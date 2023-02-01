@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../resources/LightStyle.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ANNA.UIController">
+   <children>
+      <TabPane fx:id="tabPane" prefHeight="720.0" prefWidth="1280.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Данные">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="1280.0">
+                     <children>
+                        <HBox prefHeight="684.0" prefWidth="1280.0">
+                           <children>
+                              <VBox prefHeight="692.0" prefWidth="635.0">
+                                 <children>
+                                    <Label alignment="CENTER" prefHeight="17.0" prefWidth="640.0" text="Обучающая выборка" textAlignment="CENTER">
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="Segoe UI Semibold" size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <Separator prefWidth="200.0" />
+                                    <HBox prefHeight="70.0" prefWidth="635.0">
+                                       <children>
+                                          <TextField fx:id="trainDataPath" prefHeight="32.0" prefWidth="330.0" promptText="Путь к файлу">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </TextField>
+                                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#browseForTrainData" prefHeight="32.0" prefWidth="22.0" text="..." textAlignment="CENTER">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="1.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                          <Label prefHeight="30.0" prefWidth="110.0" text="Разделитель:">
+                                             <font>
+                                                <Font name="Segoe UI Semibold" size="14.0" />
+                                             </font>
+                                             <padding>
+                                                <Insets left="15.0" right="5.0" />
+                                             </padding>
+                                          </Label>
+                                          <ChoiceBox fx:id="trainSeparator" prefHeight="30.0" prefWidth="40.0" />
+                                          <Button alignment="CENTER" layoutX="360.0" layoutY="20.0" mnemonicParsing="false" onAction="#applyTrainData" prefHeight="32.0" prefWidth="96.0" text="Подтвердить" textAlignment="CENTER">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="15.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="20.0" left="10.0" right="10.0" top="20.0" />
+                                       </padding>
+                                    </HBox>
+                                    <Separator prefWidth="200.0" />
+                                    <Label fx:id="trainDataLabel" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="17.0" prefWidth="640.0" text="---" textAlignment="CENTER">
+                                       <font>
+                                          <Font name="System Bold Italic" size="16.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets top="5.0" />
+                                       </padding>
+                                    </Label>
+                                    <ScrollPane prefHeight="530.0" prefWidth="635.0">
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </VBox.margin>
+                                       <content>
+                                          <TableView fx:id="trainDataTable" minHeight="491.0" minWidth="605.0" prefHeight="501.0" prefWidth="611.0" />
+                                       </content>
+                                    </ScrollPane>
+                                 </children>
+                              </VBox>
+                              <Separator orientation="VERTICAL" prefHeight="200.0" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Архитектура">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="720.0" prefWidth="1280.0">
+                     <children>
+                        <HBox prefHeight="684.0" prefWidth="1280.0">
+                           <children>
+                              <VBox prefHeight="684.0" prefWidth="350.0">
+                                 <children>
+                                    <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="924.0" text="Входные значения" textAlignment="CENTER">
+                                       <font>
+                                          <Font name="Segoe UI Semibold" size="20.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                    </Label>
+                                    <ChoiceBox fx:id="inputsChoiceBox" prefHeight="32.0" prefWidth="310.0">
+                                       <VBox.margin>
+                                          <Insets left="15.0" right="15.0" />
+                                       </VBox.margin>
+                                    </ChoiceBox>
+                                    <ScrollPane>
+                                       <VBox.margin>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </VBox.margin>
+                                       <content>
+                                          <VBox prefHeight="565.0" prefWidth="310.0" />
+                                       </content>
+                                    </ScrollPane>
+                                 </children>
+                              </VBox>
+                              <Separator orientation="VERTICAL" prefHeight="684.0" prefWidth="1.0" />
+                              <VBox layoutX="10.0" layoutY="10.0" prefHeight="684.0" prefWidth="924.0">
+                                 <children>
+                                    <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="924.0" text="Строение нейронной сети" textAlignment="CENTER">
+                                       <font>
+                                          <Font name="Segoe UI Semibold" size="20.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                    </Label>
+                                    <ScrollPane prefHeight="200.0" vbarPolicy="NEVER">
+                                       <VBox.margin>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </VBox.margin>
+                                       <content>
+                                          <HBox prefHeight="195.0" prefWidth="895.0" />
+                                       </content>
+                                    </ScrollPane>
+                                    <Separator prefWidth="924.0" />
+                                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="17.0" prefWidth="924.0" text="Графическое отображение" textAlignment="CENTER">
+                                       <font>
+                                          <Font name="Segoe UI Semibold" size="20.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                    </Label>
+                                    <Canvas height="322.0" width="900.0">
+                                       <VBox.margin>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </VBox.margin>
+                                    </Canvas>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="Управление">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="720.0" prefWidth="1280.0">
+                     <children>
+                        <HBox prefHeight="684.0" prefWidth="1280.0">
+                           <children>
+                              <VBox prefHeight="684.0" prefWidth="636.0">
+                                 <children>
+                                    <Label alignment="CENTER" prefHeight="50.0" prefWidth="636.0" text="Настройка гиперпараметров" textAlignment="CENTER">
+                                       <font>
+                                          <Font name="Segoe UI Semibold" size="20.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                    </Label>
+                                    <ScrollPane>
+                                       <content>
+                                          <VBox prefHeight="565.0" prefWidth="602.0" />
+                                       </content>
+                                       <VBox.margin>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </VBox.margin>
+                                    </ScrollPane>
+                                 </children>
+                              </VBox>
+                              <Separator orientation="VERTICAL" prefHeight="684.0" prefWidth="1.0" />
+                              <VBox prefHeight="684.0" prefWidth="636.0">
+                                 <children>
+                                    <Label alignment="CENTER" prefHeight="50.0" prefWidth="636.0" text="Управление нейронной сетью" textAlignment="CENTER">
+                                       <font>
+                                          <Font name="Segoe UI Semibold" size="20.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                    </Label>
+                                    <Button mnemonicParsing="false" onAction="#startTraining" text="Запустить нейронную сеть на тренировочных данных" textAlignment="CENTER">
+                                       <VBox.margin>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                    <Button layoutX="25.0" layoutY="25.0" mnemonicParsing="false" onAction="#startTraining" text="Запустить нейронную сеть на тестовых данных" textAlignment="CENTER">
+                                       <VBox.margin>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+            <Tab text="Результаты">
+               <content>
+                  <GridPane>
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                     <children>
+                        <LineChart fx:id="trainSetGraph" legendVisible="false" prefHeight="100.0" prefWidth="100.0" title="Обучающая выборка">
+                          <xAxis>
+                            <NumberAxis forceZeroInRange="false" label="Эпоха" lowerBound="1.0" minorTickVisible="false" side="BOTTOM" tickUnit="1.0" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis label="Средняя ошибка" minorTickCount="2" side="LEFT" tickUnit="0.1" upperBound="1.0" />
+                          </yAxis>
+                           <effect>
+                              <Blend />
+                           </effect>
+                        </LineChart>
+                        <LineChart fx:id="testSetGraph" legendVisible="false" prefHeight="100.0" prefWidth="100.0" title="Проверочная выборка" GridPane.rowIndex="1">
+                          <xAxis>
+                            <NumberAxis label="Эпоха" minorTickLength="0.0" side="BOTTOM" tickUnit="0.0" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis label="Средняя ошибка" minorTickCount="2" side="LEFT" tickUnit="0.01" upperBound="1.0" />
+                          </yAxis>
+                           <effect>
+                              <Blend />
+                           </effect>
+                        </LineChart>
+                        <TableView fx:id="confusionMatrix" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2">
+                          <columns>
+                            <TableColumn prefWidth="-1.0" text="C1" />
+                            <TableColumn prefWidth="-1.0" text="C2" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </GridPane>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</VBox>
