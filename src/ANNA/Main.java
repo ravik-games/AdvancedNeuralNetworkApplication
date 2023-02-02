@@ -20,6 +20,7 @@ public class Main extends Application {
         Parent root = loader.load();
         primaryStage.setTitle("Advanced Neural Network Application");
         primaryStage.setScene(new Scene(root, 1280, 720));
+        primaryStage.resizableProperty().setValue(false);
         primaryStage.show();
 
         controller = loader.getController();

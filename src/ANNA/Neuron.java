@@ -29,7 +29,7 @@ public class Neuron {
         if(inputs.length != weights.length - Boolean.compare(Hyperparameters.USE_BIAS_NEURONS, false)){
             //TODO Test conditions
             System.err.println("CRITICAL ERROR: length of inputs and length of weights in neuron doesn't match");
-            UIController.errorMessage("ERROR", "Критическая ошибка", "", "Произошла критическая ошибка при работе нейронной сети. Количество входных данных и весов нейрона не совпадает.");
+            PopupController.errorMessage("ERROR", "Критическая ошибка", "", "Произошла критическая ошибка при работе нейронной сети. Количество входных данных и весов нейрона не совпадает.");
             System.exit(1);
         }
 
