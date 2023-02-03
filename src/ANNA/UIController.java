@@ -297,6 +297,6 @@ public class UIController {
     }
 
     private enum inputTypes{
-        INT, DOUBLE, BOOLEAN;
+        NUMBER, BOOLEAN;
     }
 }

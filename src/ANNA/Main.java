@@ -25,7 +25,7 @@ public class Main extends Application {
 
         controller = loader.getController();
         controller.setMain(this);
-        //ontroller.initialize();
+        //controller.initialize();
     }
 
     public void train(NeuralNetwork.NetworkArguments arguments){
