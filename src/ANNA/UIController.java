@@ -5,7 +5,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
@@ -25,22 +24,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UIController {
-    @FXML
-    private Button inputNeuronButton;
-    @FXML
-    private VBox inputVBox;
-    @FXML
-    private TabPane tabPane;
-    @FXML
-    private TextField trainDataPath, testDataPath;
-    @FXML
-    private TableView<List<String>> trainDataTable, testDataTable;
-    @FXML
-    private Label trainDataLabel, testDataLabel;
-    @FXML
-    private LineChart<Integer, Double> trainSetGraph, testSetGraph;
-    @FXML
-    private ChoiceBox<String> trainSeparator, testSeparator , inputsChoiceBox;
+    public CheckBox autoOpenResults;
+    public Button inputNeuronButton, layerAddButton;
+    public VBox inputVBox;
+    public TabPane tabPane;
+    public TextField trainDataPath, testDataPath, loadArchitecturePath, loadWeightsPath, loadHyperparametersPath, loadNeuralNetworkPath, saveArchitecturePath, saveWeightsPath, saveHyperparametersPath, saveNeuralNetworkPath;
+    public TableView<List<String>> trainDataTable, testDataTable;
+    public Label trainDataLabel, testDataLabel;
+    public LineChart<Integer, Double> trainSetGraph, testSetGraph;
+    public ChoiceBox<String> trainSeparator, testSeparator , inputsChoiceBox;
 
     private Main main;
     private File trainSetFile, testSetFile;
@@ -65,14 +57,21 @@ public class UIController {
         testSeparator.getItems().addAll(",", ";");
         testSeparator.setValue(";");
 
-        inputsChoiceBox.getItems().addAll("Тренировочная база данных", "Проверочная база данных");
+        inputsChoiceBox.getItems().addAll("Обучающая база данных", "Тестовая база данных");
         inputsChoiceBox.setValue("Выберите базу данных");
     }
 
-    //Start neural network
+    //Start neural network on train data
     public void startTraining(ActionEvent actionEvent) {
-        tabPane.getSelectionModel().select(3);
+        if(autoOpenResults.isSelected())
+            tabPane.getSelectionModel().select(3);
         main.train(trainArguments);
+    }
+
+    //Start neural network on test data
+    public void startTesting(ActionEvent actionEvent) {
+        if(autoOpenResults.isSelected())
+            tabPane.getSelectionModel().select(3);
     }
 
     //Select train set data
@@ -137,7 +136,7 @@ public class UIController {
             if(trainSetFile == null || !trainSetFile.exists()){
                 inputsChoiceBox.setValue("Выберите базу данных");
                 inputNeuronButton.setDisable(true);
-                PopupController.errorMessage("WARNING", "Ошибка", "", "Отсутствует тренировочная база данных.");
+                PopupController.errorMessage("WARNING", "Ошибка", "", "Отсутствует обучающая база данных.");
                 return;
             }
             //If settings is not valid, create new.
@@ -151,7 +150,7 @@ public class UIController {
             if(testSetFile == null || !testSetFile.exists()){
                 inputsChoiceBox.setValue("Выберите базу данных");
                 inputNeuronButton.setDisable(true);
-                PopupController.errorMessage("WARNING", "Ошибка", "", "Отсутствует проверочная база данных.");
+                PopupController.errorMessage("WARNING", "Ошибка", "", "Отсутствует тестовая база данных.");
                 return;
             }
             //If settings is not valid, create new.
@@ -216,6 +215,10 @@ public class UIController {
 
         result.getChildren().addAll(children);
         return result;
+    }
+
+    //Add new layer to neural network architecture
+    public void addLayer(ActionEvent actionEvent) {
     }
 
     //Show data on train graph
@@ -294,6 +297,54 @@ public class UIController {
             PopupController.errorMessage("WARNING", "Ошибка", "", "Выбранный файл не действителен.");
         }
         return result;
+    }
+
+    public void loadArchitecture(ActionEvent actionEvent) {
+    }
+
+    public void loadWeights(ActionEvent actionEvent) {
+    }
+
+    public void loadHyperparameters(ActionEvent actionEvent) {
+    }
+
+    public void loadNeuralNetwork(ActionEvent actionEvent) {
+    }
+
+    public void browseForArchitecture(ActionEvent actionEvent) {
+    }
+
+    public void browseForWeights(ActionEvent actionEvent) {
+    }
+
+    public void browseForHyperparameters(ActionEvent actionEvent) {
+    }
+
+    public void browseForNeuralNetwork(ActionEvent actionEvent) {
+    }
+
+    public void saveArchitecture(ActionEvent actionEvent) {
+    }
+
+    public void saveWeights(ActionEvent actionEvent) {
+    }
+
+    public void saveHyperparameters(ActionEvent actionEvent) {
+    }
+
+    public void saveNeuralNetwork(ActionEvent actionEvent) {
+    }
+
+    public void browseSaveArchitecture(ActionEvent actionEvent) {
+    }
+
+    public void browseSaveWeights(ActionEvent actionEvent) {
+    }
+
+    public void browseSaveNeuralNetwork(ActionEvent actionEvent) {
+    }
+
+    public void browseSaveHyperparameters(ActionEvent actionEvent) {
     }
 
     private enum inputTypes{

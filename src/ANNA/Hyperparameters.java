@@ -8,7 +8,7 @@ public class Hyperparameters {
      * <p>
      * Affects: TODO Test what does number of epochs affect
      */
-    public static final int NUMBER_OF_EPOCHS = 100000;
+    public static final int NUMBER_OF_EPOCHS = 1000;
 
     /**
      * The number of training samples used in one iteration. If equal or below 0, then will be used number of input arguments.
