@@ -1,21 +1,22 @@
 package ANNA;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.util.Callback;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -25,20 +26,22 @@ import java.util.List;
 
 public class UIController {
     public CheckBox autoOpenResults;
-    public Button inputNeuronButton, layerAddButton;
-    public VBox inputVBox;
+    public Button inputNeuronButton, layerAddButton, inputNeuronRemoveButton, layerRemoveButton;
+    public VBox inputVBox, hyperparametersVBox;
+    public HBox architectureHBox;
     public TabPane tabPane;
-    public TextField trainDataPath, testDataPath, loadArchitecturePath, loadWeightsPath, loadHyperparametersPath, loadNeuralNetworkPath, saveArchitecturePath, saveWeightsPath, saveHyperparametersPath, saveNeuralNetworkPath;
+    public Canvas graphicOutput;
+    public TextField updateResultsEpoch, trainDataPath, testDataPath, loadArchitecturePath, loadWeightsPath, loadHyperparametersPath, loadNeuralNetworkPath, saveArchitecturePath, saveWeightsPath, saveHyperparametersPath, saveNeuralNetworkPath;
     public TableView<List<String>> trainDataTable, testDataTable;
-    public Label trainDataLabel, testDataLabel;
+    public Label trainDataLabel, testDataLabel, inputNeuronCounter, lastLayerNumber;
     public LineChart<Integer, Double> trainSetGraph, testSetGraph;
     public ChoiceBox<String> trainSeparator, testSeparator , inputsChoiceBox;
 
     private Main main;
     private File trainSetFile, testSetFile;
     private List<List<String>> rawTrainSet, rawTestSet;
-    private ObservableList<Node> trainInputSettings, testInputSettings;
-    private NeuralNetwork.NetworkArguments trainArguments = new NeuralNetwork.NetworkArguments(
+    private ObservableList<Node> trainInputSettings, testInputSettings, architectureSettings;
+    private final NeuralNetwork.NetworkArguments trainArguments = new NeuralNetwork.NetworkArguments(
             new int[]{3, 6, 6, 1},
             null,
             new double[][]{{0, 0, 0}, {0, 0, 1}, {0, 1, 0}, {0, 1, 1}, {1, 0, 0}, {1, 0, 1}, {1, 1, 0}, {1, 1, 1}},
@@ -62,20 +65,20 @@ public class UIController {
     }
 
     //Start neural network on train data
-    public void startTraining(ActionEvent actionEvent) {
+    public void startTraining() {
         if(autoOpenResults.isSelected())
             tabPane.getSelectionModel().select(3);
         main.train(trainArguments);
     }
 
     //Start neural network on test data
-    public void startTesting(ActionEvent actionEvent) {
+    public void startTesting() {
         if(autoOpenResults.isSelected())
             tabPane.getSelectionModel().select(3);
     }
 
     //Select train set data
-    public void browseForTrainData(ActionEvent actionEvent) {
+    public void browseForTrainData() {
         String path =  PopupController.openExplorer();
         if(path == null)
             return;
@@ -83,7 +86,7 @@ public class UIController {
     }
 
     //Select test set data
-    public void browseForTestData(ActionEvent actionEvent) {
+    public void browseForTestData() {
         String path =  PopupController.openExplorer();
         if(path == null)
             return;
@@ -91,7 +94,7 @@ public class UIController {
     }
 
     //Read and apply train data
-    public void applyTrainData(ActionEvent actionEvent) {
+    public void applyTrainData() {
         trainSetFile = getFileFromPath(trainDataPath.getText());
         if (!trainSetFile.exists()) {
             PopupController.errorMessage("WARNING", "Ошибка", "", "Произошла ошибка при считывании тренировочной базы данных.");
@@ -101,7 +104,7 @@ public class UIController {
         trainDataLabel.setText(trainSetFile.getName());
         //Parse data and add it to the table
         rawTrainSet = parseData(trainSetFile, trainSeparator.getValue());
-        loadTable(trainDataTable, rawTrainSet, 100);
+        loadTable(trainDataTable, rawTrainSet);
 
         //Reset inputs choice box
         inputsChoiceBox.setValue("Выберите базу данных");
@@ -110,7 +113,7 @@ public class UIController {
     }
 
     //Read and apply test data
-    public void applyTestData(ActionEvent actionEvent) {
+    public void applyTestData() {
         testSetFile = getFileFromPath(testDataPath.getText());
         if (!testSetFile.exists()) {
             PopupController.errorMessage("WARNING", "Ошибка", "", "Произошла ошибка при считывании тестовой базы данных.");
@@ -120,7 +123,7 @@ public class UIController {
         testDataLabel.setText(testSetFile.getName());
         //Parse data and add it to the table
         rawTestSet = parseData(testSetFile, testSeparator.getValue());
-        loadTable(testDataTable, rawTestSet, 100);
+        loadTable(testDataTable, rawTestSet);
 
         //Reset inputs choice box
         inputsChoiceBox.setValue("Выберите базу данных");
@@ -130,12 +133,14 @@ public class UIController {
 
     public void updateInputTable(){
         inputVBox.getChildren().remove(2, inputVBox.getChildren().size() - 1);
+        inputNeuronCounter.setText("...");
 
         //Switch on selected data set
         if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(0))){
             if(trainSetFile == null || !trainSetFile.exists()){
                 inputsChoiceBox.setValue("Выберите базу данных");
                 inputNeuronButton.setDisable(true);
+                inputNeuronRemoveButton.setDisable(true);
                 PopupController.errorMessage("WARNING", "Ошибка", "", "Отсутствует обучающая база данных.");
                 return;
             }
@@ -144,12 +149,15 @@ public class UIController {
                 trainInputSettings = FXCollections.observableArrayList(addInputValue(rawTrainSet, 0));
             }
             inputVBox.getChildren().addAll(2, trainInputSettings);
+            inputNeuronCounter.setText(String.valueOf(trainInputSettings.size() / 2));
             inputNeuronButton.setDisable(false);
+            inputNeuronRemoveButton.setDisable(false);
         }
         else if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
             if(testSetFile == null || !testSetFile.exists()){
                 inputsChoiceBox.setValue("Выберите базу данных");
                 inputNeuronButton.setDisable(true);
+                inputNeuronRemoveButton.setDisable(true);
                 PopupController.errorMessage("WARNING", "Ошибка", "", "Отсутствует тестовая база данных.");
                 return;
             }
@@ -158,14 +166,17 @@ public class UIController {
                 testInputSettings = FXCollections.observableArrayList(addInputValue(rawTestSet, 0));
             }
             inputVBox.getChildren().addAll(2, testInputSettings);
+            inputNeuronCounter.setText(String.valueOf(testInputSettings.size() / 2));
             inputNeuronButton.setDisable(false);
+            inputNeuronRemoveButton.setDisable(false);
         }else{
+            inputNeuronRemoveButton.setDisable(true);
             inputNeuronButton.setDisable(true);
         }
     }
 
     //Add new input neuron value
-    public void addInputNeuron(ActionEvent actionEvent) {
+    public void addInputNeuron() {
         if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(0))){
             trainInputSettings.addAll(addInputValue(rawTrainSet, trainInputSettings.size() / 2));
             updateInputTable();
@@ -184,6 +195,22 @@ public class UIController {
         return result;
     }
 
+    //Remove last neuron input field
+    public void removeInputNeuron() {
+        if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(0))){
+            if(trainInputSettings.size() < 3)
+                return;
+            trainInputSettings.remove(trainInputSettings.size() - 3 , trainInputSettings.size() - 1);
+            updateInputTable();
+        }
+        else if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
+            if(testInputSettings.size() < 3)
+                return;
+            testInputSettings.remove(testInputSettings.size() - 3 , testInputSettings.size() - 1);
+            updateInputTable();
+        }
+    }
+
     //Create row for table with input neurons
     private HBox createInputRow(int number, ObservableList<String> columnNames){
         HBox result = new HBox();
@@ -199,10 +226,15 @@ public class UIController {
         num.setPrefWidth(25);
 
         ChoiceBox<String> columnSelector = new ChoiceBox<>(columnNames);
+        if(number >= columnNames.size())
+            columnSelector.setValue(columnNames.get(0));
+        else
+            columnSelector.setValue(columnNames.get(number));
         columnSelector.setPrefHeight(20);
         columnSelector.setPrefWidth(130);
 
         ChoiceBox<inputTypes> typeSelector = new ChoiceBox<>(FXCollections.observableArrayList(inputTypes.values()));
+        typeSelector.setValue(inputTypes.NUMBER);
         typeSelector.setPrefHeight(20);
         typeSelector.setPrefWidth(130);
 
@@ -218,7 +250,82 @@ public class UIController {
     }
 
     //Add new layer to neural network architecture
-    public void addLayer(ActionEvent actionEvent) {
+    public void addLayer(){
+        if(architectureSettings == null){
+            architectureSettings = FXCollections.observableArrayList(addLayerValue(1));
+        }
+        else{
+            architectureSettings.addAll(addLayerValue(architectureSettings.size() / 2 + 1));
+        }
+        updateArchitectureTable();
+    }
+
+    //Remove last layer field
+    public void removeLayer() {
+        if(architectureSettings != null && architectureSettings.size() > 3){
+            architectureSettings.remove(architectureSettings.size() - 3, architectureSettings.size() - 1);
+        }
+        updateArchitectureTable();
+    }
+
+    //Refresh architecture table
+    private void updateArchitectureTable(){
+        architectureHBox.getChildren().remove(4, architectureHBox.getChildren().size() - 4);
+        if(architectureSettings == null){
+            architectureSettings = FXCollections.observableArrayList(addLayerValue(1));
+        }
+        architectureHBox.getChildren().addAll(4, architectureSettings);
+        lastLayerNumber.setText(String.valueOf(architectureSettings.size() / 2 + 1));
+    }
+
+    //Create layer value
+    private List<Node> addLayerValue(int number){
+        List<Node> result = new ArrayList<>();
+        result.add(createLayerColumn(number));
+        result.add(new Separator((Orientation.VERTICAL)));
+        return result;
+    }
+
+    //Create column for table with architecture
+    private VBox createLayerColumn(int number){
+        VBox result = new VBox();
+        result.setPrefHeight(185);
+        result.setPrefWidth(90);
+        result.setPadding(new Insets(2, 5, 2, 2));
+
+        List<Node> children = new ArrayList<>(5);
+
+        Label num = new Label(Integer.toString(number));
+        num.setFont(new Font("Segoe UI Semibold", 14));
+        num.setAlignment(Pos.CENTER);
+        num.setPrefHeight(30);
+        num.setPrefWidth(100);
+        num.setMinWidth(100);
+        num.setMinHeight(30);
+
+        TextField neuronNumber = new TextField(Integer.toString(3));
+        neuronNumber.setAlignment(Pos.CENTER);
+        neuronNumber.setPrefWidth(100);
+        neuronNumber.setPrefHeight(70);
+        neuronNumber.setMinWidth(100);
+        neuronNumber.setMinHeight(70);
+
+        ChoiceBox<NetworkStructure.neuronTypes> typeSelector = new ChoiceBox<>(FXCollections.observableArrayList(NetworkStructure.neuronTypes.values()));
+        typeSelector.setValue(NetworkStructure.neuronTypes.HIDDEN);
+        typeSelector.setPrefHeight(70);
+        typeSelector.setPrefWidth(100);
+        typeSelector.setMinWidth(100);
+        typeSelector.setMinHeight(70);
+
+        //Add them to array
+        children.add(num);
+        children.add(new Separator(Orientation.HORIZONTAL));
+        children.add(neuronNumber);
+        children.add(new Separator(Orientation.HORIZONTAL));
+        children.add(typeSelector);
+
+        result.getChildren().addAll(children);
+        return result;
     }
 
     //Show data on train graph
@@ -237,7 +344,7 @@ public class UIController {
             trainSetGraph.getData().remove(0);
         }
         //Add values to the chart
-        trainSetGraph.getData().get(trainSetGraph.getData().size() - 1).getData().add(new XYChart.Data<Integer, Double>(epoch, error));
+        trainSetGraph.getData().get(trainSetGraph.getData().size() - 1).getData().add(new XYChart.Data<>(epoch, error));
     }
 
     //Parse data from file to 2D list
@@ -261,7 +368,7 @@ public class UIController {
     }
 
     //Load table to TableView
-    private void loadTable(TableView<List<String>> table, List<List<String>> rawData, int columnWidth){
+    private void loadTable(TableView<List<String>> table, List<List<String>> rawData){
         table.getColumns().clear();
         table.getItems().clear();
 
@@ -270,15 +377,10 @@ public class UIController {
             TableColumn<List<String>, String> column = new TableColumn<>(rawData.get(0).get(i));
             int finalI = i;
             //Create cell value factory to show data in table cells
-            column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<String>, String>, ObservableValue<String>>() {
-                @Override
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<List<String>, String> param) {
-                    return new ReadOnlyStringWrapper(param.getValue().get(finalI));
-                }
-            });
-            column.setMinWidth(columnWidth >> 1);
-            column.setPrefWidth(columnWidth);
-            column.setMaxWidth(columnWidth * 2);
+            column.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().get(finalI)));
+            column.setMinWidth(100 >> 1);
+            column.setPrefWidth(100);
+            column.setMaxWidth(100 * 2);
             table.getColumns().add(column);
         }
 
@@ -299,55 +401,92 @@ public class UIController {
         return result;
     }
 
-    public void loadArchitecture(ActionEvent actionEvent) {
+    //Collect data from UI and create arguments for NN
+    private NeuralNetwork.NetworkArguments collectDataToArguments(boolean trainData){
+        if(trainData && (trainInputSettings == null || trainInputSettings.size() < 1)){
+            PopupController.errorMessage("WARNING", "Ошибка", "", "Не настроены входные нейроны для обучающих данных");
+            return null;
+        }
+        else if (!trainData && (testInputSettings == null || testInputSettings.size() < 1)){
+            PopupController.errorMessage("WARNING", "Ошибка", "", "Не настроены входные нейроны для тестовых данных");
+            return null;
+        }
+
+        if(architectureSettings == null || architectureSettings.size() < 1){
+            PopupController.errorMessage("WARNING", "Ошибка", "", "Не настроена структура нейронной сети");
+            return null;
+        }
+
+        //Local variables
+        ObservableList<Node> currentInputNeuronSet = trainData ? trainInputSettings : testInputSettings;
+        int[] architecture = new int[2 + architectureSettings.size() / 2];
+        double[][] inputs = new double[0][];
+        double[][] expectedOutputs = new double[0][];
+        int logEpoch = Integer.parseInt(updateResultsEpoch.getText()); //TODO Check for only digits in field
+
+        //Collect architecture data
+        architecture[0] = currentInputNeuronSet.size() / 2;
+        for(int i = 0; i < architectureSettings.size(); i+=2) {
+            VBox vBox = (VBox) architectureSettings.get(i);
+            TextField textField = (TextField) vBox.getChildren().get(2);
+            architecture[i / 2] = Integer.parseInt(textField.getText()); //TODO Check for only digits in field
+        }
+        architecture[architecture.length - 1] = 1;
+
+        NeuralNetwork.NetworkArguments arguments = new NeuralNetwork.NetworkArguments(architecture, null, inputs, expectedOutputs, this, logEpoch);
+        System.out.println(arguments);
+        return arguments;
     }
 
-    public void loadWeights(ActionEvent actionEvent) {
+    public void loadArchitecture() {
     }
 
-    public void loadHyperparameters(ActionEvent actionEvent) {
+    public void loadWeights() {
     }
 
-    public void loadNeuralNetwork(ActionEvent actionEvent) {
+    public void loadHyperparameters() {
     }
 
-    public void browseForArchitecture(ActionEvent actionEvent) {
+    public void loadNeuralNetwork() {
     }
 
-    public void browseForWeights(ActionEvent actionEvent) {
+    public void browseForArchitecture() {
     }
 
-    public void browseForHyperparameters(ActionEvent actionEvent) {
+    public void browseForWeights() {
     }
 
-    public void browseForNeuralNetwork(ActionEvent actionEvent) {
+    public void browseForHyperparameters() {
     }
 
-    public void saveArchitecture(ActionEvent actionEvent) {
+    public void browseForNeuralNetwork() {
     }
 
-    public void saveWeights(ActionEvent actionEvent) {
+    public void saveArchitecture() {
     }
 
-    public void saveHyperparameters(ActionEvent actionEvent) {
+    public void saveWeights() {
     }
 
-    public void saveNeuralNetwork(ActionEvent actionEvent) {
+    public void saveHyperparameters() {
     }
 
-    public void browseSaveArchitecture(ActionEvent actionEvent) {
+    public void saveNeuralNetwork() {
     }
 
-    public void browseSaveWeights(ActionEvent actionEvent) {
+    public void browseSaveArchitecture() {
     }
 
-    public void browseSaveNeuralNetwork(ActionEvent actionEvent) {
+    public void browseSaveWeights() {
     }
 
-    public void browseSaveHyperparameters(ActionEvent actionEvent) {
+    public void browseSaveNeuralNetwork() {
+    }
+
+    public void browseSaveHyperparameters() {
     }
 
     private enum inputTypes{
-        NUMBER, BOOLEAN;
+        NUMBER, BOOLEAN
     }
 }

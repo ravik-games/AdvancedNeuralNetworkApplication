@@ -31,6 +31,7 @@ public class Main extends Application {
     public void train(NeuralNetwork.NetworkArguments arguments){
         if(network == null)
             network = new NeuralNetwork();
+        System.out.println(arguments);
         network.run(arguments);
     }
 

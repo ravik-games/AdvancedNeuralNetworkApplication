@@ -121,7 +121,6 @@
 
 .tab {
     -fx-padding: 5 5 4 5;
-    -fx-border-width: 0;
     -fx-background-radius: 0;
     -fx-background-color: #ffffff;
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
@@ -168,8 +167,8 @@
 }
 
 .text-area {
-    -fx-border-color: #858585;
-    -fx-border-width: 0.75;
+    -fx-border-color: #4769ff;
+    -fx-border-width: 0.25;
     -fx-background-radius: 7.5;
     -fx-border-radius: 7.5;
     -fx-background-color: #ededed;
@@ -207,11 +206,6 @@
     -fx-padding: 0px;
 }
 
-/*
- * Push Button � ����� Metro
- * �����: Pedro Duque Vieira
- * http://pixelduke.wordpress.com/2012/10/23/jmetro-windows-8-controls-on-java/
- */
 .button {
     -fx-padding: 5 5 5 5;
     -fx-border-color: #4769ff;

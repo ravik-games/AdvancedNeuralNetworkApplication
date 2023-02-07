@@ -15,7 +15,10 @@ public class Neuron {
 
     private double lastOutput;
 
-    public Neuron(int id, int positionY, int positionX) {
+    public final NetworkStructure.neuronTypes type;
+
+    public Neuron(int id, int positionY, int positionX, NetworkStructure.neuronTypes type) {
+        this.type = type;
         this.positionX = positionX;
         this.positionY = positionY;
         this.id = id;

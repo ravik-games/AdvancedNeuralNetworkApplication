@@ -35,7 +35,12 @@ public class NetworkStructure {
             ArrayList<Neuron> layer = new ArrayList<Neuron>(newStructure.length);
             //Create new neurons in layer
             for (int j = 0; j < newStructure[i]; j++) {
-                layer.add(initializeNeuron(i, j));
+                if(i == 0)
+                    layer.add(initializeNeuron(i, j, neuronTypes.INPUT));
+                else if(i == newStructure.length - 1)
+                    layer.add(initializeNeuron(i, j, neuronTypes.OUTPUT));
+                else
+                    layer.add(initializeNeuron(i, j, neuronTypes.HIDDEN));
             }
             structure.add(layer);
         }
@@ -74,9 +79,9 @@ public class NetworkStructure {
     }
 
     //Initialize single neuron and add it to the arrays
-    private Neuron initializeNeuron(int positionY, int positionX){
+    private Neuron initializeNeuron(int positionY, int positionX, neuronTypes type){
         //Create new neuron and set it ID
-        Neuron value = new Neuron(neuronsArray.size(), positionY, positionX);
+        Neuron value = new Neuron(neuronsArray.size(), positionY, positionX, type);
         //Add to the array
         neuronsArray.add(value);
         return value;
@@ -175,5 +180,9 @@ public class NetworkStructure {
             this.deltaWeight = deltaWeight;
             this.weight = weight;
         }
+    }
+
+    public enum neuronTypes{
+        INPUT, HIDDEN, OUTPUT
     }
 }
