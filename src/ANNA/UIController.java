@@ -35,7 +35,7 @@ public class UIController {
     public TableView<List<String>> trainDataTable, testDataTable;
     public Label trainDataLabel, testDataLabel, inputNeuronCounter, lastLayerNumber;
     public LineChart<Integer, Double> trainSetGraph, testSetGraph;
-    public ChoiceBox<String> trainSeparator, testSeparator , inputsChoiceBox;
+    public ChoiceBox<String> trainSeparator, testSeparator, inputsChoiceBox, lastColumnChoiceBox;
 
     private Main main;
     private File trainSetFile, testSetFile;
@@ -68,7 +68,9 @@ public class UIController {
     public void startTraining() {
         if(autoOpenResults.isSelected())
             tabPane.getSelectionModel().select(3);
-        main.train(trainArguments);
+        NeuralNetwork.NetworkArguments arguments = collectDataToArguments(true);
+        //if(arguments != null)
+            //main.train(null);
     }
 
     //Start neural network on test data
@@ -419,6 +421,7 @@ public class UIController {
 
         //Local variables
         ObservableList<Node> currentInputNeuronSet = trainData ? trainInputSettings : testInputSettings;
+        List<List<String>> currentRawDataSet = trainData ? rawTrainSet : rawTestSet;
         int[] architecture = new int[2 + architectureSettings.size() / 2];
         double[][] inputs = new double[0][];
         double[][] expectedOutputs = new double[0][];
@@ -432,6 +435,18 @@ public class UIController {
             architecture[i / 2] = Integer.parseInt(textField.getText()); //TODO Check for only digits in field
         }
         architecture[architecture.length - 1] = 1;
+
+        //Create inputs from existing data
+        int[] reassign = new int[currentInputNeuronSet.size() / 2]; //Each value corresponds to column number in raw data
+        for(int i = 0; i < currentInputNeuronSet.size(); i+=2) {
+            HBox hBox = (HBox) currentInputNeuronSet.get(i);
+            ChoiceBox<String> choiceBox = (ChoiceBox<String>) hBox.getChildren().get(2);
+            int position = currentRawDataSet.get(0).indexOf(choiceBox.getValue());
+            reassign[i / 2] = position;
+        }
+        for(int i = 1; i < currentRawDataSet.size(); i++) {
+
+        }
 
         NeuralNetwork.NetworkArguments arguments = new NeuralNetwork.NetworkArguments(architecture, null, inputs, expectedOutputs, this, logEpoch);
         System.out.println(arguments);
