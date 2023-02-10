@@ -15,14 +15,11 @@ public class NeuralNetwork {
 
             double meanError = 0;
             for (int j = 0; j < bathSize; j++) {
-//                System.out.println("\nInputs:\t" + Arrays.toString(arguments.inputs()[j]));
 
                 OutputValue output = iteration(arguments.inputs()[j], arguments.expectedOutputs()[j]);
+                if(arguments.training)
+                    backpropagation(arguments.expectedOutputs()[j]);
                 meanError += output.error();
-
-//                System.out.println("Output:\t" + Arrays.toString(output.output()));
-//                System.out.println("Expected:\t" + Arrays.toString(arguments.expectedOutputs()[j]));
-//                System.out.println("Error:\t" + output.error());
             }
             meanError = meanError / bathSize;
 
@@ -46,7 +43,7 @@ public class NeuralNetwork {
             structure.getNeuronByPosition(0, i).setLastOutput(inputs[i]);
         }
 
-        //Process through all hidden neurons
+        //Process through all hidden and output neurons
         for (int i = 1; i < structure.getLayersAmount(); i++) {
             for (int j = 0; j < structure.getNeuronsAmountInLayer(i); j++) {
                 //Prepare input values
@@ -63,14 +60,22 @@ public class NeuralNetwork {
                 structure.getNeuronByPosition(i, j).calculateOutput(neuronInputs, neuronWeights);
             }
         }
-        //Calculate error and output delta
+        //Calculate error
         double[] outputLayer = new double[structure.getNeuronsAmountInLayer(structure.getLayersAmount() - 1)];
         for (int i = 0; i < structure.getNeuronsAmountInLayer(structure.getLayersAmount() - 1); i++) {
             Neuron currentNeuron = structure.getNeuronByPosition(structure.getLayersAmount() - 1, i);
             outputLayer[i] = currentNeuron.getLastOutput();
-            currentNeuron.setDelta(LearningFunctions.outputDelta(ideal[i], outputLayer[i], ActivationFunctions.types.SIGMOID));
         }
         double error = ErrorFunctions.MeanSquaredError(ideal, outputLayer);
+        return new OutputValue(outputLayer, error);
+    }
+
+    public void backpropagation(double[] idealValues){
+        //Calculate output delta
+        for (int i = 0; i < structure.getNeuronsAmountInLayer(structure.getLayersAmount() - 1); i++) {
+            Neuron currentNeuron = structure.getNeuronByPosition(structure.getLayersAmount() - 1, i);
+            currentNeuron.setDelta(LearningFunctions.outputDelta(idealValues[i], currentNeuron.getLastOutput(), ActivationFunctions.types.SIGMOID));
+        }
 
         //Hidden neurons delta
         for (int i = structure.getLayersAmount() - 2; i > 0; i--) {
@@ -108,11 +113,10 @@ public class NeuralNetwork {
                 }
             }
         }
-        return new OutputValue(outputLayer, error);
     }
 
     //Structure class for output
     private record OutputValue(double[] output, double error) { }
     //Structure class for network start arguments
-    public record NetworkArguments(int[] architecture, double[][] initialWeights, double[][] inputs, double[][] expectedOutputs, UIController uiController, int logEpoch) { }
+    public record NetworkArguments(int[] architecture, double[][] initialWeights, double[][] inputs, double[][] expectedOutputs, boolean training, UIController uiController, int logEpoch) { }
 }

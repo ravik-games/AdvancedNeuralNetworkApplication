@@ -215,17 +215,17 @@
                   </ScrollPane>
                   <HBox alignment="CENTER" spacing="15.0">
                      <VBox.margin>
-                        <Insets bottom="15.0" left="15.0" right="15.0"/>
+                        <Insets bottom="15.0" left="15.0" right="15.0" />
                      </VBox.margin>
                      <Label prefHeight="20.0" prefWidth="170.0" text="Проверочный столбец">
                         <font>
-                           <Font name="Segoe UI Semibold" size="14.0"/>
+                           <Font name="Segoe UI Semibold" size="14.0" />
                         </font>
                         <HBox.margin>
-                           <Insets/>
+                           <Insets />
                         </HBox.margin>
                      </Label>
-                     <ChoiceBox fx:id="lastColumnChoiceBox" prefWidth="150.0"/>
+                     <ChoiceBox fx:id="lastColumnChoiceBox" disable="true" prefWidth="150.0" />
                   </HBox>
                </VBox>
                <Separator orientation="VERTICAL" prefHeight="684.0" prefWidth="1.0" />
@@ -360,16 +360,16 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </Label>
-                  <ScrollPane prefHeight="606.0" prefWidth="606.0">
+                  <ScrollPane hbarPolicy="NEVER" prefHeight="606.0" prefWidth="606.0">
                      <VBox.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </VBox.margin>
                      <VBox fx:id="hyperparametersVBox" prefHeight="600.0" prefWidth="602.0">
-                        <HBox prefHeight="24.0" prefWidth="100.0">
+                        <HBox prefHeight="24.0" prefWidth="470.0">
                            <padding>
                               <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                            </padding>
-                           <Label prefHeight="20.0" prefWidth="150.0" text="Название">
+                           <Label prefHeight="20.0" prefWidth="140.0" text="Название">
                               <font>
                                  <Font name="Segoe UI Semibold" size="14.0" />
                               </font>
@@ -387,7 +387,7 @@
                               </HBox.margin>
                            </Label>
                            <Separator orientation="VERTICAL" prefHeight="200.0" />
-                           <Label prefHeight="20.0" prefWidth="130.0" text="Описание">
+                           <Label prefHeight="20.0" prefWidth="280.0" text="Описание">
                               <font>
                                  <Font name="Segoe UI Semibold" size="14.0" />
                               </font>
@@ -616,12 +616,12 @@
                      <VBox.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="5.0" />
                      </VBox.margin>
-                     <Button mnemonicParsing="false" onAction="#startTraining" prefHeight="30.0" prefWidth="295.0" text="Запустить на обучающих данных" textAlignment="CENTER">
+                     <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#startTraining" prefHeight="30.0" prefWidth="295.0" text="Запустить на обучающих данных" textAlignment="CENTER">
                         <font>
                            <Font name="Segoe UI Semibold" size="14.0" />
                         </font>
                      </Button>
-                     <Button mnemonicParsing="false" onAction="#startTesting" prefHeight="30.0" prefWidth="295.0" text="Запустить на тестовых данных" textAlignment="CENTER">
+                     <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#startTesting" prefHeight="30.0" prefWidth="295.0" text="Запустить на тестовых данных" textAlignment="CENTER">
                         <font>
                            <Font name="Segoe UI Semibold" size="14.0" />
                         </font>
@@ -652,7 +652,7 @@
                   <Separator prefWidth="200.0" />
                   <LineChart fx:id="testSetGraph" legendVisible="false" prefHeight="340.0" prefWidth="636.0" title="Тестовая выборка">
                      <xAxis>
-                        <NumberAxis label="Эпоха" minorTickLength="0.0" side="BOTTOM" tickUnit="0.0" />
+                        <NumberAxis label="Итерация" minorTickLength="0.0" side="BOTTOM" tickUnit="0.0" />
                      </xAxis>
                      <yAxis>
                         <NumberAxis label="Средняя ошибка" minorTickCount="2" side="LEFT" tickUnit="0.01" upperBound="1.0" />

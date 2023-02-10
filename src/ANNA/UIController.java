@@ -38,16 +38,10 @@ public class UIController {
     public ChoiceBox<String> trainSeparator, testSeparator, inputsChoiceBox, lastColumnChoiceBox;
 
     private Main main;
+    private String trainLastColumn, testLastColumn; //TODO Replace single choice box with same system, as with input neurons
     private File trainSetFile, testSetFile;
     private List<List<String>> rawTrainSet, rawTestSet;
     private ObservableList<Node> trainInputSettings, testInputSettings, architectureSettings;
-    private final NeuralNetwork.NetworkArguments trainArguments = new NeuralNetwork.NetworkArguments(
-            new int[]{3, 6, 6, 1},
-            null,
-            new double[][]{{0, 0, 0}, {0, 0, 1}, {0, 1, 0}, {0, 1, 1}, {1, 0, 0}, {1, 0, 1}, {1, 1, 0}, {1, 1, 1}},
-            new double[][]{{0}, {1}, {1}, {0}, {1}, {0}, {0}, {1}},
-            this,
-            Hyperparameters.NUMBER_OF_EPOCHS / 100);
 
     public void setMain(Main main){
         this.main = main;
@@ -62,21 +56,34 @@ public class UIController {
 
         inputsChoiceBox.getItems().addAll("Обучающая база данных", "Тестовая база данных");
         inputsChoiceBox.setValue("Выберите базу данных");
+
+        lastColumnChoiceBox.setDisable(true);
+        lastColumnChoiceBox.setValue("...");
+
+        graphicOutput.getGraphicsContext2D().fillText("В разработке...", 400, 150);
+
+        //Create hyperparameters table
+        initializeHyperparameters();
     }
 
     //Start neural network on train data
     public void startTraining() {
+        NeuralNetwork.NetworkArguments arguments = collectDataToArguments(true);
+        if(arguments == null)
+            return;
         if(autoOpenResults.isSelected())
             tabPane.getSelectionModel().select(3);
-        NeuralNetwork.NetworkArguments arguments = collectDataToArguments(true);
-        //if(arguments != null)
-            //main.train(null);
+        main.train(arguments);
     }
 
     //Start neural network on test data
     public void startTesting() {
+        NeuralNetwork.NetworkArguments arguments = collectDataToArguments(false);
+        if(arguments == null)
+            return;
         if(autoOpenResults.isSelected())
             tabPane.getSelectionModel().select(3);
+        main.train(arguments);
     }
 
     //Select train set data
@@ -97,6 +104,8 @@ public class UIController {
 
     //Read and apply train data
     public void applyTrainData() {
+        lastColumnChoiceBox.setDisable(true);
+        lastColumnChoiceBox.getItems().clear();
         trainSetFile = getFileFromPath(trainDataPath.getText());
         if (!trainSetFile.exists()) {
             PopupController.errorMessage("WARNING", "Ошибка", "", "Произошла ошибка при считывании тренировочной базы данных.");
@@ -116,6 +125,8 @@ public class UIController {
 
     //Read and apply test data
     public void applyTestData() {
+        lastColumnChoiceBox.setDisable(true);
+        lastColumnChoiceBox.getItems().clear();
         testSetFile = getFileFromPath(testDataPath.getText());
         if (!testSetFile.exists()) {
             PopupController.errorMessage("WARNING", "Ошибка", "", "Произошла ошибка при считывании тестовой базы данных.");
@@ -129,12 +140,17 @@ public class UIController {
 
         //Reset inputs choice box
         inputsChoiceBox.setValue("Выберите базу данных");
+        lastColumnChoiceBox.setDisable(false);
+        lastColumnChoiceBox.setValue("...");
+        lastColumnChoiceBox.getItems().addAll(rawTestSet.get(0));
         testInputSettings = null;
         updateInputTable();
     }
 
     public void updateInputTable(){
         inputVBox.getChildren().remove(2, inputVBox.getChildren().size() - 1);
+        lastColumnChoiceBox.getItems().clear();
+        lastColumnChoiceBox.setValue("...");
         inputNeuronCounter.setText("...");
 
         //Switch on selected data set
@@ -152,8 +168,10 @@ public class UIController {
             }
             inputVBox.getChildren().addAll(2, trainInputSettings);
             inputNeuronCounter.setText(String.valueOf(trainInputSettings.size() / 2));
+            lastColumnChoiceBox.getItems().addAll(rawTrainSet.get(0));
             inputNeuronButton.setDisable(false);
             inputNeuronRemoveButton.setDisable(false);
+            lastColumnChoiceBox.setDisable(false);
         }
         else if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
             if(testSetFile == null || !testSetFile.exists()){
@@ -169,11 +187,14 @@ public class UIController {
             }
             inputVBox.getChildren().addAll(2, testInputSettings);
             inputNeuronCounter.setText(String.valueOf(testInputSettings.size() / 2));
+            lastColumnChoiceBox.getItems().addAll(rawTestSet.get(0));
             inputNeuronButton.setDisable(false);
             inputNeuronRemoveButton.setDisable(false);
+            lastColumnChoiceBox.setDisable(false);
         }else{
             inputNeuronRemoveButton.setDisable(true);
             inputNeuronButton.setDisable(true);
+            lastColumnChoiceBox.setDisable(true);
         }
     }
 
@@ -305,7 +326,11 @@ public class UIController {
         num.setMinWidth(100);
         num.setMinHeight(30);
 
-        TextField neuronNumber = new TextField(Integer.toString(3));
+        TextField neuronNumber = new TextField();
+        if(inputNeuronCounter.getText() != null && !inputNeuronCounter.getText().equals("..."))
+            neuronNumber.setText(String.valueOf(Integer.parseInt(inputNeuronCounter.getText()) * 2));
+        else
+            neuronNumber.setText(String.valueOf(3));
         neuronNumber.setAlignment(Pos.CENTER);
         neuronNumber.setPrefWidth(100);
         neuronNumber.setPrefHeight(70);
@@ -413,7 +438,10 @@ public class UIController {
             PopupController.errorMessage("WARNING", "Ошибка", "", "Не настроены входные нейроны для тестовых данных");
             return null;
         }
-
+        if(trainData && (lastColumnChoiceBox.getValue().equals("...") || lastColumnChoiceBox.getValue() == null)){
+            PopupController.errorMessage("WARNING", "Ошибка", "", "Не выбран проверочный столбец для обучающих данных");
+            return null;
+        }
         if(architectureSettings == null || architectureSettings.size() < 1){
             PopupController.errorMessage("WARNING", "Ошибка", "", "Не настроена структура нейронной сети");
             return null;
@@ -422,9 +450,10 @@ public class UIController {
         //Local variables
         ObservableList<Node> currentInputNeuronSet = trainData ? trainInputSettings : testInputSettings;
         List<List<String>> currentRawDataSet = trainData ? rawTrainSet : rawTestSet;
+
         int[] architecture = new int[2 + architectureSettings.size() / 2];
-        double[][] inputs = new double[0][];
-        double[][] expectedOutputs = new double[0][];
+        double[][] inputs = new double[currentRawDataSet.size() - 1][currentInputNeuronSet.size() / 2];
+        double[][] expectedOutputs = new double[currentRawDataSet.size() - 1][1];
         int logEpoch = Integer.parseInt(updateResultsEpoch.getText()); //TODO Check for only digits in field
 
         //Collect architecture data
@@ -432,25 +461,96 @@ public class UIController {
         for(int i = 0; i < architectureSettings.size(); i+=2) {
             VBox vBox = (VBox) architectureSettings.get(i);
             TextField textField = (TextField) vBox.getChildren().get(2);
-            architecture[i / 2] = Integer.parseInt(textField.getText()); //TODO Check for only digits in field
+            architecture[i / 2 + 1] = Integer.parseInt(textField.getText()); //TODO Check for only digits in field
         }
         architecture[architecture.length - 1] = 1;
 
         //Create inputs from existing data
         int[] reassign = new int[currentInputNeuronSet.size() / 2]; //Each value corresponds to column number in raw data
+        inputTypes[] types = new inputTypes[currentInputNeuronSet.size() / 2]; //Each value will be parsed according to set type
+        int expectedColumn = currentRawDataSet.get(0).indexOf(lastColumnChoiceBox.getValue());
         for(int i = 0; i < currentInputNeuronSet.size(); i+=2) {
             HBox hBox = (HBox) currentInputNeuronSet.get(i);
-            ChoiceBox<String> choiceBox = (ChoiceBox<String>) hBox.getChildren().get(2);
-            int position = currentRawDataSet.get(0).indexOf(choiceBox.getValue());
+            ChoiceBox<String> column = (ChoiceBox<String>) hBox.getChildren().get(2);
+            ChoiceBox<inputTypes> type = (ChoiceBox<inputTypes>) hBox.getChildren().get(4);
+            int position = currentRawDataSet.get(0).indexOf(column.getValue());
+            types[i / 2] = type.getValue();
             reassign[i / 2] = position;
         }
         for(int i = 1; i < currentRawDataSet.size(); i++) {
-
+            for (int j = 0; j < reassign.length; j++) {
+                inputs[i - 1][j] = parseRawValue(currentRawDataSet.get(i).get(reassign[j]), types[j]);
+            }
+            //Set expected outputs for training set
+            expectedOutputs[i - 1][0] = Double.parseDouble(currentRawDataSet.get(i).get(expectedColumn));
         }
 
-        NeuralNetwork.NetworkArguments arguments = new NeuralNetwork.NetworkArguments(architecture, null, inputs, expectedOutputs, this, logEpoch);
-        System.out.println(arguments);
-        return arguments;
+        return new NeuralNetwork.NetworkArguments(architecture, null, inputs, expectedOutputs, trainData, this, logEpoch);
+    }
+
+    //Method for parsing raw set values
+    private double parseRawValue(String value, inputTypes type){
+        switch(type){
+            case NUMBER -> {
+                return Double.parseDouble(value);
+            }
+            case BOOLEAN -> {
+                value = value.toLowerCase();
+                if(value.equals("true") || value.equals("1"))
+                    return 1;
+                else
+                    return 0;
+            }
+            default -> {
+                PopupController.errorMessage("WARNING", "Ошибка", "", "Произошла ошибка при считывании базы данных. Ошибочные входные значения будут заменены нулями");
+                return 0;
+            }
+        }
+    }
+
+    private void initializeHyperparameters(){
+        hyperparametersVBox.getChildren().remove(2, hyperparametersVBox.getChildren().size());
+
+        for(Hyperparameters.identificator i: Hyperparameters.identificator.values()){
+            hyperparametersVBox.getChildren().addAll(createHyperparametersRow(Hyperparameters.getData(i, true),
+                    Hyperparameters.getValueByID(i),
+                    Hyperparameters.getData(i, false)));
+        }
+    }
+
+    private List<Node> createHyperparametersRow(String name, String defaultValue, String description){
+        //Create row
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER_LEFT);
+        hBox.setMinHeight(80);
+        hBox.setPadding(new Insets(2));
+
+        //Name of hyperparameters
+        Label nameLabel = new Label(name);
+        nameLabel.setFont(new Font("Segoe UI SemiBold", 12));
+        nameLabel.setPrefWidth(140);
+        nameLabel.setWrapText(true);
+
+        TextField valueField = new TextField(defaultValue);
+        valueField.setPromptText("Введите значение");
+        valueField.setPrefWidth(150);
+
+        Label descriptionLabel = new Label(description);
+        descriptionLabel.setFont(new Font("Segoe UI SemiLight", 12));
+        descriptionLabel.setPrefWidth(280);
+        descriptionLabel.setWrapText(true);
+
+        hBox.getChildren().add(nameLabel);
+        hBox.getChildren().add(new Separator(Orientation.VERTICAL));
+        hBox.getChildren().add(valueField);
+        hBox.getChildren().add(new Separator(Orientation.VERTICAL));
+        hBox.getChildren().add(descriptionLabel);
+
+        List<Node> result = new ArrayList<>(2);
+        result.add(hBox);
+        result.add(new Separator(Orientation.HORIZONTAL));
+
+        return  result;
     }
 
     public void loadArchitecture() {
