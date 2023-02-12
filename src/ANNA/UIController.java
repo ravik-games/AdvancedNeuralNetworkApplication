@@ -17,10 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,11 +28,12 @@ public class UIController {
     public HBox architectureHBox;
     public TabPane tabPane;
     public Canvas graphicOutput;
-    public TextField updateResultsEpoch, trainDataPath, testDataPath, loadArchitecturePath, loadWeightsPath, loadHyperparametersPath, loadNeuralNetworkPath, saveArchitecturePath, saveWeightsPath, saveHyperparametersPath, saveNeuralNetworkPath;
+    public TextField updateResultsEpoch, trainDataPath, testDataPath, loadArchitecturePath, loadWeightsPath, loadHyperparametersPath,
+            loadNeuralNetworkPath, saveArchitecturePath, saveWeightsPath, saveHyperparametersPath, saveNeuralNetworkPath;
     public TableView<List<String>> trainDataTable, testDataTable;
     public Label trainDataLabel, testDataLabel, inputNeuronCounter, lastLayerNumber;
     public LineChart<Integer, Double> trainSetGraph, testSetGraph;
-    public ChoiceBox<String> trainSeparator, testSeparator, inputsChoiceBox, lastColumnChoiceBox;
+    public ChoiceBox<String> inputsChoiceBox, lastColumnChoiceBox;
 
     private Main main;
     private String trainLastColumn, testLastColumn; //TODO Replace single choice box with same system, as with input neurons
@@ -49,10 +47,6 @@ public class UIController {
 
     //Initialize components
     public void initialize(){
-        trainSeparator.getItems().addAll(",", ";");
-        trainSeparator.setValue(";");
-        testSeparator.getItems().addAll(",", ";");
-        testSeparator.setValue(";");
 
         inputsChoiceBox.getItems().addAll("Обучающая база данных", "Тестовая база данных");
         inputsChoiceBox.setValue("Выберите базу данных");
@@ -73,7 +67,7 @@ public class UIController {
             return;
         if(autoOpenResults.isSelected())
             tabPane.getSelectionModel().select(3);
-        main.train(arguments);
+        main.runNeuralNetwork(arguments);
     }
 
     //Start neural network on test data
@@ -83,7 +77,7 @@ public class UIController {
             return;
         if(autoOpenResults.isSelected())
             tabPane.getSelectionModel().select(3);
-        main.train(arguments);
+        main.runNeuralNetwork(arguments);
     }
 
     //Select train set data
@@ -114,7 +108,7 @@ public class UIController {
 
         trainDataLabel.setText(trainSetFile.getName());
         //Parse data and add it to the table
-        rawTrainSet = parseData(trainSetFile, trainSeparator.getValue());
+        rawTrainSet = Parser.parseData(trainSetFile);
         loadTable(trainDataTable, rawTrainSet);
 
         //Reset inputs choice box
@@ -135,7 +129,7 @@ public class UIController {
 
         testDataLabel.setText(testSetFile.getName());
         //Parse data and add it to the table
-        rawTestSet = parseData(testSetFile, testSeparator.getValue());
+        rawTestSet = Parser.parseData(testSetFile);
         loadTable(testDataTable, rawTestSet);
 
         //Reset inputs choice box
@@ -256,8 +250,8 @@ public class UIController {
         columnSelector.setPrefHeight(20);
         columnSelector.setPrefWidth(130);
 
-        ChoiceBox<inputTypes> typeSelector = new ChoiceBox<>(FXCollections.observableArrayList(inputTypes.values()));
-        typeSelector.setValue(inputTypes.NUMBER);
+        ChoiceBox<Parser.inputTypes> typeSelector = new ChoiceBox<>(FXCollections.observableArrayList(Parser.inputTypes.values()));
+        typeSelector.setValue(Parser.inputTypes.NUMBER);
         typeSelector.setPrefHeight(20);
         typeSelector.setPrefWidth(130);
 
@@ -374,26 +368,6 @@ public class UIController {
         trainSetGraph.getData().get(trainSetGraph.getData().size() - 1).getData().add(new XYChart.Data<>(epoch, error));
     }
 
-    //Parse data from file to 2D list
-    public List<List<String>> parseData(File file, String separator){
-        List<List<String>> result = new ArrayList<>();
-        try {
-            BufferedReader bReader = new BufferedReader(new FileReader(file));
-            String line = bReader.readLine();
-            //Read all lines in file
-            do{
-                result.add(List.of(line.split(separator)));
-                line = bReader.readLine();
-            }while(line != null);
-
-        }catch (IOException e){
-            e.printStackTrace();
-            PopupController.errorMessage("ERROR", "Ошибка", "", e.toString());
-            System.exit(1);
-        }
-        return result;
-    }
-
     //Load table to TableView
     private void loadTable(TableView<List<String>> table, List<List<String>> rawData){
         table.getColumns().clear();
@@ -405,9 +379,9 @@ public class UIController {
             int finalI = i;
             //Create cell value factory to show data in table cells
             column.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().get(finalI)));
-            column.setMinWidth(100 >> 1);
+            column.setMinWidth(50);
             column.setPrefWidth(100);
-            column.setMaxWidth(100 * 2);
+            column.setMaxWidth(200);
             table.getColumns().add(column);
         }
 
@@ -453,7 +427,8 @@ public class UIController {
 
         int[] architecture = new int[2 + architectureSettings.size() / 2];
         double[][] inputs = new double[currentRawDataSet.size() - 1][currentInputNeuronSet.size() / 2];
-        double[][] expectedOutputs = new double[currentRawDataSet.size() - 1][1];
+        String[] expectedOutput = new String[currentRawDataSet.size() - 1];
+        List<String> allOutputTypes = new ArrayList<>();
         int logEpoch = Integer.parseInt(updateResultsEpoch.getText()); //TODO Check for only digits in field
 
         //Collect architecture data
@@ -463,49 +438,37 @@ public class UIController {
             TextField textField = (TextField) vBox.getChildren().get(2);
             architecture[i / 2 + 1] = Integer.parseInt(textField.getText()); //TODO Check for only digits in field
         }
-        architecture[architecture.length - 1] = 1;
 
         //Create inputs from existing data
         int[] reassign = new int[currentInputNeuronSet.size() / 2]; //Each value corresponds to column number in raw data
-        inputTypes[] types = new inputTypes[currentInputNeuronSet.size() / 2]; //Each value will be parsed according to set type
+        Parser.inputTypes[] types = new Parser.inputTypes[currentInputNeuronSet.size() / 2]; //Each value will be parsed according to set type
         int expectedColumn = currentRawDataSet.get(0).indexOf(lastColumnChoiceBox.getValue());
         for(int i = 0; i < currentInputNeuronSet.size(); i+=2) {
             HBox hBox = (HBox) currentInputNeuronSet.get(i);
             ChoiceBox<String> column = (ChoiceBox<String>) hBox.getChildren().get(2);
-            ChoiceBox<inputTypes> type = (ChoiceBox<inputTypes>) hBox.getChildren().get(4);
+            ChoiceBox<Parser.inputTypes> type = (ChoiceBox<Parser.inputTypes>) hBox.getChildren().get(4);
             int position = currentRawDataSet.get(0).indexOf(column.getValue());
             types[i / 2] = type.getValue();
             reassign[i / 2] = position;
         }
+
+        //Parse raw data file
         for(int i = 1; i < currentRawDataSet.size(); i++) {
             for (int j = 0; j < reassign.length; j++) {
-                inputs[i - 1][j] = parseRawValue(currentRawDataSet.get(i).get(reassign[j]), types[j]);
+                inputs[i - 1][j] = Parser.parseRawValue(currentRawDataSet.get(i).get(reassign[j]), types[j]);
             }
             //Set expected outputs for training set
-            expectedOutputs[i - 1][0] = Double.parseDouble(currentRawDataSet.get(i).get(expectedColumn));
-        }
-
-        return new NeuralNetwork.NetworkArguments(architecture, null, inputs, expectedOutputs, trainData, this, logEpoch);
-    }
-
-    //Method for parsing raw set values
-    private double parseRawValue(String value, inputTypes type){
-        switch(type){
-            case NUMBER -> {
-                return Double.parseDouble(value);
-            }
-            case BOOLEAN -> {
-                value = value.toLowerCase();
-                if(value.equals("true") || value.equals("1"))
-                    return 1;
-                else
-                    return 0;
-            }
-            default -> {
-                PopupController.errorMessage("WARNING", "Ошибка", "", "Произошла ошибка при считывании базы данных. Ошибочные входные значения будут заменены нулями");
-                return 0;
+            String idealValue = currentRawDataSet.get(i).get(expectedColumn);
+            expectedOutput[i - 1] = idealValue;
+            if(!allOutputTypes.contains(idealValue)){
+                allOutputTypes.add(idealValue);
             }
         }
+
+        //Set output layer neuron counter
+        architecture[architecture.length - 1] = allOutputTypes.size();
+
+        return new NeuralNetwork.NetworkArguments(architecture, null, inputs, expectedOutput, allOutputTypes.toArray(new String[0]), trainData, this, logEpoch);
     }
 
     private void initializeHyperparameters(){
@@ -599,9 +562,5 @@ public class UIController {
     }
 
     public void browseSaveHyperparameters() {
-    }
-
-    private enum inputTypes{
-        NUMBER, BOOLEAN
     }
 }

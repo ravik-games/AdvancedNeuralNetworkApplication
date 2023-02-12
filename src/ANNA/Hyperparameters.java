@@ -36,14 +36,14 @@ public class Hyperparameters {
      * <p>
      * Affects: TODO Test what does learning rate affect
      */
-    public static final double LEARNING_RATE = 0.9;
+    public static final double LEARNING_RATE = 0.1;
 
     /**
      * Helps to prevent oscillations and getting stuck in local minimums.
      * <p>
      * Affects: TODO Test what does momentum affect
      */
-    public static final double MOMENTUM = 0.7;
+    public static final double MOMENTUM = 0.3;
 
     /**
      * Needed for ELU and LReLU. Default is 0.01.

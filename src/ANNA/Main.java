@@ -28,10 +28,9 @@ public class Main extends Application {
         //controller.initialize();
     }
 
-    public void train(NeuralNetwork.NetworkArguments arguments){
+    public void runNeuralNetwork(NeuralNetwork.NetworkArguments arguments){
         if(network == null)
             network = new NeuralNetwork();
-        System.out.println(arguments);
         network.run(arguments);
     }
 
