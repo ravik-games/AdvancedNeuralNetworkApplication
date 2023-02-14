@@ -34,4 +34,10 @@ public class Main extends Application {
         network.run(arguments);
     }
 
+    public void runSimulation(double[] inputs){
+        if(network == null)
+            return;
+        network.simulation(inputs);
+    }
+
 }

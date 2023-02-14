@@ -19,13 +19,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class UIController {
     public CheckBox autoOpenResults;
-    public Button inputNeuronButton, layerAddButton, inputNeuronRemoveButton, layerRemoveButton;
+    public Button inputNeuronButton, layerAddButton, inputNeuronRemoveButton, layerRemoveButton, startSimulatorButton;
     public VBox inputVBox, hyperparametersVBox;
-    public HBox architectureHBox;
+    public HBox architectureHBox, simulatorHBox;
     public TabPane tabPane;
     public Canvas graphicOutput;
     public TextField updateResultsEpoch, trainDataPath, testDataPath, loadArchitecturePath, loadWeightsPath, loadHyperparametersPath,
@@ -34,12 +35,14 @@ public class UIController {
     public Label trainDataLabel, testDataLabel, inputNeuronCounter, lastLayerNumber;
     public LineChart<Integer, Double> trainSetGraph, testSetGraph;
     public ChoiceBox<String> inputsChoiceBox, lastColumnChoiceBox;
+    public TextArea simulatorOutput;
 
     private Main main;
-    private String trainLastColumn, testLastColumn; //TODO Replace single choice box with same system, as with input neurons
     private File trainSetFile, testSetFile;
     private List<List<String>> rawTrainSet, rawTestSet;
     private ObservableList<Node> trainInputSettings, testInputSettings, architectureSettings;
+    private NeuralNetwork.NetworkArguments lastArguments;
+    private Parser.inputTypes[] lastInputTypes;
 
     public void setMain(Main main){
         this.main = main;
@@ -58,6 +61,9 @@ public class UIController {
 
         //Create hyperparameters table
         initializeHyperparameters();
+
+        //Clear simulator
+        initializeSimulator(false);
     }
 
     //Start neural network on train data
@@ -68,6 +74,8 @@ public class UIController {
         if(autoOpenResults.isSelected())
             tabPane.getSelectionModel().select(3);
         main.runNeuralNetwork(arguments);
+        //Enable simulator
+        initializeSimulator(true);
     }
 
     //Start neural network on test data
@@ -427,6 +435,7 @@ public class UIController {
 
         int[] architecture = new int[2 + architectureSettings.size() / 2];
         double[][] inputs = new double[currentRawDataSet.size() - 1][currentInputNeuronSet.size() / 2];
+        lastInputTypes = new Parser.inputTypes[currentInputNeuronSet.size() / 2];
         String[] expectedOutput = new String[currentRawDataSet.size() - 1];
         List<String> allOutputTypes = new ArrayList<>();
         int logEpoch = Integer.parseInt(updateResultsEpoch.getText()); //TODO Check for only digits in field
@@ -447,6 +456,7 @@ public class UIController {
             HBox hBox = (HBox) currentInputNeuronSet.get(i);
             ChoiceBox<String> column = (ChoiceBox<String>) hBox.getChildren().get(2);
             ChoiceBox<Parser.inputTypes> type = (ChoiceBox<Parser.inputTypes>) hBox.getChildren().get(4);
+            lastInputTypes[i / 2] = type.getValue();
             int position = currentRawDataSet.get(0).indexOf(column.getValue());
             types[i / 2] = type.getValue();
             reassign[i / 2] = position;
@@ -468,9 +478,11 @@ public class UIController {
         //Set output layer neuron counter
         architecture[architecture.length - 1] = allOutputTypes.size();
 
-        return new NeuralNetwork.NetworkArguments(architecture, null, inputs, expectedOutput, allOutputTypes.toArray(new String[0]), trainData, this, logEpoch);
+        lastArguments = new NeuralNetwork.NetworkArguments(architecture, null, inputs, expectedOutput, allOutputTypes.toArray(new String[0]), trainData, this, logEpoch);
+        return lastArguments;
     }
 
+    //Create/update hyperparameters UI
     private void initializeHyperparameters(){
         hyperparametersVBox.getChildren().remove(2, hyperparametersVBox.getChildren().size());
 
@@ -514,6 +526,76 @@ public class UIController {
         result.add(new Separator(Orientation.HORIZONTAL));
 
         return  result;
+    }
+
+    //Create/update simulator table
+    private void initializeSimulator(boolean enable){
+        simulatorHBox.getChildren().remove(2, simulatorHBox.getChildren().size());
+        simulatorHBox.setDisable(!enable);
+        startSimulatorButton.setDisable(!enable);
+        if(lastArguments == null || lastInputTypes == null) {
+            simulatorHBox.setDisable(true);
+            startSimulatorButton.setDisable(true);
+            return;
+        }
+
+        for (int i = 0; i < lastArguments.architecture()[0]; i++) {
+            simulatorHBox.getChildren().addAll(createSimulatorColumn(i));
+        }
+    }
+
+    //Create input column for simulator
+    private List<Node> createSimulatorColumn(int numberOfNeuron){
+        //Create column
+        VBox vBox = new VBox();
+        vBox.setAlignment(Pos.TOP_CENTER);
+        vBox.setPrefHeight(100);
+        vBox.setPrefWidth(90);
+        vBox.setMinWidth(90);
+
+        //Create label and field
+        Label name = new Label(String.valueOf(numberOfNeuron));
+        name.setFont(new Font("Segoe UI SemiBold", 14));
+        name.setAlignment(Pos.CENTER);
+        name.setPrefWidth(90);
+        name.setPrefHeight(50);
+
+        TextField field = new TextField();
+        field.setFont(new Font("Segoe UI SemiLight", 12));
+        field.setAlignment(Pos.CENTER);
+        field.prefWidth(90);
+        field.setPrefHeight(50);
+
+        //Add children nto VBox
+        vBox.getChildren().add(name);
+        vBox.getChildren().add(new Separator(Orientation.HORIZONTAL));
+        vBox.getChildren().add(field);
+
+        //Create output list
+        List<Node> output = new ArrayList<>(2);
+        output.add(vBox);
+        output.add(new Separator(Orientation.VERTICAL));
+
+        return output;
+    }
+
+    //Prepare and run simulator
+    public void prepareSimulation(){
+        double[] inputs = new double[(simulatorHBox.getChildren().size() - 2) / 2];
+
+        for(int i = 2; i < simulatorHBox.getChildren().size(); i+=2) {
+            VBox vBox = (VBox) simulatorHBox.getChildren().get(i);
+            TextField field = (TextField) vBox.getChildren().get(2);
+            inputs[i / 2 - 1] = Parser.parseRawValue(field.getText(), lastInputTypes[i / 2 - 1]);
+        }
+
+        main.runSimulation(inputs);
+    }
+
+    //Add simulation output to UI
+    public void simulationResult(double[] outputValues, String outputCategory){
+        String text = "Наиболее вероятная категория:\n" + outputCategory + "\nВыходные значения нейронной сети:\n" + Arrays.toString(outputValues);
+        simulatorOutput.setText(text);
     }
 
     public void loadArchitecture() {

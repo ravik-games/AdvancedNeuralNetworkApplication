@@ -27,7 +27,7 @@
                      <padding>
                         <Insets bottom="20.0" left="10.0" right="10.0" top="20.0" />
                      </padding>
-                     <TextField fx:id="trainDataPath" prefHeight="32.0" prefWidth="330.0" promptText="Путь к файлу">
+                     <TextField fx:id="trainDataPath" prefHeight="30.0" prefWidth="480.0" promptText="Путь к файлу">
                         <font>
                            <Font size="14.0" />
                         </font>
@@ -40,15 +40,6 @@
                            <Insets left="1.0" />
                         </HBox.margin>
                      </Button>
-                     <Label prefHeight="30.0" prefWidth="110.0" text="Разделитель:">
-                        <font>
-                           <Font name="Segoe UI Semibold" size="14.0" />
-                        </font>
-                        <padding>
-                           <Insets left="15.0" right="5.0" />
-                        </padding>
-                     </Label>
-                     <ChoiceBox fx:id="trainSeparator" prefHeight="30.0" prefWidth="40.0" />
                      <Button alignment="CENTER" layoutX="360.0" layoutY="20.0" mnemonicParsing="false" onAction="#applyTrainData" prefHeight="32.0" prefWidth="96.0" text="Подтвердить" textAlignment="CENTER">
                         <font>
                            <Font size="14.0" />
@@ -89,7 +80,7 @@
                      <padding>
                         <Insets bottom="20.0" left="10.0" right="10.0" top="20.0" />
                      </padding>
-                     <TextField fx:id="testDataPath" prefHeight="32.0" prefWidth="330.0" promptText="Путь к файлу">
+                     <TextField fx:id="testDataPath" prefHeight="30.0" prefWidth="480.0" promptText="Путь к файлу">
                         <font>
                            <Font size="14.0" />
                         </font>
@@ -102,15 +93,6 @@
                            <Insets left="1.0" />
                         </HBox.margin>
                      </Button>
-                     <Label prefHeight="30.0" prefWidth="110.0" text="Разделитель:">
-                        <font>
-                           <Font name="Segoe UI Semibold" size="14.0" />
-                        </font>
-                        <padding>
-                           <Insets left="15.0" right="5.0" />
-                        </padding>
-                     </Label>
-                     <ChoiceBox fx:id="testSeparator" prefHeight="30.0" prefWidth="40.0" />
                      <Button alignment="CENTER" layoutX="360.0" layoutY="20.0" mnemonicParsing="false" onAction="#applyTestData" prefHeight="32.0" prefWidth="96.0" text="Подтвердить" textAlignment="CENTER">
                         <font>
                            <Font size="14.0" />
@@ -315,7 +297,7 @@
                               </font>
                            </Label>
                            <Separator prefWidth="200.0" />
-                           <Label alignment="CENTER" prefHeight="70.0" prefWidth="100.0" text="1" textAlignment="CENTER" wrapText="true">
+                           <Label alignment="CENTER" prefHeight="70.0" prefWidth="100.0" text="Авто" textAlignment="CENTER" wrapText="true">
                               <font>
                                  <Font name="Segoe UI Semibold" size="14.0" />
                               </font>
@@ -765,12 +747,12 @@
                            <Font name="Segoe UI Semibold" size="20.0" />
                         </font>
                      </Label>
-                     <ScrollPane prefHeight="110.0" prefWidth="616.0" vbarPolicy="NEVER">
+                     <ScrollPane prefHeight="125.0" prefWidth="616.0" vbarPolicy="NEVER">
                         <VBox.margin>
                            <Insets />
                         </VBox.margin>
-                        <HBox prefHeight="110.0" prefWidth="612.0">
-                           <VBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="90.0">
+                        <HBox fx:id="simulatorHBox" disable="true" prefHeight="110.0" prefWidth="612.0">
+                           <VBox alignment="TOP_CENTER" minWidth="90.0" prefHeight="100.0" prefWidth="90.0">
                               <Label alignment="CENTER" prefHeight="50.0" prefWidth="90.0" text="№ входного нейрона" textAlignment="CENTER" wrapText="true">
                                  <font>
                                     <Font name="Segoe UI Semibold" size="14.0" />
@@ -786,7 +768,7 @@
                            <Separator orientation="VERTICAL" prefHeight="200.0" />
                         </HBox>
                      </ScrollPane>
-                     <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="615.0" text="Рассчитать">
+                     <Button fx:id="startSimulatorButton" mnemonicParsing="false" onAction="#prepareSimulation" prefHeight="30.0" prefWidth="615.0" text="Рассчитать">
                         <font>
                            <Font name="Segoe UI Black" size="14.0" />
                         </font>
@@ -799,10 +781,10 @@
                            <Font name="Segoe UI Semibold" size="14.0" />
                         </font>
                         <VBox.margin>
-                           <Insets bottom="5.0" top="5.0" />
+                           <Insets />
                         </VBox.margin>
                      </Label>
-                     <TextArea prefHeight="100.0" prefWidth="616.0">
+                     <TextArea fx:id="simulatorOutput" prefHeight="90.0" prefWidth="616.0">
                         <font>
                            <Font name="Segoe UI" size="14.0" />
                         </font>

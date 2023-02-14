@@ -1,26 +1,20 @@
 package ANNA;
 
-import java.util.Arrays;
-
 public class NeuralNetwork {
 
     NetworkStructure structure;
+    NetworkArguments lastArguments;
 
     //Main method of NN
     public void run(NetworkArguments arguments){
-
-        //Throw error if network outputs layer length doesn't match with output types length
-        if(arguments.architecture()[arguments.architecture().length - 1] != arguments.allOutputTypes().length){
-            PopupController.errorMessage("ERROR", "Ошибка при запуске сети", "", "Количество выходных нейронов не совпадает с количеством выходных значений");
-            return;
-        }
-
+        //Remember arguments
+        lastArguments = arguments;
         //Create and set network structure
         structure = new NetworkStructure(arguments.architecture(), arguments.initialWeights());
 
         //Log start time
         long startTime = System.nanoTime();
-        System.out.println("--- Starting neural network ---");
+        System.out.println("\n--- Starting neural network ---");
 
         //Main loop
         int bathSize = Hyperparameters.BATCH_SIZE <= 0? arguments.inputs().length : Hyperparameters.BATCH_SIZE;
@@ -29,12 +23,18 @@ public class NeuralNetwork {
             //Epoch
             double meanError = 0;
             for (int j = 0; j < bathSize; j++) {
+                //Prepare variables
+                double[] actualValues = getActualValuesArray(arguments.expectedOutput()[j], arguments.allOutputTypes());
+
                 //Iteration
-                OutputValue output = iteration(arguments.inputs()[j], getActualValuesArray(arguments.expectedOutput()[j], arguments.allOutputTypes()));
+                double[] outputValues = iteration(arguments.inputs()[j]);
+                //Learning
                 if(arguments.training)
-                    backpropagation(getActualValuesArray(arguments.expectedOutput()[j], arguments.allOutputTypes()));
-                meanError += output.error();
+                    backpropagation(actualValues);
+                //Error calculation
+                meanError += calculateError(outputValues, actualValues);
             }
+            //Calculation mean error
             meanError = meanError / bathSize;
 
             //Log data
@@ -52,8 +52,20 @@ public class NeuralNetwork {
 
         //Log end time
         long elapsedTime = System.nanoTime() - startTime;
-        System.out.println("--- Neural network finished ---");
+        System.out.println("\n--- Neural network finished ---");
         System.out.println("\nElapsed time: " + (elapsedTime / 1000000) + "ms\t" + elapsedTime + "ns"); //Convert nanoseconds to milliseconds by dividing by 1000000
+    }
+
+    public void simulation(double[] inputs){
+        //Validate arguments and inputs
+        if(lastArguments == null || inputs == null){
+            PopupController.errorMessage("ERROR", "Ошибка симулятора", "", "Произошла ошибка при запуске симулятора. Отсутствуют необходимые значения");
+            return;
+        }
+        //Run neural network
+        double[] outputValues = iteration(inputs);
+        //Update UI
+        lastArguments.uiController().simulationResult(outputValues, getOutputValueFromRawOutput(outputValues, lastArguments.allOutputTypes()));
     }
 
     //Convert ideal value to array of ideal values
@@ -78,8 +90,19 @@ public class NeuralNetwork {
         return array;
     }
 
+    //Inverting getActualValuesArray()
+    private String getOutputValueFromRawOutput(double[] rawOutput, String[] allOutputTypes){
+        int idOfValue = 0;
+        for (int i = 0; i < rawOutput.length; i++) {
+            if(rawOutput[i] > rawOutput[idOfValue]) {
+                idOfValue = i;
+            }
+        }
+        return allOutputTypes[idOfValue];
+    }
+
     //Contains main structure of NN.
-    private OutputValue iteration(double[] inputs, double[] ideal){
+    private double[] iteration(double[] inputs){
         //Set input neurons values
         for (int i = 0; i < structure.getNeuronsAmountInLayer(0); i++) {
             structure.getNeuronByPosition(0, i).setLastOutput(inputs[i]);
@@ -108,12 +131,16 @@ public class NeuralNetwork {
             Neuron currentNeuron = structure.getNeuronByPosition(structure.getLayersAmount() - 1, i);
             outputLayer[i] = currentNeuron.getLastOutput();
         }
-        double error = ErrorFunctions.MeanSquaredError(ideal, outputLayer);
-        return new OutputValue(outputLayer, error);
+        return outputLayer;
+    }
+
+    private double calculateError(double[] actual, double[] ideal){
+        //Calculate error. Change error function here
+        return ErrorFunctions.MeanSquaredError(ideal, actual);
     }
 
     //Learning method
-    public void backpropagation(double[] idealValues){
+    private void backpropagation(double[] idealValues){
         //Calculate output delta
         for (int i = 0; i < structure.getNeuronsAmountInLayer(structure.getLayersAmount() - 1); i++) {
             Neuron currentNeuron = structure.getNeuronByPosition(structure.getLayersAmount() - 1, i);
@@ -158,8 +185,6 @@ public class NeuralNetwork {
         }
     }
 
-    //Structure class for output
-    private record OutputValue(double[] output, double error) { }
     //Structure class for network start arguments
     public record NetworkArguments(int[] architecture, double[][] initialWeights, double[][] inputs, String[] expectedOutput, String[] allOutputTypes, boolean training,
                                    UIController uiController, int logEpoch) { }

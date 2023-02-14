@@ -163,6 +163,7 @@ public class Hyperparameters {
             }
         }
     }
+
     public enum identificator{
         NUMBER_OF_EPOCHS, BATCH_SIZE, USE_BIAS_NEURONS, NETWORK_WEIGHT_INITIALIZATION, LEARNING_RATE, MOMENTUM, SLOPE_IN_ACTIVATION_FUNCTIONS
     }
