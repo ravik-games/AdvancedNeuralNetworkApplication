@@ -1,4 +1,6 @@
-package ANNA;
+package ANNA.UI;
+
+import ANNA.UI.PopupController;
 
 import java.io.BufferedReader;
 import java.io.File;

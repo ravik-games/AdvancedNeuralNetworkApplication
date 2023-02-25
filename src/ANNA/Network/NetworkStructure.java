@@ -1,4 +1,4 @@
-package ANNA;
+package ANNA.Network;
 
 import java.util.ArrayList;
 

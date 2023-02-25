@@ -1,4 +1,6 @@
-package ANNA;
+package ANNA.Functions;
+
+import ANNA.Network.Hyperparameters;
 
 public class LearningFunctions {
     //Class with functions, needed to learn neural network

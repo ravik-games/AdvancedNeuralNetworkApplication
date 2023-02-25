@@ -1,4 +1,7 @@
-package ANNA;
+package ANNA.Network;
+
+import ANNA.Functions.ActivationFunctions;
+import ANNA.UI.PopupController;
 
 public class Neuron {
     //Simple class, containing values and logic of one neuron

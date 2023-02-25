@@ -1,4 +1,4 @@
-package ANNA;
+package ANNA.UI;
 
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;

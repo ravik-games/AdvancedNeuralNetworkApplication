@@ -1,4 +1,4 @@
-package ANNA;
+package ANNA.Network;
 
 public class Hyperparameters {
     //Class with all hyperparameters of neural network

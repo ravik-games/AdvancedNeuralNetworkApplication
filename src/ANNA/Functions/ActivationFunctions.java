@@ -1,4 +1,6 @@
-package ANNA;
+package ANNA.Functions;
+
+import ANNA.Network.Hyperparameters;
 
 public class ActivationFunctions {
 

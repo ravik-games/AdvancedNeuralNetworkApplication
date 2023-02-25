@@ -1,4 +1,10 @@
-package ANNA;
+package ANNA.Network;
+
+import ANNA.Functions.ActivationFunctions;
+import ANNA.Functions.ErrorFunctions;
+import ANNA.Functions.LearningFunctions;
+import ANNA.UI.PopupController;
+import ANNA.UI.UIController;
 
 public class NeuralNetwork {
 
@@ -45,7 +51,7 @@ public class NeuralNetwork {
                 System.out.println("Mean error of epoch:\t" + meanError);
 
                 if(arguments.uiController() != null){
-                    arguments.uiController().updateTrainGraph(false, justStarted, meanError, i + 1);
+                    arguments.uiController().outputController.updateTrainGraph(false, justStarted, meanError, i + 1);
                 }
             }
         }
@@ -65,7 +71,7 @@ public class NeuralNetwork {
         //Run neural network
         double[] outputValues = iteration(inputs);
         //Update UI
-        lastArguments.uiController().simulationResult(outputValues, getOutputValueFromRawOutput(outputValues, lastArguments.allOutputTypes()));
+        lastArguments.uiController().outputController.simulationResult(outputValues, getOutputValueFromRawOutput(outputValues, lastArguments.allOutputTypes()));
     }
 
     //Convert ideal value to array of ideal values

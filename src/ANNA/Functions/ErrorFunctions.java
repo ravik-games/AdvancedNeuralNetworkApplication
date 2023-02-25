@@ -1,4 +1,4 @@
-package ANNA;
+package ANNA.Functions;
 
 public class ErrorFunctions {
 

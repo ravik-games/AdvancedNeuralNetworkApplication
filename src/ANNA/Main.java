@@ -1,5 +1,7 @@
 package ANNA;
 
+import ANNA.Network.NeuralNetwork;
+import ANNA.UI.UIController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
