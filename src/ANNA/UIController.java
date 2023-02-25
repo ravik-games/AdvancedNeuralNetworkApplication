@@ -486,14 +486,12 @@ public class UIController {
     private void initializeHyperparameters(){
         hyperparametersVBox.getChildren().remove(2, hyperparametersVBox.getChildren().size());
 
-        for(Hyperparameters.identificator i: Hyperparameters.identificator.values()){
-            hyperparametersVBox.getChildren().addAll(createHyperparametersRow(Hyperparameters.getData(i, true),
-                    Hyperparameters.getValueByID(i),
-                    Hyperparameters.getData(i, false)));
+        for(Hyperparameters.Identificator i: Hyperparameters.Identificator.values()){
+            hyperparametersVBox.getChildren().addAll(createHyperparametersRow(Hyperparameters.getValueByID(i), i.getName(), i.getDescription()));
         }
     }
 
-    private List<Node> createHyperparametersRow(String name, String defaultValue, String description){
+    private List<Node> createHyperparametersRow(String defaultValue, String name, String description){
         //Create row
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER_LEFT);
