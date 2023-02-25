@@ -42,7 +42,7 @@ public class LearningFunctions {
                 //Special case: when actual == 0, derivative will count as 0.
             }
             case LRELU -> {
-                return actual > 0 ? 1 : Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS;
+                return actual > 0 ? 1 : Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS.getValue().doubleValue();
                 //Special case: when actual == 0, derivative will count as slope value.
             }
             case SIGMOID -> {
@@ -52,7 +52,7 @@ public class LearningFunctions {
                 return  1 - (actual * actual);
             }
             case ELU -> {
-                return actual > 0 ? 1 : Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS * Math.exp(actual);
+                return actual > 0 ? 1 : Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS.getValue().doubleValue() * Math.exp(actual);
             }
             default -> {
                 System.out.println("CRITICAL ERROR: Unexpected value in derivative -- " + typeOfActivation);
@@ -64,6 +64,6 @@ public class LearningFunctions {
 
     public static double deltaWeight(double nextDelta, double currentOutput, double lastDeltaWeight){
         //Calculate delta weight
-        return Hyperparameters.LEARNING_RATE * gradient(nextDelta, currentOutput) + Hyperparameters.MOMENTUM * lastDeltaWeight;
+        return Hyperparameters.LEARNING_RATE.getValue().doubleValue() * gradient(nextDelta, currentOutput) + Hyperparameters.MOMENTUM.getValue().doubleValue() * lastDeltaWeight;
     }
 }

@@ -17,8 +17,9 @@ public class NeuralNetwork {
         System.out.println("\n--- Starting neural network ---");
 
         //Main loop
-        int bathSize = Hyperparameters.BATCH_SIZE <= 0? arguments.inputs().length : Hyperparameters.BATCH_SIZE;
-        for (int i = 0; i < Hyperparameters.NUMBER_OF_EPOCHS; i++) {
+        int bathSize = Hyperparameters.BATCH_SIZE.getValue().intValue() <= 0? arguments.inputs().length : Hyperparameters.BATCH_SIZE.getValue().intValue();
+        int numberOfEpochs = Hyperparameters.NUMBER_OF_EPOCHS.getValue().intValue();
+        for (int i = 0; i < numberOfEpochs; i++) {
 
             //Epoch
             double meanError = 0;
@@ -38,7 +39,7 @@ public class NeuralNetwork {
             meanError = meanError / bathSize;
 
             //Log data
-            if(i == 0 || i == Hyperparameters.NUMBER_OF_EPOCHS - 1 || (arguments.logEpoch() != 0 && (i + 1) % arguments.logEpoch() == 0)){
+            if(i == 0 || i == numberOfEpochs - 1 || (arguments.logEpoch() != 0 && (i + 1) % arguments.logEpoch() == 0)){
                 boolean justStarted = i == 0;
 
                 System.out.println("\n---------- " + (i + 1) + " Epoch ----------");

@@ -29,7 +29,7 @@ public class Neuron {
         double output = 0;
 
         //Throw error and stop program when length of inputs and length of weights doesn't match.
-        if(inputs.length != weights.length - Boolean.compare(Hyperparameters.USE_BIAS_NEURONS, false)){
+        if(inputs.length != weights.length - Hyperparameters.USE_BIAS_NEURONS.getValue().intValue()){
             //TODO Test conditions
             System.err.println("CRITICAL ERROR: length of inputs and length of weights in neuron doesn't match");
             PopupController.errorMessage("ERROR", "Критическая ошибка", "", "Произошла критическая ошибка при работе нейронной сети. Количество входных данных и весов нейрона не совпадает.");
@@ -42,7 +42,7 @@ public class Neuron {
         }
 
         //Bias neron influence
-        if (Hyperparameters.USE_BIAS_NEURONS)
+        if (Hyperparameters.USE_BIAS_NEURONS.getValue().intValue() == 1)
             output += weights[weights.length - 1];
 
         //Return processed output using activation function.

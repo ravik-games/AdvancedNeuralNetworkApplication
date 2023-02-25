@@ -23,7 +23,7 @@ public class ActivationFunctions {
      * @return Below 0 --- slope * x; <p> At 0 and above --- x
      */
     public static double LeakyReLU(double input){
-        return Math.max(input * Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS, input);
+        return Math.max(input * Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS.getValue().doubleValue(), input);
     }
 
     /**
@@ -57,7 +57,7 @@ public class ActivationFunctions {
      */
     public static double ExponentialLU(double input){
         //return input >= 0 ? input : slope * (Math.exp(input) - 1);
-        return Math.max(Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS * (Math.exp(input) - 1), input);
+        return Math.max(Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS.getValue().doubleValue() * (Math.exp(input) - 1), input);
     }
 
     public enum types{
