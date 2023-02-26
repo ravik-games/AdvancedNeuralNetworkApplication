@@ -10,22 +10,27 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class UIStructureController {
     //Class for working with second tab of UI (Structure creation)
     private final VBox inputVBox;
     private final HBox architectureHBox;
-    private final ChoiceBox<String> lastColumnChoiceBox, inputsChoiceBox;
+    public final ChoiceBox<String> lastColumnChoiceBox, inputsChoiceBox;
     private final Label inputNeuronCounter, lastLayerNumber;
     private final Button inputNeuronButton, inputNeuronRemoveButton;
+    private Canvas graphicOutput;
 
     private UIController mainController;
     private UIDataController dataController;
@@ -35,7 +40,7 @@ public class UIStructureController {
     public ObservableList<Node> trainInputSettings, testInputSettings, architectureSettings;
 
     public UIStructureController(UIController controller, VBox inputVBox, HBox architectureHBox, ChoiceBox<String> inputsChoiceBox, ChoiceBox<String> lastColumnChoiceBox,
-                                 Label inputNeuronCounter, Label lastLayerNumber, Button inputNeuronRemoveButton, Button inputNeuronButton){
+                                 Label inputNeuronCounter, Label lastLayerNumber, Button inputNeuronRemoveButton, Button inputNeuronButton, Canvas graphicOutput){
         this.inputVBox = inputVBox;
         this.architectureHBox = architectureHBox;
         this.lastColumnChoiceBox = lastColumnChoiceBox;
@@ -45,6 +50,7 @@ public class UIStructureController {
         this.inputNeuronButton = inputNeuronButton;
         this.inputNeuronRemoveButton = inputNeuronRemoveButton;
         this.mainController = controller;
+        this.graphicOutput = graphicOutput;
     }
 
     public void setControllerReferences(UIDataController dataController, UINetworkController networkController, UIOutputController outputController){
@@ -191,8 +197,8 @@ public class UIStructureController {
 
     //Remove last layer field
     public void removeLayer() {
-        if(architectureSettings != null && architectureSettings.size() > 3){
-            architectureSettings.remove(architectureSettings.size() - 3, architectureSettings.size() - 1);
+        if(architectureSettings != null && architectureSettings.size() > 1){
+            architectureSettings.remove(architectureSettings.size() - 2, architectureSettings.size());
         }
         updateArchitectureTable();
     }
@@ -205,6 +211,8 @@ public class UIStructureController {
         }
         architectureHBox.getChildren().addAll(4, architectureSettings);
         lastLayerNumber.setText(String.valueOf(architectureSettings.size() / 2 + 1));
+
+        updateGraphicOutput();
     }
 
     //Create layer value
@@ -242,6 +250,9 @@ public class UIStructureController {
         neuronNumber.setPrefHeight(70);
         neuronNumber.setMinWidth(100);
         neuronNumber.setMinHeight(70);
+        neuronNumber.textProperty().addListener(
+                (observable -> updateGraphicOutput())
+        );
 
         ChoiceBox<NetworkStructure.neuronTypes> typeSelector = new ChoiceBox<>(FXCollections.observableArrayList(NetworkStructure.neuronTypes.values()));
         typeSelector.setValue(NetworkStructure.neuronTypes.HIDDEN);
@@ -259,5 +270,78 @@ public class UIStructureController {
 
         result.getChildren().addAll(children);
         return result;
+    }
+
+    private void updateGraphicOutput(){
+        GraphicsContext graphicsContext = graphicOutput.getGraphicsContext2D();
+        graphicsContext.clearRect(0, 0, graphicOutput.getWidth(), graphicOutput.getHeight());
+
+        double radius = 20;
+        int maxNeurons = 10;
+        int maxLayers = 10;
+        graphicsContext.setFill(Color.web("#4769ff"));
+
+        //Parse data
+        int[] data = new int[Math.min(maxLayers, architectureSettings.size() / 2 + 2)];
+        for (int i = 0; i < architectureSettings.size(); i+=2) {
+            if(i / 2 >= data.length - 1){
+                break;
+            }
+            VBox vBox = (VBox) architectureSettings.get(i);
+            TextField textField = (TextField) vBox.getChildren().get(2);
+            if(textField.getText().equals(""))
+                return;
+            data[i / 2 + 1] = Integer.parseInt(textField.getText());
+        }
+        if(inputNeuronCounter.getText().equals("..."))
+            return;
+        data[0] = Integer.parseInt(inputNeuronCounter.getText());
+        data[data.length - 1] = 1;
+
+        //Calculate position
+        double xSpacing = ((graphicOutput.getWidth() - radius) - radius * data.length) / (data.length + 1);
+        double lastX = 0;
+        double lastYSpacing = 0;
+
+        //Draw network graph
+        for (int i = 0; i < data.length; i++) {
+            //Calculate position x
+            double x = xSpacing * (i + 1) + radius * i;
+            double ySpacing = ((graphicOutput.getHeight() - radius) - radius * Math.min(maxNeurons, data[i])) / (Math.min(maxNeurons, data[i]) + 1);
+
+            if(maxLayers == data.length && i == maxLayers - 2){
+                graphicsContext.fillText("...", x, graphicOutput.getHeight() / 2);
+                continue;
+            }
+
+            for (int j = 0; j < data[i]; j++) {
+                //Calculate position y
+                double y = ySpacing * (j + 1) + radius * j;
+                if(j >= maxNeurons){
+                    graphicsContext.fillText("...", x, y);
+                    break;
+                }
+
+                //Draw neurons
+                graphicsContext.strokeOval(x, y, radius, radius);
+                graphicsContext.fillOval(x, y, radius, radius);
+
+                if(i == 0 || i == maxLayers - 1)
+                    continue;
+
+                int min = Math.min(maxNeurons, data[i - 1]);
+
+                //Draw synapses
+                for (int k = 0; k < data[i - 1]; k++) {
+                    if(k >= maxNeurons){
+                        break;
+                    }
+                    double y2 = lastYSpacing * (k + 1) + radius * k;
+                    graphicsContext.strokeLine(lastX + radius, y2 + radius / 2, x, y + radius / 2);
+                }
+            }
+            lastX = x;
+            lastYSpacing = ySpacing;
+        }
     }
 }

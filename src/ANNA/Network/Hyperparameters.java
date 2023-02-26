@@ -81,7 +81,7 @@ public class Hyperparameters {
         }
     }
 
-    public void setValueByID(Identificator id, String value){
+    public static void setValueByID(Identificator id, String value){
         //TODO Add check for value
         switch(id){
             case NUMBER_OF_EPOCHS -> NUMBER_OF_EPOCHS = Integer.parseInt(value);

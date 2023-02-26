@@ -212,7 +212,7 @@
                </VBox>
                <Separator orientation="VERTICAL" prefHeight="684.0" prefWidth="1.0" />
                <VBox layoutX="10.0" layoutY="10.0" prefHeight="684.0" prefWidth="924.0">
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="924.0" text="Строение нейронной сети" textAlignment="CENTER">
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="924.0" text="Архитектура нейронной сети" textAlignment="CENTER">
                      <font>
                         <Font name="Segoe UI Semibold" size="20.0" />
                      </font>
@@ -313,7 +313,7 @@
                      </HBox>
                   </ScrollPane>
                   <Separator prefWidth="924.0" />
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="17.0" prefWidth="924.0" text="Графическое отображение" textAlignment="CENTER">
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="17.0" prefWidth="924.0" text="Визуализация" textAlignment="CENTER">
                      <font>
                         <Font name="Segoe UI Semibold" size="20.0" />
                      </font>

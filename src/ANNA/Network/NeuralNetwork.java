@@ -59,7 +59,8 @@ public class NeuralNetwork {
         //Log end time
         long elapsedTime = System.nanoTime() - startTime;
         System.out.println("\n--- Neural network finished ---");
-        System.out.println("\nElapsed time: " + (elapsedTime / 1000000) + "ms\t" + elapsedTime + "ns"); //Convert nanoseconds to milliseconds by dividing by 1000000
+        System.out.println("\nElapsed time: " + (elapsedTime / 1000000000) + "s\t" + (elapsedTime / 1000000) + "ms\t" + elapsedTime + "ns\n");
+        //Print time in seconds, milliseconds and nanoseconds
     }
 
     public void simulation(double[] inputs){
