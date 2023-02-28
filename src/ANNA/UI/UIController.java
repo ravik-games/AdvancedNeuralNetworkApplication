@@ -66,7 +66,7 @@ public class UIController {
         lastColumnChoiceBox.setDisable(true);
         lastColumnChoiceBox.setValue("...");
 
-        graphicOutput.getGraphicsContext2D().fillText("В разработке...", 400, 150);
+        graphicOutput.getGraphicsContext2D().fillText("...", graphicOutput.getWidth() / 2, graphicOutput.getHeight() / 2);
 
         //Create hyperparameters table
         networkController.initializeHyperparameters();
