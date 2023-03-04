@@ -9,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class Main extends Application {
-    private UIController controller;
     private NeuralNetwork network;
 
     public static void main(String[] args) {
@@ -25,7 +24,7 @@ public class Main extends Application {
         primaryStage.resizableProperty().setValue(false);
         primaryStage.show();
 
-        controller = loader.getController();
+        UIController controller = loader.getController();
         controller.setMain(this);
     }
 
