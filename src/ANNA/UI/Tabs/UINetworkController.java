@@ -132,6 +132,8 @@ public class UINetworkController {
             return null;
         }
 
+        boolean isPrediction = false;
+
         //Log preparation time
         long startTime = System.nanoTime();
         System.out.println("\n--- Starting preparation ---");
@@ -177,13 +179,18 @@ public class UINetworkController {
             //Set expected outputs for training set
             String idealValue = currentRawDataSet.get(i).get(expectedColumn);
             expectedOutput[i - 1] = idealValue;
-            if(!allOutputTypes.contains(idealValue)){
+            if(!isPrediction && !allOutputTypes.contains(idealValue)){
                 allOutputTypes.add(idealValue);
             }
         }
 
         //Set output layer neuron counter
-        architecture[architecture.length - 1] = allOutputTypes.size();
+        if(isPrediction) {
+            architecture[architecture.length - 1] = 1;
+        }
+        else {
+            architecture[architecture.length - 1] = allOutputTypes.size();
+        }
 
         //Parse and update hyperparameters
         for (int i = 2; i < hyperparametersVBox.getChildren().size(); i+=2) {
@@ -192,7 +199,8 @@ public class UINetworkController {
             Hyperparameters.setValueByID(Hyperparameters.Identificator.values()[i / 2 - 1], textField.getText());
         }
 
-        mainController.lastArguments = new NeuralNetwork.NetworkArguments(architecture, null, inputs, expectedOutput, allOutputTypes.toArray(new String[0]), trainData, mainController, logEpoch);
+        mainController.lastArguments = new NeuralNetwork.NetworkArguments(architecture, null, inputs, expectedOutput, allOutputTypes.toArray(new String[0]),
+                trainData, isPrediction, mainController, logEpoch);
 
         //Log end time
         long elapsedTime = System.nanoTime() - startTime;

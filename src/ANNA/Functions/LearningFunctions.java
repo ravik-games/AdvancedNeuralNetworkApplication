@@ -8,12 +8,12 @@ public class LearningFunctions {
     //  --- Backpropagation functions ---
 
     //Calculates delta of output neuron
-    public static double outputDelta(double ideal, double actual, ActivationFunctions.types typeOfActivation){
-        return (ideal - actual) * derivative(typeOfActivation, actual);
+    public static double outputDelta(double rawOutput, double ideal, double actual, ActivationFunctions.types typeOfActivation){
+        return (ideal - actual) * derivative(typeOfActivation, rawOutput);
     }
 
     //Calculates delta of hidden neuron
-    public static double hiddenDelta(double[] weights, double[] deltas, double actual, ActivationFunctions.types typeOfActivation){
+    public static double hiddenDelta(double[] weights, double[] deltas, double rawOutput, ActivationFunctions.types typeOfActivation){
         double sum = 0;
 
         //Throw error when lengths mismatch
@@ -28,7 +28,7 @@ public class LearningFunctions {
         }
 
         //Return delta of this hidden neuron
-        return sum * derivative(typeOfActivation, actual);
+        return sum * derivative(typeOfActivation, rawOutput);
     }
 
     //Calculates gradient
@@ -37,24 +37,28 @@ public class LearningFunctions {
     }
 
     //Calculates derivative using simplified functions
-    public static double derivative(ActivationFunctions.types typeOfActivation, double actual){
+    public static double derivative(ActivationFunctions.types typeOfActivation, double rawOutput){
         switch(typeOfActivation){
             case RELU -> {
-                return actual > 0 ? 1 : 0;
-                //Special case: when actual == 0, derivative will count as 0.
+                return rawOutput > 0 ? 1 : 0;
+                //Special case: when rawOutput == 0, derivative will count as 0.
             }
             case LRELU -> {
-                return actual > 0 ? 1 : Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS;
-                //Special case: when actual == 0, derivative will count as slope value.
+                return rawOutput > 0 ? 1 : Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS;
+                //Special case: when rawOutput == 0, derivative will count as slope value.
             }
             case SIGMOID -> {
-                return (1 - actual) * actual;
+                return ActivationFunctions.sigmoid(rawOutput) * (1 - ActivationFunctions.sigmoid(rawOutput));
             }
             case TANH -> {
-                return  1 - (actual * actual);
+                return  1 - ActivationFunctions.tanh(rawOutput) * ActivationFunctions.tanh(rawOutput);
             }
             case ELU -> {
-                return actual > 0 ? 1 : Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS * Math.exp(actual);
+                return rawOutput > 0 ? 1 : Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS * Math.exp(rawOutput);
+                //Special case: when rawOutput == 0, derivative will count as slope value * e^rawOutput.
+            }
+            case LINEAR -> {
+                return  Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS;
             }
             default -> {
                 System.out.println("CRITICAL ERROR: Unexpected value in derivative -- " + typeOfActivation);

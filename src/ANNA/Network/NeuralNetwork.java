@@ -1,6 +1,5 @@
 package ANNA.Network;
 
-import ANNA.Functions.ActivationFunctions;
 import ANNA.Functions.ErrorFunctions;
 import ANNA.Functions.LearningFunctions;
 import ANNA.UI.PopupController;
@@ -30,7 +29,14 @@ public class NeuralNetwork {
             double meanError = 0;
             for (int j = 0; j < bathSize; j++) {
                 //Prepare variables
-                double[] actualValues = getActualValuesArray(arguments.expectedOutput()[j], arguments.allOutputTypes());
+                double[] actualValues;
+                if(arguments.isPrediction){
+                    actualValues = new double[1];
+                    actualValues[0] = Double.parseDouble(arguments.expectedOutput()[j]);
+                }
+                else {
+                    actualValues = getActualValuesArray(arguments.expectedOutput()[j], arguments.allOutputTypes());
+                }
 
                 //Iteration
                 double[] outputValues = iteration(arguments.inputs()[j]);
@@ -72,7 +78,10 @@ public class NeuralNetwork {
         //Run neural network
         double[] outputValues = iteration(inputs);
         //Update UI
-        lastArguments.uiController().outputController.simulationResult(outputValues, getOutputValueFromRawOutput(outputValues, lastArguments.allOutputTypes()));
+        if(lastArguments.isPrediction())
+            lastArguments.uiController().outputController.simulationResult(outputValues[0]);
+        else
+            lastArguments.uiController().outputController.simulationResult(outputValues, getOutputValueFromRawOutput(outputValues, lastArguments.allOutputTypes()));
     }
 
     //Convert ideal value to array of ideal values
@@ -151,7 +160,7 @@ public class NeuralNetwork {
         //Calculate output delta
         for (int i = 0; i < structure.getNeuronsAmountInLayer(structure.getLayersAmount() - 1); i++) {
             Neuron currentNeuron = structure.getNeuronByPosition(structure.getLayersAmount() - 1, i);
-            currentNeuron.setDelta(LearningFunctions.outputDelta(idealValues[i], currentNeuron.getLastOutput(), ActivationFunctions.types.SIGMOID));
+            currentNeuron.setDelta(LearningFunctions.outputDelta(currentNeuron.getLastRawOutput(), idealValues[i], currentNeuron.getLastOutput(), currentNeuron.activationFunction));
         }
 
         //Hidden neurons delta
@@ -173,7 +182,7 @@ public class NeuralNetwork {
                     }
                 }
                 //Calculate delta
-                currentNeuron.setDelta(LearningFunctions.hiddenDelta(neuronWeights, neuronDeltas, currentNeuron.getLastOutput(), ActivationFunctions.types.SIGMOID));
+                currentNeuron.setDelta(LearningFunctions.hiddenDelta(neuronWeights, neuronDeltas, currentNeuron.getLastRawOutput(), currentNeuron.activationFunction));
             }
         }
 
@@ -194,5 +203,5 @@ public class NeuralNetwork {
 
     //Structure class for network start arguments
     public record NetworkArguments(int[] architecture, double[][] initialWeights, double[][] inputs, String[] expectedOutput, String[] allOutputTypes, boolean training,
-                                   UIController uiController, int logEpoch) { }
+            boolean isPrediction, UIController uiController, int logEpoch) { }
 }

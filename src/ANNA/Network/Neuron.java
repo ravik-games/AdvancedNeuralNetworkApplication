@@ -16,15 +16,18 @@ public class Neuron {
     //Deltas, used in backpropagation
     private double delta;
 
+    private double lastRawOutput; //Last output without activation function
     private double lastOutput;
 
     public final NetworkStructure.neuronTypes type;
+    public final ActivationFunctions.types activationFunction;
 
-    public Neuron(int id, int positionY, int positionX, NetworkStructure.neuronTypes type) {
+    public Neuron(int id, int positionY, int positionX, NetworkStructure.neuronTypes type, ActivationFunctions.types activationFunction) {
         this.type = type;
         this.positionX = positionX;
         this.positionY = positionY;
         this.id = id;
+        this.activationFunction = activationFunction;
     }
 
     //Logic for calculating output of neuron
@@ -48,8 +51,17 @@ public class Neuron {
         if (Hyperparameters.USE_BIAS_NEURONS)
             output += weights[weights.length - 1];
 
+        //Save raw output for later learning
+        lastRawOutput = output;
         //Return processed output using activation function.
-        lastOutput = ActivationFunctions.sigmoid(output);
+        lastOutput = switch(activationFunction){
+            case RELU -> ActivationFunctions.ReLU(output);
+            case LRELU -> ActivationFunctions.LeakyReLU(output);
+            case SIGMOID -> ActivationFunctions.sigmoid(output);
+            case TANH -> ActivationFunctions.tanh(output);
+            case ELU -> ActivationFunctions.ExponentialLU(output);
+            case LINEAR -> ActivationFunctions.Linear(output);
+        };
     }
 
     //Getters
@@ -78,5 +90,9 @@ public class Neuron {
     }
     public void setLastOutput(double lastOutput) {
         this.lastOutput = lastOutput;
+    }
+
+    public double getLastRawOutput() {
+        return lastRawOutput;
     }
 }

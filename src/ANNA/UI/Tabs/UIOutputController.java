@@ -121,6 +121,10 @@ public class UIOutputController {
         String text = "Наиболее вероятная категория:\n" + outputCategory + "\nВыходные значения нейронной сети:\n" + Arrays.toString(outputValues);
         simulatorOutput.setText(text);
     }
+    public void simulationResult(double outputValue){
+        String text = "Прогнозируемое значение:\n" + outputValue;
+        simulatorOutput.setText(text);
+    }
 
     //Show data on train graph
     public void updateTrainGraph(boolean clear, boolean newSeries, double error, int epoch){

@@ -62,7 +62,20 @@ public class ActivationFunctions {
         return Math.max(Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS * (Math.exp(input) - 1), input);
     }
 
+    /**
+     * Linear activation function.
+     * <p>
+     * x * slope
+     * <p>
+     * Basic linear function, gives range of activations, but derivative and gradient is a constant values.
+     * @param input double x
+     * @return x * slope
+     */
+    public static double Linear(double input){
+        return input * Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS;
+    }
+
     public enum types{
-        RELU, LRELU, SIGMOID, TANH, ELU
+        RELU, LRELU, SIGMOID, TANH, ELU, LINEAR
     }
 }
