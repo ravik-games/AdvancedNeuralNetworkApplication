@@ -45,6 +45,10 @@ public class NeuralNetwork {
                     backpropagation(actualValues);
                 //Error calculation
                 meanError += calculateError(outputValues, actualValues);
+                if(Double.compare(meanError, Double.NaN) == 0 || Double.compare(meanError, Double.POSITIVE_INFINITY) == 0 || Double.compare(meanError, Double.NEGATIVE_INFINITY) == 0){
+                    System.err.println("Unexpected calculation error, aborting");
+                    return;
+                }
             }
             //Calculation mean error
             meanError = meanError / bathSize;
