@@ -145,7 +145,7 @@ public class NeuralNetwork {
                 structure.getNeuronByPosition(i, j).calculateOutput(neuronInputs, neuronWeights);
             }
         }
-        //Calculate error
+        //Get output values
         double[] outputLayer = new double[structure.getNeuronsAmountInLayer(structure.getLayersAmount() - 1)];
         for (int i = 0; i < structure.getNeuronsAmountInLayer(structure.getLayersAmount() - 1); i++) {
             Neuron currentNeuron = structure.getNeuronByPosition(structure.getLayersAmount() - 1, i);

@@ -41,7 +41,7 @@ public class NetworkStructure {
                 else if(i == newStructure.length - 1) //Output layer
                     layer.add(initializeNeuron(i, j, neuronTypes.OUTPUT, ActivationFunctions.types.LINEAR));
                 else //Hidden layers
-                    layer.add(initializeNeuron(i, j, neuronTypes.HIDDEN, ActivationFunctions.types.SIGMOID));
+                    layer.add(initializeNeuron(i, j, neuronTypes.HIDDEN, ActivationFunctions.types.TANH));
             }
             structure.add(layer);
         }

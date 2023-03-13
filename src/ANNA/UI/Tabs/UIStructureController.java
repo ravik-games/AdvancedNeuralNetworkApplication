@@ -255,6 +255,7 @@ public class UIStructureController {
         );
 
         ChoiceBox<NetworkStructure.neuronTypes> typeSelector = new ChoiceBox<>(FXCollections.observableArrayList(NetworkStructure.neuronTypes.values()));
+        typeSelector.setDisable(true);
         typeSelector.setValue(NetworkStructure.neuronTypes.HIDDEN);
         typeSelector.setPrefHeight(70);
         typeSelector.setPrefWidth(100);
@@ -279,19 +280,22 @@ public class UIStructureController {
         double radius = 20;
         int maxNeurons = 10;
         int maxLayers = 10;
-        graphicsContext.setFill(Color.web("#4769ff"));
 
         //Parse data
         int[] data = new int[Math.min(maxLayers, architectureSettings.size() / 2 + 2)];
+        NetworkStructure.neuronTypes[] types = new NetworkStructure.neuronTypes[Math.min(maxLayers, architectureSettings.size() / 2 + 2)];
         for (int i = 0; i < architectureSettings.size(); i+=2) {
             if(i / 2 >= data.length - 1){
                 break;
             }
             VBox vBox = (VBox) architectureSettings.get(i);
             TextField textField = (TextField) vBox.getChildren().get(2);
-            if(textField.getText().equals(""))
+            ChoiceBox<NetworkStructure.neuronTypes> choiceBox = (ChoiceBox) vBox.getChildren().get(4);
+            if(textField.getText().equals("")) {
                 return;
+            }
             data[i / 2 + 1] = Integer.parseInt(textField.getText());
+            types[i / 2 + 1] = NetworkStructure.neuronTypes.valueOf(String.valueOf(choiceBox.getValue()));
         }
         if(inputNeuronCounter.getText().equals("..."))
             return;
@@ -320,6 +324,21 @@ public class UIStructureController {
                 if(j >= maxNeurons){
                     graphicsContext.fillText("...", x, y);
                     break;
+                }
+
+                //Switch colors
+                if(i == 0){
+                    graphicsContext.setFill(Color.web("#0be881"));
+                }
+                else if(i < data.length - 1){
+                    switch(types[i]){
+                        case HIDDEN -> {
+                            graphicsContext.setFill(Color.web("#4769ff"));
+                        }
+                    }
+                }
+                else{
+                    graphicsContext.setFill(Color.web("#e15f41"));
                 }
 
                 //Draw neurons

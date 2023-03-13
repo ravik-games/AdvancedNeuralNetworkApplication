@@ -72,7 +72,7 @@ public class ActivationFunctions {
      * @return x * slope
      */
     public static double Linear(double input){
-        return input * Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS;
+        return input;
     }
 
     public enum types{

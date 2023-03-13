@@ -58,7 +58,7 @@ public class LearningFunctions {
                 //Special case: when rawOutput == 0, derivative will count as slope value * e^rawOutput.
             }
             case LINEAR -> {
-                return  Hyperparameters.SLOPE_IN_ACTIVATION_FUNCTIONS;
+                return 1;
             }
             default -> {
                 System.out.println("CRITICAL ERROR: Unexpected value in derivative -- " + typeOfActivation);
