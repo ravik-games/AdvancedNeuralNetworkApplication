@@ -10,7 +10,7 @@ class NeuralNetworkTest {
     @Test
     void run() {
         Hyperparameters.NUMBER_OF_EPOCHS = 10;
-        Hyperparameters.USE_BIAS_NEURONS = true;
+        Hyperparameters.USE_BIAS_NEURONS = false;
 
         int[] architecture = new int[]{2, 2, 1};
         double[][] initialWeights = null;
@@ -26,5 +26,6 @@ class NeuralNetworkTest {
 
         NeuralNetwork network = new NeuralNetwork();
         network.run(arguments);
+        network.structure.printWeights(false);
     }
 }
