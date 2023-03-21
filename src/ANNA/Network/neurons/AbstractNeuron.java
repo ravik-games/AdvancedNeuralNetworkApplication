@@ -29,8 +29,6 @@ public abstract class AbstractNeuron {
     }
 
     public void calculateOutput(double[] inputs, double[] weights){
-        double output = 0;
-
         //Throw error and stop program when length of inputs and length of weights doesn't match.
         if(inputs.length != weights.length - Boolean.compare(Hyperparameters.USE_BIAS_NEURONS, false)){
             //TODO Test conditions
@@ -40,7 +38,7 @@ public abstract class AbstractNeuron {
         }
 
         //Calculate output in child class
-        output = calculateRawOutput(inputs, weights);
+        double output = calculateRawOutput(inputs, weights);
 
         //Save raw output for later learning
         lastRawOutput = output;

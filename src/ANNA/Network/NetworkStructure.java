@@ -40,7 +40,7 @@ public class NetworkStructure {
             //Create new neurons in layer
             for (int j = 0; j < newStructure[i]; j++) {
                 if(i == 0) //Input layer
-                    layer.add(initializeNeuron(i, j, neuronTypes.INPUT, ActivationFunctions.types.SIGMOID));
+                    layer.add(initializeNeuron(i, j, neuronTypes.INPUT, ActivationFunctions.types.LINEAR));
                 else if(i == newStructure.length - 1) //Output layer
                     layer.add(initializeNeuron(i, j, neuronTypes.OUTPUT, ActivationFunctions.types.LINEAR));
                 else //Hidden layers

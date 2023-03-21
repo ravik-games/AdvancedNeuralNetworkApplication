@@ -132,7 +132,7 @@ public class UINetworkController {
             return null;
         }
 
-        boolean isPrediction = true;
+        boolean isPrediction = false;
 
         //Log preparation time
         long startTime = System.nanoTime();
