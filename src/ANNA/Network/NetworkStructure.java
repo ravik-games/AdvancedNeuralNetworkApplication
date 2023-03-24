@@ -42,9 +42,9 @@ public class NetworkStructure {
                 if(i == 0) //Input layer
                     layer.add(initializeNeuron(i, j, neuronTypes.INPUT, ActivationFunctions.types.LINEAR));
                 else if(i == newStructure.length - 1) //Output layer
-                    layer.add(initializeNeuron(i, j, neuronTypes.OUTPUT, ActivationFunctions.types.LINEAR));
+                    layer.add(initializeNeuron(i, j, neuronTypes.OUTPUT, ActivationFunctions.types.SIGMOID));
                 else //Hidden layers
-                    layer.add(initializeNeuron(i, j, neuronTypes.HIDDEN, ActivationFunctions.types.TANH));
+                    layer.add(initializeNeuron(i, j, neuronTypes.HIDDEN, ActivationFunctions.types.SIGMOID));
             }
             structure.add(layer);
         }

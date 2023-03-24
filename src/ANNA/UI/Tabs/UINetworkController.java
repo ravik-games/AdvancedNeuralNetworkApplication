@@ -132,6 +132,7 @@ public class UINetworkController {
             return null;
         }
 
+        //Change mode
         boolean isPrediction = false;
 
         //Log preparation time
