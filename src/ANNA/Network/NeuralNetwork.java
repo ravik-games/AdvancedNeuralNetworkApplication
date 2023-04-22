@@ -2,7 +2,7 @@ package ANNA.Network;
 
 import ANNA.Functions.ErrorFunctions;
 import ANNA.Functions.LearningFunctions;
-import ANNA.Network.neurons.AbstractNeuron;
+import ANNA.Network.neurons.Neuron;
 import ANNA.UI.PopupController;
 import ANNA.UI.UIController;
 
@@ -149,7 +149,7 @@ public class NeuralNetwork {
         //Get output values
         double[] outputLayer = new double[structure.getNeuronsAmountInLayer(structure.getLayersAmount() - 1)];
         for (int i = 0; i < structure.getNeuronsAmountInLayer(structure.getLayersAmount() - 1); i++) {
-            AbstractNeuron currentNeuron = structure.getNeuronByPosition(structure.getLayersAmount() - 1, i);
+            Neuron currentNeuron = structure.getNeuronByPosition(structure.getLayersAmount() - 1, i);
             outputLayer[i] = currentNeuron.getLastOutput();
         }
         return outputLayer;
@@ -164,7 +164,7 @@ public class NeuralNetwork {
     private void backpropagation(double[] idealValues){
         //Calculate output delta
         for (int i = 0; i < structure.getNeuronsAmountInLayer(structure.getLayersAmount() - 1); i++) {
-            AbstractNeuron currentNeuron = structure.getNeuronByPosition(structure.getLayersAmount() - 1, i);
+            Neuron currentNeuron = structure.getNeuronByPosition(structure.getLayersAmount() - 1, i);
             currentNeuron.setDelta(LearningFunctions.outputDelta(currentNeuron.getLastRawOutput(), idealValues[i], currentNeuron.getLastOutput(), currentNeuron.getActivationFunction()));
         }
 
@@ -172,7 +172,7 @@ public class NeuralNetwork {
         for (int i = structure.getLayersAmount() - 2; i > 0; i--) {
             for (int j = 0; j < structure.getNeuronsAmountInLayer(i); j++) {
                 //Prepare values
-                AbstractNeuron currentNeuron = structure.getNeuronByPosition(i, j);
+                Neuron currentNeuron = structure.getNeuronByPosition(i, j);
                 int currentID = structure.getIDByPosition(i, j);
                 double[] neuronWeights = new double[structure.getLastID() + 1];
                 double[] neuronDeltas = new double[structure.getLastID() + 1];
@@ -193,7 +193,7 @@ public class NeuralNetwork {
 
         //Update weights from input neurons
         for (int i = 0; i < structure.getNeuronsAmountInLayer(0); i++) {
-            AbstractNeuron currentNeuron = structure.getNeuronByPosition(0, i);
+            Neuron currentNeuron = structure.getNeuronByPosition(0, i);
             int currentID = structure.getIDByPosition(0, i);
             //Set deltas of weights
             for (int k = currentID + 1; k <= structure.getLastID(); k++) {

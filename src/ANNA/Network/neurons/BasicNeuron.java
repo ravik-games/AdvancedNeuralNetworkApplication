@@ -4,7 +4,7 @@ import ANNA.Functions.ActivationFunctions;
 import ANNA.Network.Hyperparameters;
 import ANNA.Network.NetworkStructure;
 
-public class BasicNeuron extends  AbstractNeuron{
+public class BasicNeuron extends Neuron {
     public BasicNeuron(int positionX, int positionY, int id, ActivationFunctions.types activationFunction, NetworkStructure.neuronTypes type) {
         super(positionX, positionY, id, activationFunction, type);
     }

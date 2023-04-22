@@ -620,7 +620,7 @@
          <AnchorPane>
             <HBox prefHeight="684.0" prefWidth="1280.0">
                <VBox prefHeight="683.0" prefWidth="636.0">
-                  <LineChart fx:id="trainSetGraph" legendVisible="false" prefHeight="340.0" prefWidth="636.0" title="Обучающая выборка">
+                  <LineChart fx:id="trainSetGraph" legendVisible="false" prefHeight="340.0" prefWidth="636.0">
                      <xAxis>
                         <NumberAxis forceZeroInRange="false" label="Эпоха" lowerBound="1.0" minorTickVisible="false" prefWidth="569.0" side="BOTTOM" tickUnit="1.0" />
                      </xAxis>

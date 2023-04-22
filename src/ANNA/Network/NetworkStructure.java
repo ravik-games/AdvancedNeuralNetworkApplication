@@ -1,7 +1,7 @@
 package ANNA.Network;
 
 import ANNA.Functions.ActivationFunctions;
-import ANNA.Network.neurons.AbstractNeuron;
+import ANNA.Network.neurons.Neuron;
 import ANNA.Network.neurons.BasicNeuron;
 
 import java.util.ArrayList;
@@ -14,10 +14,10 @@ public class NetworkStructure {
 
     //Structure of neural network
     //First column contains input neurons, last contains output and between all is a hidden neurons
-    private final ArrayList<ArrayList<AbstractNeuron>> structure = new ArrayList<>();
+    private final ArrayList<ArrayList<Neuron>> structure = new ArrayList<>();
 
     //Neurons by IDs
-    private final ArrayList<AbstractNeuron> neuronsArray = new ArrayList<>();
+    private final ArrayList<Neuron> neuronsArray = new ArrayList<>();
 
     //Initialize structure
     public NetworkStructure(int[] structure, double[][] weights){
@@ -36,7 +36,7 @@ public class NetworkStructure {
         //Initialize new neurons
         for(int i = 0; i < newStructure.length; i++) {
 
-            ArrayList<AbstractNeuron> layer = new ArrayList<>(newStructure.length);
+            ArrayList<Neuron> layer = new ArrayList<>(newStructure.length);
             //Create new neurons in layer
             for (int j = 0; j < newStructure[i]; j++) {
                 if(i == 0) //Input layer
@@ -65,7 +65,7 @@ public class NetworkStructure {
                 for (int k = 0; k < structure.get(i + 1).size(); k++) {
                     double weight;
                     int firstID = getIDByPosition(i, j);
-                    int secondID =getIDByPosition(i + 1, k);
+                    int secondID = getIDByPosition(i + 1, k);
                     //Using pre-defined weights if we can, else random
                     if(weights != null)
                         weight = weights[firstID][secondID];
@@ -84,9 +84,9 @@ public class NetworkStructure {
     }
 
     //Initialize single neuron and add it to the arrays
-    private AbstractNeuron initializeNeuron(int positionY, int positionX, neuronTypes type, ActivationFunctions.types activationFunction){
+    private Neuron initializeNeuron(int positionY, int positionX, neuronTypes type, ActivationFunctions.types activationFunction){
         //Create new neuron and set it ID
-        AbstractNeuron value = new BasicNeuron(positionX, positionY, neuronsArray.size(), activationFunction, type);
+        Neuron value = new BasicNeuron(positionX, positionY, neuronsArray.size(), activationFunction, type);
         //Add to the array
         neuronsArray.add(value);
         return value;
@@ -100,10 +100,10 @@ public class NetworkStructure {
         return new int[]{getNeuronByID(id).getPositionY(), getNeuronByID(id).getPositionX()};
     }
 
-    public AbstractNeuron getNeuronByID(int id){
+    public Neuron getNeuronByID(int id){
         return neuronsArray.get(id);
     }
-    public AbstractNeuron getNeuronByPosition(int x, int y){
+    public Neuron getNeuronByPosition(int x, int y){
         return structure.get(x).get(y);
     }
 
