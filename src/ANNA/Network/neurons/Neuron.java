@@ -5,8 +5,6 @@ import ANNA.Network.Hyperparameters;
 import ANNA.Network.NetworkStructure;
 import ANNA.UI.PopupController;
 
-import java.util.ArrayList;
-
 public abstract class Neuron {
 
     protected int positionX;
@@ -20,8 +18,6 @@ public abstract class Neuron {
     protected NetworkStructure.neuronTypes type;
     protected ActivationFunctions.types activationFunction;
 
-    protected ArrayList<Synapse> inputConnections;
-    protected ArrayList<Synapse> outputConnections;
     public Neuron(int positionX, int positionY, int id, ActivationFunctions.types activationFunction, NetworkStructure.neuronTypes type) {
         this.positionX = positionX;
         this.positionY = positionY;
@@ -92,44 +88,5 @@ public abstract class Neuron {
 
     public ActivationFunctions.types getActivationFunction() {
         return activationFunction;
-    }
-
-    public void addInputConnection(Synapse connection){
-        inputConnections.add(connection);
-    }
-
-    public void addOutputConnection(Synapse connection){
-        outputConnections.add(connection);
-    }
-
-    public static class Synapse{
-        Neuron neuron;
-        double weight;
-        double deltaWeight;
-
-        public double getWeight() {
-            return weight;
-        }
-        public void setWeight(double weight) {
-            this.weight = weight;
-        }
-
-        public double getDeltaWeight() {
-            return deltaWeight;
-        }
-        public void setDeltaWeight(double deltaWeight) {
-            this.deltaWeight = deltaWeight;
-        }
-
-        public Synapse(Neuron neuron, double weight, double deltaWeight){
-            if(neuron == null) {
-                System.err.println("CRITICAL ERROR: Neuron synapse initialization failed. Target neuron is invalid.");
-                PopupController.errorMessage("ERROR", "Критическая ошибка", "", "Произошла критическая ошибка при инициализации нейронной сети. Не удалось создать синапс между нейронами: один из нейронов недействителен.");
-                System.exit(1);
-            }
-            this.deltaWeight = deltaWeight;
-            this.weight = weight;
-            this.neuron = neuron;
-        }
     }
 }

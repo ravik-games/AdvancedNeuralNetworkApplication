@@ -6,6 +6,8 @@ import ANNA.Network.neurons.Neuron;
 import ANNA.UI.PopupController;
 import ANNA.UI.UIController;
 
+import java.util.ArrayList;
+
 public class NeuralNetwork {
 
     NetworkStructure structure;
@@ -134,14 +136,20 @@ public class NeuralNetwork {
             for (int j = 0; j < structure.getNeuronsAmountInLayer(i); j++) {
                 //Prepare input values
                 int currentID = structure.getIDByPosition(i, j);
-                double[] neuronInputs = new double[currentID];
-                double[] neuronWeights = new double[currentID];
-                for (int k = 0; k < currentID; k++) {
+                ArrayList<NetworkStructure.Synapse> inputConnections = structure.getInputConnections(currentID);
+                double[] neuronInputs = new double[inputConnections.size()];
+                double[] neuronWeights = new double[inputConnections.size()];
+
+                for (int k = 0; k < inputConnections.size(); k++) {
+                    neuronInputs[k] = structure.getNeuronByID(inputConnections.get(k).getNeuronID()).getLastOutput(); //Get output of neuron
+                    neuronWeights[k] = inputConnections.get(k).getWeight(); //Get weight of synapse
+                }
+                /*for (int k = 0; k < currentID; k++) {
                     if(structure.getWeightByID(currentID, k) != 0) {
                         neuronWeights[k] = structure.getWeightByID(currentID, k);
                         neuronInputs[k] = structure.getNeuronByID(k).getLastOutput();
                     }
-                }
+                }*/
                 //Calculate output
                 structure.getNeuronByPosition(i, j).calculateOutput(neuronInputs, neuronWeights);
             }
@@ -174,10 +182,22 @@ public class NeuralNetwork {
                 //Prepare values
                 Neuron currentNeuron = structure.getNeuronByPosition(i, j);
                 int currentID = structure.getIDByPosition(i, j);
-                double[] neuronWeights = new double[structure.getLastID() + 1];
-                double[] neuronDeltas = new double[structure.getLastID() + 1];
+                ArrayList<NetworkStructure.Synapse> outputConnections = structure.getOutputConnections(currentID);
+
+                double[] neuronWeights = new double[outputConnections.size()];
+                double[] neuronDeltas = new double[outputConnections.size()];
+
                 //Get deltas and set delta of weights
-                for (int k = currentID + 1; k <= structure.getLastID(); k++) {
+                for (int k = 0; k < outputConnections.size(); k++) {
+                    neuronWeights[k] = outputConnections.get(k).getWeight();
+                    neuronDeltas[k] = outputConnections.get(k).getDeltaWeight();
+
+                    outputConnections.get(k).setDeltaWeight(LearningFunctions.deltaWeight(structure.getNeuronByID(outputConnections.get(k).getNeuronID()).getDelta(),
+                            currentNeuron.getLastOutput(), outputConnections.get(k).getDeltaWeight()));
+                    outputConnections.get(k).setWeight(outputConnections.get(k).getWeight() + outputConnections.get(k).getDeltaWeight());
+                }
+
+                /*for (int k = currentID + 1; k <= structure.getLastID(); k++) {
                     if(structure.getWeightByID(currentID, k) != 0) {
                         neuronDeltas[k] = structure.getNeuronByID(k).getDelta();
                         neuronWeights[k] = structure.getWeightByID(currentID, k);
@@ -185,7 +205,7 @@ public class NeuralNetwork {
                                 LearningFunctions.deltaWeight(structure.getNeuronByID(k).getDelta(), currentNeuron.getLastOutput(), structure.getDeltaWeightByID(currentID, k)));
                         structure.setWeightByID(currentID, k, structure.getWeightByID(currentID, k) + structure.getDeltaWeightByID(currentID, k));
                     }
-                }
+                }*/
                 //Calculate delta
                 currentNeuron.setDelta(LearningFunctions.hiddenDelta(neuronWeights, neuronDeltas, currentNeuron.getLastRawOutput(), currentNeuron.getActivationFunction()));
             }
@@ -195,14 +215,21 @@ public class NeuralNetwork {
         for (int i = 0; i < structure.getNeuronsAmountInLayer(0); i++) {
             Neuron currentNeuron = structure.getNeuronByPosition(0, i);
             int currentID = structure.getIDByPosition(0, i);
-            //Set deltas of weights
-            for (int k = currentID + 1; k <= structure.getLastID(); k++) {
+            ArrayList<NetworkStructure.Synapse> outputConnections = structure.getOutputConnections(currentID);
+
+            //Set delta weights
+            for (int k = 0; k < outputConnections.size(); k++) {
+                outputConnections.get(k).setDeltaWeight(LearningFunctions.deltaWeight(structure.getNeuronByID(outputConnections.get(k).getNeuronID()).getDelta(),
+                        currentNeuron.getLastOutput(), outputConnections.get(k).getDeltaWeight()));
+                outputConnections.get(k).setWeight(outputConnections.get(k).getWeight() + outputConnections.get(k).getDeltaWeight());
+            }
+            /*for (int k = currentID + 1; k <= structure.getLastID(); k++) {
                 if(structure.getWeightByID(currentID, k) != 0) {
                     structure.setDeltaWeightByID(currentID, k,
                             LearningFunctions.deltaWeight(structure.getNeuronByID(k).getDelta(), currentNeuron.getLastOutput(), structure.getDeltaWeightByID(currentID, k)));
                     structure.setWeightByID(currentID, k, structure.getWeightByID(currentID, k) + structure.getDeltaWeightByID(currentID, k));
                 }
-            }
+            }*/
         }
     }
 
