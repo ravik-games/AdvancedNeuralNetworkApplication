@@ -3,8 +3,6 @@ package ANNA.Network;
 import ANNA.UI.UIController;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class NeuralNetworkTest {
 
     @Test

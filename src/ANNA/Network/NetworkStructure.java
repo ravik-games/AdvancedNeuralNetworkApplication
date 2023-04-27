@@ -9,9 +9,6 @@ import java.util.ArrayList;
 public class NetworkStructure {
     //Class, containing data about neurons and network structure
 
-    //Table of weights by neurons IDs
-    private final ArrayList<ArrayList<WeightData>> weightsTable = new ArrayList<>();
-
     //List of full neuron data by id
     private final ArrayList<NeuronData> neuronsList = new ArrayList<>();
 
@@ -30,7 +27,6 @@ public class NetworkStructure {
      */
     public void setStructure(int[] newStructure, double[][] weights){
         //Clear previous values
-        weightsTable.clear();
         structure.clear();
         neuronsList.clear();
 
@@ -71,8 +67,8 @@ public class NetworkStructure {
                     if(weights != null)
                         weight = weights[firstID][secondID];
                     else
-                        weight = 0.5;
-                        //weight = Math.random() * 2 - 1;
+                        //weight = 0.5;
+                        weight = Math.random() * 2 - 1;
                     createSynapse(firstID, secondID, weight);
                 }
             }
@@ -106,23 +102,6 @@ public class NetworkStructure {
     }
     public Neuron getNeuronByPosition(int x, int y){
         return structure.get(x).get(y);
-    }
-
-    public double getWeightByID(int firstID, int secondID){
-        //return weightsTable.get(firstID).get(secondID).getWeight();
-        return neuronsList.get(firstID).getOutputConnections().get(secondID).getWeight();
-    }
-    public void setWeightByID(int firstID, int secondID, double weight){
-        weightsTable.get(firstID).get(secondID).setWeight(weight);
-        weightsTable.get(secondID).get(firstID).setWeight(weight);
-    }
-
-    public double getDeltaWeightByID(int firstID, int secondID){
-        return weightsTable.get(firstID).get(secondID).getDeltaWeight();
-    }
-    public void setDeltaWeightByID(int firstID, int secondID, double deltaWeight){
-         weightsTable.get(firstID).get(secondID).setDeltaWeight(deltaWeight);
-         weightsTable.get(secondID).get(firstID).setDeltaWeight(deltaWeight);
     }
 
     public ArrayList<Synapse> getInputConnections(int neuronID){
@@ -187,30 +166,6 @@ public class NetworkStructure {
             str.append("\n");
         }
         System.out.println(str);
-    }
-
-    //Class with 2 variables for weights table
-    private static class WeightData{
-        private double weight, deltaWeight;
-
-        public double getWeight() {
-            return weight;
-        }
-        public void setWeight(double weight) {
-            this.weight = weight;
-        }
-
-        public double getDeltaWeight() {
-            return deltaWeight;
-        }
-        public void setDeltaWeight(double deltaWeight) {
-            this.deltaWeight = deltaWeight;
-        }
-
-        public WeightData(double weight, double deltaWeight){
-            this.deltaWeight = deltaWeight;
-            this.weight = weight;
-        }
     }
 
     //Information about one neuron
