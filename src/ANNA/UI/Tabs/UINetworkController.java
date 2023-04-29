@@ -11,9 +11,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -24,10 +26,10 @@ import java.util.List;
 public class UINetworkController {
     //Class for working with third tab (Network control)
 
-    private VBox hyperparametersVBox;
-    private TextField updateResultsEpoch;
+    private final VBox hyperparametersVBox;
+    private final TextField updateResultsEpoch;
 
-    private UIController mainController;
+    private final UIController mainController;
     private UIDataController dataController;
     private UIStructureController structureController;
     private UIOutputController outputController;

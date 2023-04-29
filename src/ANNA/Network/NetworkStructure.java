@@ -46,15 +46,6 @@ public class NetworkStructure {
             structure.add(layer);
         }
 
-        //Create empty 2D ArrayList for weights
-        /*for (int i = 0; i < neuronsArray.size(); i++) {
-            ArrayList<WeightData> weightsRow = new ArrayList<>(neuronsArray.size());
-            for (int j = 0; j < neuronsArray.size(); j++) {
-                weightsRow.add(new WeightData(0, 0));
-            }
-            weightsTable.add(weightsRow);
-        }*/
-
         //Create synapses
         for (int i = 0; i < structure.size() - 1; i++) {
             for (int j = 0; j < structure.get(i).size(); j++) {
@@ -76,8 +67,6 @@ public class NetworkStructure {
     }
 
     public void createSynapse(int firstID, int secondID, double initialWeight){
-        /*weightsTable.get(firstID).set(secondID, new WeightData(initialWeight, 0));
-        weightsTable.get(secondID).set(firstID, new WeightData(initialWeight, 0));*/
         neuronsList.get(firstID).getOutputConnections().add(new Synapse(secondID, initialWeight, 0));
         neuronsList.get(secondID).getInputConnections().add(new Synapse(firstID, initialWeight, 0));
     }
@@ -124,16 +113,6 @@ public class NetworkStructure {
 
     public void printWeights(boolean delta){
         StringBuilder str = new StringBuilder();
-        /*for (ArrayList<WeightData> i: weightsTable) {
-            for (WeightData j: i) {
-                if (delta)
-                    str.append(j.getDeltaWeight());
-                else
-                    str.append(j.getWeight());
-                str.append("\t\t");
-            }
-            str.append("\n");
-        }*/
 
         for (int i = 0; i < neuronsList.size(); i++) {
             str.append("Neuron ").append(i).append(" (").append(neuronsList.get(i).neuron.toString()).append(")\t");
@@ -210,13 +189,10 @@ public class NetworkStructure {
     public static class Synapse{
         private double weight, deltaWeight;
 
-        private int neuronID;
+        private final int neuronID;
 
         public int getNeuronID() {
             return neuronID;
-        }
-        public void setNeuronID(int id) {
-            neuronID = id;
         }
 
         public double getWeight() {
