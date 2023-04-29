@@ -26,10 +26,10 @@ import java.util.List;
 public class UINetworkController {
     //Class for working with third tab (Network control)
 
-    private VBox hyperparametersVBox;
-    private TextField updateResultsEpoch;
+    private final VBox hyperparametersVBox;
+    private final TextField updateResultsEpoch;
 
-    private UIController mainController;
+    private final UIController mainController;
     private UIDataController dataController;
     private UIStructureController structureController;
     private UIOutputController outputController;
@@ -134,6 +134,7 @@ public class UINetworkController {
             return null;
         }
 
+        //Change mode
         boolean isPrediction = false;
 
         //Log preparation time

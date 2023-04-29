@@ -3,14 +3,15 @@ package ANNA.Network;
 import ANNA.UI.UIController;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.List;
 
 class NeuralNetworkTest {
 
     @Test
     void run() {
         Hyperparameters.NUMBER_OF_EPOCHS = 10;
-        Hyperparameters.USE_BIAS_NEURONS = true;
+        Hyperparameters.USE_BIAS_NEURONS = false;
 
         int[] architecture = new int[]{2, 2, 1};
         double[][] initialWeights = null;
@@ -26,5 +27,30 @@ class NeuralNetworkTest {
 
         NeuralNetwork network = new NeuralNetwork();
         network.run(arguments);
+        network.structure.printWeights(false);
+    }
+
+    @Test
+    void singleHidden(){
+        Hyperparameters.NUMBER_OF_EPOCHS = 2;
+        Hyperparameters.LEARNING_RATE = 0.7;
+        Hyperparameters.MOMENTUM = 0.3;
+
+        int[] architecture = new int[]{2, 2, 1};
+        double[][] initialWeights = new double[][]{{0, 0, 0.45, 0.78, 0}, {0, 0, -0.12, 0.13, 0}, {0.45, -0.12, 0, 0, 1.5}, {0.78, 0.13, 0, 0, -2.3}, {0, 0, 1.5, -2.3, 0}};
+        double[][] inputs = new double[][]{{1, 0}};
+        String[] expectedOutput = new String[]{"1"};
+        List<String> allOutputTypes = new ArrayList<>();
+        allOutputTypes.add("1");
+        boolean training = true;
+        boolean isPrediction = false;
+        UIController uiController = null;
+        int logEpoch = 1;
+        NeuralNetwork.NetworkArguments arguments = new NeuralNetwork.NetworkArguments(architecture, initialWeights, inputs, expectedOutput, allOutputTypes.toArray(new String[0]), training, isPrediction,
+                uiController, logEpoch);
+
+        NeuralNetwork network = new NeuralNetwork();
+        network.run(arguments);
+        network.structure.printWeights(false);
     }
 }

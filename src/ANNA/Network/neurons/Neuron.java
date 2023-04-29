@@ -1,39 +1,32 @@
-package ANNA.Network;
+package ANNA.Network.neurons;
 
 import ANNA.Functions.ActivationFunctions;
+import ANNA.Network.Hyperparameters;
+import ANNA.Network.NetworkStructure;
 import ANNA.UI.PopupController;
 
-public class Neuron {
-    //Simple class, containing values and logic of one neuron
+public abstract class Neuron {
 
-    //Where neuron is located in NN structure (X is for layers, Y is for place in layer)
-    private final int positionX;
-    private final int positionY;
+    protected int positionX;
+    protected int positionY;
+    protected int id;
 
-    //Index of neuron
-    private final int id;
+    protected double delta;
+    protected double lastRawOutput; //Last output without activation function
+    protected double lastOutput;
 
-    //Deltas, used in backpropagation
-    private double delta;
+    protected NetworkStructure.neuronTypes type;
+    protected ActivationFunctions.types activationFunction;
 
-    private double lastRawOutput; //Last output without activation function
-    private double lastOutput;
-
-    public final NetworkStructure.neuronTypes type;
-    public final ActivationFunctions.types activationFunction;
-
-    public Neuron(int id, int positionY, int positionX, NetworkStructure.neuronTypes type, ActivationFunctions.types activationFunction) {
-        this.type = type;
+    public Neuron(int positionX, int positionY, int id, ActivationFunctions.types activationFunction, NetworkStructure.neuronTypes type) {
         this.positionX = positionX;
         this.positionY = positionY;
         this.id = id;
         this.activationFunction = activationFunction;
+        this.type = type;
     }
 
-    //Logic for calculating output of neuron
     public void calculateOutput(double[] inputs, double[] weights){
-        double output = 0;
-
         //Throw error and stop program when length of inputs and length of weights doesn't match.
         if(inputs.length != weights.length - Boolean.compare(Hyperparameters.USE_BIAS_NEURONS, false)){
             //TODO Test conditions
@@ -42,14 +35,8 @@ public class Neuron {
             System.exit(1);
         }
 
-        //Multiply by weights and add all inputs together.
-        for (int i = 0; i < inputs.length; i++) {
-            output += inputs[i] * weights[i];
-        }
-
-        //Bias neron influence
-        if (Hyperparameters.USE_BIAS_NEURONS)
-            output += weights[weights.length - 1];
+        //Calculate output in child class
+        double output = calculateRawOutput(inputs, weights);
 
         //Save raw output for later learning
         lastRawOutput = output;
@@ -64,7 +51,9 @@ public class Neuron {
         };
     }
 
-    //Getters
+    protected abstract double calculateRawOutput(double[] inputs, double[] weights);
+
+    //Getters and setters
     public int getPositionX() {
         return positionX;
     }
@@ -88,11 +77,16 @@ public class Neuron {
     public double getLastOutput() {
         return lastOutput;
     }
+
     public void setLastOutput(double lastOutput) {
         this.lastOutput = lastOutput;
     }
 
     public double getLastRawOutput() {
         return lastRawOutput;
+    }
+
+    public ActivationFunctions.types getActivationFunction() {
+        return activationFunction;
     }
 }
