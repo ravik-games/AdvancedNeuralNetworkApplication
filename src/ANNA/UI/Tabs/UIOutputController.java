@@ -20,6 +20,8 @@ import java.util.List;
 public class UIOutputController {
     //Class for working with fourth tab (Results)
 
+    public Label truePositiveLabel, trueNegativeLabel, falsePositiveLabel, falseNegativeLabel;
+
     private HBox simulatorHBox;
     private Button startSimulatorButton;
     private TextArea simulatorOutput;

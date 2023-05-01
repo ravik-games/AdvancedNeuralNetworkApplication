@@ -2,6 +2,7 @@ package ANNA.Network;
 
 import ANNA.Functions.ActivationFunctions;
 import ANNA.Network.neurons.BasicNeuron;
+import ANNA.Network.neurons.BiasNeuron;
 import ANNA.Network.neurons.Neuron;
 
 import java.util.ArrayList;
@@ -36,12 +37,23 @@ public class NetworkStructure {
             ArrayList<Neuron> layer = new ArrayList<>(newStructure.length);
             //Create new neurons in layer
             for (int j = 0; j < newStructure[i]; j++) {
-                if(i == 0) //Input layer
-                    layer.add(initializeNeuron(i, j, neuronTypes.INPUT, ActivationFunctions.types.LINEAR));
-                else if(i == newStructure.length - 1) //Output layer
-                    layer.add(initializeNeuron(i, j, neuronTypes.OUTPUT, ActivationFunctions.types.SIGMOID));
-                else //Hidden layers
-                    layer.add(initializeNeuron(i, j, neuronTypes.HIDDEN, ActivationFunctions.types.SIGMOID));
+                neuronTypes neuronType;
+                ActivationFunctions.types activationFunction;
+
+                if (i == 0) { //Input layer
+                    neuronType = neuronTypes.INPUT;
+                    activationFunction = ActivationFunctions.types.LINEAR;
+                }
+                else if (i == newStructure.length - 1) {//Output layer
+                    neuronType = neuronTypes.OUTPUT;
+                    activationFunction = ActivationFunctions.types.SIGMOID;
+                }
+                else { //Hidden layers
+                    neuronType = neuronTypes.HIDDEN;
+                    activationFunction = ActivationFunctions.types.SIGMOID;
+                }
+
+                layer.add(initializeNeuron(i, j, neuronType, activationFunction));
             }
             structure.add(layer);
         }
@@ -54,6 +66,9 @@ public class NetworkStructure {
                     double weight;
                     int firstID = getIDByPosition(i, j);
                     int secondID = getIDByPosition(i + 1, k);
+
+                    if(getNeuronByID(secondID) instanceof BiasNeuron)
+                        continue; //Skip bias neurons
                     //Using pre-defined weights if we can, else random
                     if(weights != null)
                         weight = weights[firstID][secondID];

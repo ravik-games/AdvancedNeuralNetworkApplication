@@ -9,9 +9,9 @@ import java.util.List;
 class NeuralNetworkTest {
 
     @Test
-    void run() {
+    void Sum() {
         Hyperparameters.NUMBER_OF_EPOCHS = 10;
-        Hyperparameters.USE_BIAS_NEURONS = false;
+        Hyperparameters.USE_BIAS_NEURONS = true;
 
         int[] architecture = new int[]{2, 2, 1};
         double[][] initialWeights = null;
@@ -31,7 +31,7 @@ class NeuralNetworkTest {
     }
 
     @Test
-    void singleHidden(){
+    void SingleHidden(){
         Hyperparameters.NUMBER_OF_EPOCHS = 2;
         Hyperparameters.LEARNING_RATE = 0.7;
         Hyperparameters.MOMENTUM = 0.3;

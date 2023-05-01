@@ -1,6 +1,6 @@
 package ANNA.UI;
 
-import ANNA.*;
+import ANNA.Main;
 import ANNA.Network.NeuralNetwork;
 import ANNA.UI.Tabs.UIDataController;
 import ANNA.UI.Tabs.UINetworkController;
@@ -8,14 +8,7 @@ import ANNA.UI.Tabs.UIOutputController;
 import ANNA.UI.Tabs.UIStructureController;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.chart.LineChart;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -162,32 +155,45 @@ public class UIController {
     public void updateInputTable() {
         structureController.updateInputTable();
     }
-
     public void addInputNeuron() {
         structureController.addInputNeuron();
     }
-
     public void removeInputNeuron() {
         structureController.removeInputNeuron();
     }
-
     public void addLayer() {
         structureController.addLayer();
     }
-
     public void removeLayer() {
         structureController.removeLayer();
     }
-
     public void startTraining() {
         networkController.startTraining();
     }
-
     public void startTesting() {
         networkController.startTesting();
     }
-
     public void prepareSimulation() {
         outputController.prepareSimulation();
+    }
+
+    //Open browser links
+    public void openFeedbackForm() {
+        PopupController.openURI("https://forms.yandex.ru/u/6443d915d046880af1ef091f/");
+    }
+    public void openVK() {
+        PopupController.openURI("https://vk.com/ravikgames");
+    }
+    public void openGitHub() {
+        PopupController.openURI("https://github.com/ravik-games/AdvancedNeuralNetworkApplication");
+    }
+    public void openMAN() {
+        PopupController.openURI("https://sevman.edusev.ru/");
+    }
+
+    //Open new window
+    public void newWindowMatrix() {
+    }
+    public void newWindowChart() {
     }
 }

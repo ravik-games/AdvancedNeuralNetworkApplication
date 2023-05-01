@@ -3,7 +3,9 @@ package ANNA.UI;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 
+import java.awt.*;
 import java.io.File;
+import java.net.URI;
 
 public class PopupController {
     //Method for showing errors to user
@@ -13,7 +15,7 @@ public class PopupController {
             case "INFORMATION" -> Alert.AlertType.INFORMATION;
             default -> Alert.AlertType.WARNING;
         };
-        Alert alert= new Alert(type);
+        Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(headerMessage);
         alert.setContentText(infoMessage);
@@ -35,5 +37,13 @@ public class PopupController {
             return null;
         }
         return file.getAbsolutePath();
+    }
+
+    public static void openURI(String uri){
+        try {
+            Desktop.getDesktop().browse(new URI(uri));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
