@@ -10,13 +10,14 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.util.List;
 
 public class UIController {
     public CheckBox autoOpenResults;
-    public Button inputNeuronButton, layerAddButton, inputNeuronRemoveButton, layerRemoveButton, startSimulatorButton;
+    public Button inputNeuronButton, layerAddButton, inputNeuronRemoveButton, inputNeuronAutoButton, layerRemoveButton, startSimulatorButton, newWindowChartButton, newWindowMatrixButton;
     public VBox inputVBox, hyperparametersVBox;
     public HBox architectureHBox, simulatorHBox;
     public TabPane tabPane;
@@ -25,9 +26,10 @@ public class UIController {
             loadNeuralNetworkPath, saveArchitecturePath, saveWeightsPath, saveHyperparametersPath, saveNeuralNetworkPath;
     public TableView<List<String>> trainDataTable, testDataTable;
     public Label trainDataLabel, testDataLabel, inputNeuronCounter, lastLayerNumber;
-    public LineChart<Integer, Double> trainSetGraph, testSetGraph;
+    public LineChart<Integer, Double> errorChart;
     public ChoiceBox<String> inputsChoiceBox, lastColumnChoiceBox;
     public TextArea simulatorOutput;
+    public Pane chartParent, matrixParent;
 
     public NeuralNetwork.NetworkArguments lastArguments;
     public Parser.inputTypes[] lastInputTypes;
@@ -44,9 +46,9 @@ public class UIController {
     //Initialize components
     public void initialize(){
         dataController = new UIDataController(this, trainDataPath, testDataPath, trainDataLabel, testDataLabel, trainDataTable, testDataTable);
-        structureController = new UIStructureController(this, inputVBox, architectureHBox, inputsChoiceBox, lastColumnChoiceBox, inputNeuronCounter, lastLayerNumber, inputNeuronRemoveButton, inputNeuronButton, graphicOutput);
+        structureController = new UIStructureController(this, inputVBox, architectureHBox, inputsChoiceBox, lastColumnChoiceBox, inputNeuronCounter, lastLayerNumber, inputNeuronRemoveButton, inputNeuronButton, inputNeuronAutoButton, graphicOutput);
         networkController = new UINetworkController(this, hyperparametersVBox, updateResultsEpoch);
-        outputController = new UIOutputController(this, simulatorOutput, startSimulatorButton, simulatorHBox, trainSetGraph, testSetGraph);
+        outputController = new UIOutputController(this, simulatorOutput, startSimulatorButton, simulatorHBox, errorChart, matrixParent);
 
         dataController.setControllerReferences(structureController, networkController, outputController);
         structureController.setControllerReferences(dataController, networkController, outputController);
@@ -161,6 +163,9 @@ public class UIController {
     public void removeInputNeuron() {
         structureController.removeInputNeuron();
     }
+    public void autoInputNeuron() {
+        structureController.autoInputNeurons();
+    }
     public void addLayer() {
         structureController.addLayer();
     }
@@ -193,7 +198,9 @@ public class UIController {
 
     //Open new window
     public void newWindowMatrix() {
+        outputController.openMatrixInNewWindow(newWindowMatrixButton, matrixParent);
     }
     public void newWindowChart() {
+        outputController.openChartInNewWindow(newWindowChartButton, chartParent);
     }
 }

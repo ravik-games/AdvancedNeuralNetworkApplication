@@ -2,17 +2,24 @@ package ANNA.UI.Tabs;
 
 import ANNA.Main;
 import ANNA.UI.Parser;
+import ANNA.UI.PopupController;
 import ANNA.UI.UIController;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,9 +32,10 @@ public class UIOutputController {
     private HBox simulatorHBox;
     private Button startSimulatorButton;
     private TextArea simulatorOutput;
-    private LineChart<Integer, Double> trainSetGraph, testSetGraph;
+    private LineChart<Integer, Double> errorChart;
+    private Parent currentMatrix, confusionMatrixFull, confusionMatrixSingle;
 
-    private final UIController mainController;
+    private UIController mainController;
     private UIDataController dataController;
     private UIStructureController structureController;
     private UINetworkController networkController;
@@ -35,13 +43,29 @@ public class UIOutputController {
 
 
     public UIOutputController(UIController controller, TextArea simulatorOutput, Button startSimulatorButton, HBox simulatorHBox,
-                              LineChart<Integer, Double> trainSetGraph, LineChart<Integer, Double> testSetGraph){
+                              LineChart<Integer, Double> errorChart, Pane matrixParent){
         this.simulatorHBox = simulatorHBox;
         this.startSimulatorButton = startSimulatorButton;
         this.simulatorOutput = simulatorOutput;
         this.mainController = controller;
-        this.trainSetGraph = trainSetGraph;
-        this.testSetGraph = testSetGraph;
+        this.errorChart = errorChart;
+
+        //Load matrix
+        try {
+            //FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ConfusionMatrixSingle.fxml"));
+            confusionMatrixSingle = loader.load();
+            currentMatrix = confusionMatrixSingle;
+            matrixParent.getChildren().add(currentMatrix);
+        } catch (IOException e) {
+            PopupController.errorMessage("ERROR", "Ошибка загрузки", "", "Произошла ошибка при загрузке дополнительных файлов.\n" + e.getMessage());
+            e.printStackTrace();
+            System.err.println("CRITICAL ERROR: Couldn't load .fxml files");
+            //System.exit(1);
+        }
+    }
+
+    public UIOutputController(){
     }
 
     public void setMain(Main main){
@@ -131,19 +155,55 @@ public class UIOutputController {
     //Show data on train graph
     public void updateTrainGraph(boolean clear, boolean newSeries, double error, int epoch){
         if(clear)
-            trainSetGraph.getData().clear();
+            errorChart.getData().clear();
 
         //Create series if not exist
-        if(trainSetGraph.getData().isEmpty() || trainSetGraph.getData().get(trainSetGraph.getData().size() - 1) == null || newSeries) {
+        if(errorChart.getData().isEmpty() || errorChart.getData().get(errorChart.getData().size() - 1) == null || newSeries) {
             XYChart.Series<Integer, Double> series = new XYChart.Series<>();
             series.setName("Средняя ошибка эпохи");
-            trainSetGraph.getData().add(series);
+            errorChart.getData().add(series);
         }
 
-        if(trainSetGraph.getData().size() > 5){
-            trainSetGraph.getData().remove(0);
+        if(errorChart.getData().size() > 5){
+            errorChart.getData().remove(0);
         }
         //Add values to the chart
-        trainSetGraph.getData().get(trainSetGraph.getData().size() - 1).getData().add(new XYChart.Data<>(epoch, error));
+        errorChart.getData().get(errorChart.getData().size() - 1).getData().add(new XYChart.Data<>(epoch, error));
+    }
+
+    //Open element in new window
+    public void openElementInNewWindow(String title, Pane parent, Parent element, Button openButton, double minWidth, double minHeight){
+        parent.getChildren().remove(element);
+        Label label = new Label("Открыто в другом окне");
+        label.setFont(new Font("Segoe UI SemiLight", 14));
+        label.setAlignment(Pos.CENTER);
+        label.setPrefHeight(parent.getHeight());
+        label.setPrefWidth(parent.getWidth());
+
+        parent.getChildren().add(label);
+        Scene scene = new Scene(element);
+        openButton.setDisable(true);
+
+        Stage stage = new Stage();
+        stage.setTitle(title);
+        stage.setScene(scene);
+        stage.setMinWidth(minWidth);
+        stage.setMinHeight(minHeight);
+        stage.show();
+
+        stage.setOnCloseRequest(windowEvent -> {
+            scene.setRoot(new Pane());
+            parent.getChildren().remove(label);
+            parent.getChildren().add(element);
+            element.setStyle("-fx-background-color: white");
+            openButton.setDisable(false);
+        });
+    }
+    
+    public void openChartInNewWindow(Button button, Pane parent){
+        openElementInNewWindow("График средней ошибки", parent, errorChart, button, 250, 250);
+    }
+    public void openMatrixInNewWindow(Button button, Pane parent){
+        openElementInNewWindow("Матрица", parent, currentMatrix, button, 616, 290);
     }
 }

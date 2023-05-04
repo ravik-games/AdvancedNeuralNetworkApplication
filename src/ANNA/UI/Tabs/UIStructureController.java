@@ -16,11 +16,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class UIStructureController {
@@ -29,7 +27,7 @@ public class UIStructureController {
     private final HBox architectureHBox;
     public final ChoiceBox<String> lastColumnChoiceBox, inputsChoiceBox;
     private final Label inputNeuronCounter, lastLayerNumber;
-    private final Button inputNeuronButton, inputNeuronRemoveButton;
+    private final Button inputNeuronButton, inputNeuronRemoveButton, inputNeuronAutoButton;
     private Canvas graphicOutput;
 
     private UIController mainController;
@@ -40,7 +38,8 @@ public class UIStructureController {
     public ObservableList<Node> trainInputSettings, testInputSettings, architectureSettings;
 
     public UIStructureController(UIController controller, VBox inputVBox, HBox architectureHBox, ChoiceBox<String> inputsChoiceBox, ChoiceBox<String> lastColumnChoiceBox,
-                                 Label inputNeuronCounter, Label lastLayerNumber, Button inputNeuronRemoveButton, Button inputNeuronButton, Canvas graphicOutput){
+                                 Label inputNeuronCounter, Label lastLayerNumber, Button inputNeuronRemoveButton, Button inputNeuronButton, Button inputNeuronAutoButton,
+                                 Canvas graphicOutput){
         this.inputVBox = inputVBox;
         this.architectureHBox = architectureHBox;
         this.lastColumnChoiceBox = lastColumnChoiceBox;
@@ -51,6 +50,7 @@ public class UIStructureController {
         this.inputNeuronRemoveButton = inputNeuronRemoveButton;
         this.mainController = controller;
         this.graphicOutput = graphicOutput;
+        this.inputNeuronAutoButton = inputNeuronAutoButton;
     }
 
     public void setControllerReferences(UIDataController dataController, UINetworkController networkController, UIOutputController outputController){
@@ -71,6 +71,7 @@ public class UIStructureController {
                 inputsChoiceBox.setValue("Выберите базу данных");
                 inputNeuronButton.setDisable(true);
                 inputNeuronRemoveButton.setDisable(true);
+                inputNeuronAutoButton.setDisable(true);
                 PopupController.errorMessage("WARNING", "Ошибка", "", "Отсутствует обучающая база данных.");
                 return;
             }
@@ -83,6 +84,7 @@ public class UIStructureController {
             lastColumnChoiceBox.getItems().addAll(dataController.rawTrainSet.get(0));
             inputNeuronButton.setDisable(false);
             inputNeuronRemoveButton.setDisable(false);
+            inputNeuronAutoButton.setDisable(false);
             lastColumnChoiceBox.setDisable(false);
         }
         else if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
@@ -90,6 +92,7 @@ public class UIStructureController {
                 inputsChoiceBox.setValue("Выберите базу данных");
                 inputNeuronButton.setDisable(true);
                 inputNeuronRemoveButton.setDisable(true);
+                inputNeuronAutoButton.setDisable(true);
                 PopupController.errorMessage("WARNING", "Ошибка", "", "Отсутствует тестовая база данных.");
                 return;
             }
@@ -102,10 +105,12 @@ public class UIStructureController {
             lastColumnChoiceBox.getItems().addAll(dataController.rawTestSet.get(0));
             inputNeuronButton.setDisable(false);
             inputNeuronRemoveButton.setDisable(false);
+            inputNeuronAutoButton.setDisable(false);
             lastColumnChoiceBox.setDisable(false);
         }else{
             inputNeuronRemoveButton.setDisable(true);
             inputNeuronButton.setDisable(true);
+            inputNeuronAutoButton.setDisable(true);
             lastColumnChoiceBox.setDisable(true);
         }
     }
@@ -120,6 +125,27 @@ public class UIStructureController {
             testInputSettings.addAll(addInputValue(dataController.rawTestSet, testInputSettings.size() / 2));
             updateInputTable();
         }
+    }
+
+    //Auto add input and set output neurons. Adds input neurons from 2nd to size - 1.
+    public void autoInputNeurons(){
+        //Cleat input neurons
+        inputVBox.getChildren().remove(2, inputVBox.getChildren().size() - 1);
+
+        if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(0))){
+            trainInputSettings.clear();
+            for (int i = 0; i < dataController.rawTrainSet.get(0).size() - 1; i++) {
+                trainInputSettings.addAll(addInputValue(dataController.rawTrainSet, i));
+            }
+        }
+        else if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
+            testInputSettings.clear();
+            for (int i = 0; i < dataController.rawTestSet.get(0).size() - 1; i++) {
+                testInputSettings.addAll(addInputValue(dataController.rawTestSet, i));
+            }
+        }
+        updateInputTable();
+        lastColumnChoiceBox.setValue(lastColumnChoiceBox.getItems().get(lastColumnChoiceBox.getItems().size() - 1));
     }
 
     //Create input neuron value
