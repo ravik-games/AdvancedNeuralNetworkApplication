@@ -116,7 +116,7 @@ public class UIOutputController {
         field.prefWidth(90);
         field.setPrefHeight(50);
 
-        //Add children nto VBox
+        //Add children to VBox
         vBox.getChildren().add(name);
         vBox.getChildren().add(new Separator(Orientation.HORIZONTAL));
         vBox.getChildren().add(field);
@@ -195,7 +195,7 @@ public class UIOutputController {
             scene.setRoot(new Pane());
             parent.getChildren().remove(label);
             parent.getChildren().add(element);
-            element.setStyle("-fx-background-color: white");
+            element.setStyle("-fx-background-color: white"); //Fix background color
             openButton.setDisable(false);
         });
     }

@@ -1,6 +1,7 @@
 package ANNA.UI.Tabs;
 
 import ANNA.Main;
+import ANNA.Network.DataTypes;
 import ANNA.Network.Hyperparameters;
 import ANNA.Network.NeuralNetwork;
 import ANNA.UI.Parser;
@@ -141,11 +142,12 @@ public class UINetworkController {
         long startTime = System.nanoTime();
         System.out.println("\n--- Starting preparation ---");
 
-        //Local variables
+        //Initialize local variables
         ObservableList<Node> currentInputNeuronSet = trainData ? structureController.trainInputSettings : structureController.testInputSettings;
         List<List<String>> currentRawDataSet = trainData ? dataController.rawTrainSet : dataController.rawTestSet;
 
         int[] architecture = new int[2 + structureController.architectureSettings.size() / 2];
+        DataTypes.NetworkData initialWeights = null;
         double[][] inputs = new double[currentRawDataSet.size() - 1][currentInputNeuronSet.size() / 2];
         mainController.lastInputTypes = new Parser.inputTypes[currentInputNeuronSet.size() / 2];
         String[] expectedOutput = new String[currentRawDataSet.size() - 1];
@@ -202,7 +204,7 @@ public class UINetworkController {
             Hyperparameters.setValueByID(Hyperparameters.Identificator.values()[i / 2 - 1], textField.getText());
         }
 
-        mainController.lastArguments = new NeuralNetwork.NetworkArguments(architecture, null, inputs, expectedOutput, allOutputTypes.toArray(new String[0]),
+        mainController.lastArguments = new NeuralNetwork.NetworkArguments(architecture, initialWeights, inputs, expectedOutput, allOutputTypes.toArray(new String[0]),
                 trainData, isPrediction, mainController, logEpoch);
 
         //Log end time

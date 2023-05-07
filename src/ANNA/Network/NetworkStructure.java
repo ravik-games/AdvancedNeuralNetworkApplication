@@ -4,14 +4,19 @@ import ANNA.Functions.ActivationFunctions;
 import ANNA.Network.neurons.BasicNeuron;
 import ANNA.Network.neurons.BiasNeuron;
 import ANNA.Network.neurons.Neuron;
+import ANNA.UI.PopupController;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NetworkStructure {
     //Class, containing data about neurons and network structure
 
+    //Signal variable. Shows if network needs to be aborted
+    public boolean abortRun;
+
     //List of full neuron data by id
-    private final ArrayList<NeuronData> neuronsList = new ArrayList<>();
+    private final ArrayList<DataTypes.NeuronData> neuronsList = new ArrayList<>();
 
     //Structure of neural network
     //First column contains input neurons, last contains output and between all is a hidden neurons
@@ -19,14 +24,15 @@ public class NetworkStructure {
 
 
     //Initialize structure
-    public NetworkStructure(int[] structure, double[][] weights){
-        setStructure(structure, weights);
+    public NetworkStructure(int[] structure, DataTypes.NetworkData weights){
+        abortRun = !setStructure(structure, weights);
     }
 
     /**
      * @param newStructure Array of Integers. Represents number of neurons in each layer.
+     * @param weights Class WeightsData. Contains all information about initial weights.
      */
-    public void setStructure(int[] newStructure, double[][] weights){
+    public boolean setStructure(int[] newStructure, DataTypes.NetworkData weights){
         //Clear previous values
         structure.clear();
         neuronsList.clear();
@@ -59,6 +65,24 @@ public class NetworkStructure {
         }
 
         //Create synapses
+        //Using pre-defined weights if we can, else random
+        if (weights != null){
+            if(weights.getStructure() != newStructure){
+                PopupController.errorMessage("ERROR", "Ошибка при загрузке весов", "", "Обнаружено расхождение текущей структуры нейронной сети и структуры загружаемых весов.");
+                System.err.println("WARNING: There is a conflict between the current structure of the neural network and the structure of the weights to be loaded.");
+                return false;
+            }
+            if (weights.getWeightsList() == null)
+                return false;
+            for (int i = 0; i < weights.getWeightsList().size(); i++) {
+                //Set input connections
+                neuronsList.get(i).setInputConnections(weights.getWeights(i).inputConnections());
+                //Set output connections
+                neuronsList.get(i).setOutputConnections(weights.getWeights(i).outputConnections());
+            }
+            return true;
+        }
+
         for (int i = 0; i < structure.size() - 1; i++) {
             for (int j = 0; j < structure.get(i).size(); j++) {
                 //Getting next rows neurons
@@ -67,23 +91,22 @@ public class NetworkStructure {
                     int firstID = getIDByPosition(i, j);
                     int secondID = getIDByPosition(i + 1, k);
 
-                    if(getNeuronByID(secondID) instanceof BiasNeuron)
+                    if (getNeuronByID(secondID) instanceof BiasNeuron)
                         continue; //Skip bias neurons
-                    //Using pre-defined weights if we can, else random
-                    if(weights != null)
-                        weight = weights[firstID][secondID];
-                    else
-                        //weight = 0.5;
-                        weight = Math.random() * 2 - 1;
+
+                    //weight = 0.5;
+                    weight = Math.random() * 2 - 1;
                     createSynapse(firstID, secondID, weight);
                 }
             }
         }
+
+        return true;
     }
 
     public void createSynapse(int firstID, int secondID, double initialWeight){
-        neuronsList.get(firstID).getOutputConnections().add(new Synapse(secondID, initialWeight, 0));
-        neuronsList.get(secondID).getInputConnections().add(new Synapse(firstID, initialWeight, 0));
+        neuronsList.get(firstID).getOutputConnections().add(new DataTypes.Synapse(secondID, initialWeight, 0));
+        neuronsList.get(secondID).getInputConnections().add(new DataTypes.Synapse(firstID, initialWeight, 0));
     }
 
     //Initialize single neuron and add it to the arrays
@@ -91,7 +114,7 @@ public class NetworkStructure {
         //Create new neuron and set it ID
         Neuron neuron = new BasicNeuron(positionX, positionY, neuronsList.size(), activationFunction, type);
         //Add to the array
-        neuronsList.add(new NeuronData(neuron));
+        neuronsList.add(new DataTypes.NeuronData(neuron));
         //neuronsArray.add(value);
         return neuron;
     }
@@ -102,16 +125,16 @@ public class NetworkStructure {
     }
 
     public Neuron getNeuronByID(int id){
-        return neuronsList.get(id).neuron;
+        return neuronsList.get(id).getNeuron();
     }
     public Neuron getNeuronByPosition(int x, int y){
         return structure.get(x).get(y);
     }
 
-    public ArrayList<Synapse> getInputConnections(int neuronID){
+    public ArrayList<DataTypes.Synapse> getInputConnections(int neuronID){
         return neuronsList.get(neuronID).getInputConnections();
     }
-    public ArrayList<Synapse> getOutputConnections(int neuronID){
+    public ArrayList<DataTypes.Synapse> getOutputConnections(int neuronID){
         return neuronsList.get(neuronID).getOutputConnections();
     }
 
@@ -122,15 +145,11 @@ public class NetworkStructure {
         return structure.get(layer).size();
     }
 
-    public int getLastID(){
-        return neuronsList.size() - 1;
-    }
-
     public void printWeights(boolean delta){
         StringBuilder str = new StringBuilder();
 
         for (int i = 0; i < neuronsList.size(); i++) {
-            str.append("Neuron ").append(i).append(" (").append(neuronsList.get(i).neuron.toString()).append(")\t");
+            str.append("Neuron ").append(i).append(" (").append(neuronsList.get(i).getNeuron().toString()).append(")\t");
             str.append("Input: ");
             for (int j = 0; j < neuronsList.get(i).getInputConnections().size(); j++) {
                 str.append("(").append(neuronsList.get(i).getInputConnections().get(j).getNeuronID()).append("; ");
@@ -162,73 +181,8 @@ public class NetworkStructure {
         System.out.println(str);
     }
 
-    //Information about one neuron
-    private static class NeuronData {
-        private Neuron neuron;
-        private ArrayList<Synapse> inputConnections = new ArrayList<>();
-        private ArrayList<Synapse> outputConnections = new ArrayList<>();
-
-        public NeuronData(Neuron neuron, ArrayList<Synapse> inputConnections, ArrayList<Synapse> outputConnections){
-            setNeuron(neuron);
-            setInputConnections(inputConnections);
-            setOutputConnections(outputConnections);
-        }
-
-        public NeuronData(Neuron neuron){
-            setNeuron(neuron);
-        }
-
-        public Neuron getNeuron() {
-            return neuron;
-        }
-        public void setNeuron(Neuron neuron) {
-            this.neuron = neuron;
-        }
-
-        public ArrayList<Synapse> getInputConnections() {
-            return inputConnections;
-        }
-        public void setInputConnections(ArrayList<Synapse> inputConnections) {
-            this.inputConnections = inputConnections;
-        }
-
-        public ArrayList<Synapse> getOutputConnections() {
-            return outputConnections;
-        }
-        public void setOutputConnections(ArrayList<Synapse> outputConnections) {
-            this.outputConnections = outputConnections;
-        }
-    }
-
-    //Information about one synapse (connection) between neurons
-    public static class Synapse{
-        private double weight, deltaWeight;
-
-        private final int neuronID;
-
-        public int getNeuronID() {
-            return neuronID;
-        }
-
-        public double getWeight() {
-            return weight;
-        }
-        public void setWeight(double weight) {
-            this.weight = weight;
-        }
-
-        public double getDeltaWeight() {
-            return deltaWeight;
-        }
-        public void setDeltaWeight(double deltaWeight) {
-            this.deltaWeight = deltaWeight;
-        }
-
-        public Synapse(int neuronID, double weight, double deltaWeight){
-            this.deltaWeight = deltaWeight;
-            this.weight = weight;
-            this.neuronID = neuronID;
-        }
+    public List<DataTypes.NeuronData> getRawWeightsData(){
+        return neuronsList;
     }
 
     public enum neuronTypes{

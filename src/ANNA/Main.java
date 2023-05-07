@@ -39,5 +39,4 @@ public class Main extends Application {
             return;
         network.simulation(inputs);
     }
-
 }

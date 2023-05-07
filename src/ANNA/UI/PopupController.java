@@ -27,7 +27,7 @@ public class PopupController {
         FileChooser open = new FileChooser();
         File file;
         open.setTitle("Выберите данные");
-        String currentDir = new File(System.getProperty("user.dir") + "\\src\\resources\\Train").isDirectory() ? System.getProperty("user.dir") + "\\src\\resources\\Train" : System.getProperty("user.dir");
+        String currentDir = new File(System.getProperty("user.dir") + "\\src\\resources\\datasets").isDirectory() ? System.getProperty("user.dir") + "\\src\\resources\\datasets" : System.getProperty("user.dir");
         open.setInitialDirectory(new File(currentDir));
         open.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(".csv files", "*.csv"));
         file = open.showOpenDialog(null);

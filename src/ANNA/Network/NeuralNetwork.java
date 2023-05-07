@@ -7,6 +7,7 @@ import ANNA.UI.PopupController;
 import ANNA.UI.UIController;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NeuralNetwork {
 
@@ -19,6 +20,8 @@ public class NeuralNetwork {
         lastArguments = arguments;
         //Create and set network structure
         structure = new NetworkStructure(arguments.architecture(), arguments.initialWeights());
+        if(structure.abortRun)
+            return;
 
         //Log start time
         long startTime = System.nanoTime();
@@ -136,7 +139,7 @@ public class NeuralNetwork {
             for (int j = 0; j < structure.getNeuronsAmountInLayer(i); j++) {
                 //Prepare input values
                 int currentID = structure.getIDByPosition(i, j);
-                ArrayList<NetworkStructure.Synapse> inputConnections = structure.getInputConnections(currentID);
+                ArrayList<DataTypes.Synapse> inputConnections = structure.getInputConnections(currentID);
                 double[] neuronInputs = new double[inputConnections.size()];
                 double[] neuronWeights = new double[inputConnections.size()];
 
@@ -177,7 +180,7 @@ public class NeuralNetwork {
                 //Prepare values
                 Neuron currentNeuron = structure.getNeuronByPosition(i, j);
                 int currentID = structure.getIDByPosition(i, j);
-                ArrayList<NetworkStructure.Synapse> outputConnections = structure.getOutputConnections(currentID);
+                ArrayList<DataTypes.Synapse> outputConnections = structure.getOutputConnections(currentID);
 
                 double[] neuronWeights = new double[outputConnections.size()];
                 double[] neuronDeltas = new double[outputConnections.size()];
@@ -199,7 +202,7 @@ public class NeuralNetwork {
         for (int i = 0; i < structure.getNeuronsAmountInLayer(0); i++) {
             Neuron currentNeuron = structure.getNeuronByPosition(0, i);
             int currentID = structure.getIDByPosition(0, i);
-            ArrayList<NetworkStructure.Synapse> outputConnections = structure.getOutputConnections(currentID);
+            ArrayList<DataTypes.Synapse> outputConnections = structure.getOutputConnections(currentID);
 
             //Set delta weights
             for (int k = 0; k < outputConnections.size(); k++) {
@@ -208,7 +211,7 @@ public class NeuralNetwork {
         }
     }
 
-    private void updateWeights(ArrayList<NetworkStructure.Synapse> outputConnections, Neuron currentNeuron, int connectionID){
+    private void updateWeights(ArrayList<DataTypes.Synapse> outputConnections, Neuron currentNeuron, int connectionID){
         //Set new delta weight
         double deltaWeight = LearningFunctions.deltaWeight(structure.getNeuronByID(outputConnections.get(connectionID).getNeuronID()).getDelta(),
                 currentNeuron.getLastOutput(), outputConnections.get(connectionID).getDeltaWeight());
@@ -219,7 +222,7 @@ public class NeuralNetwork {
         outputConnections.get(connectionID).setWeight(weight);
 
         //Update weights for other neurons
-        for (NetworkStructure.Synapse synapse : structure.getInputConnections(outputConnections.get(connectionID).getNeuronID())) {
+        for (DataTypes.Synapse synapse : structure.getInputConnections(outputConnections.get(connectionID).getNeuronID())) {
             if(synapse.getNeuronID() == currentNeuron.getId()){
                 synapse.setDeltaWeight(deltaWeight);
                 synapse.setWeight(weight);
@@ -227,7 +230,18 @@ public class NeuralNetwork {
         }
     }
 
+    public List<DataTypes.NeuronData> getRawWeights(){
+        if (structure == null)
+            return null;
+        return structure.getRawWeightsData();
+    }
+
+    private void abortNetworkMessage(){
+        PopupController.errorMessage("ERROR", "Произошла ошибка при работе нейронной сети.", "", "Произошла непредвиденная ошибка при запуски или работе нейронной сети.");
+        System.err.println("ERROR: Unexpected network error, aborting");
+    }
+
     //Structure class for network start arguments
-    public record NetworkArguments(int[] architecture, double[][] initialWeights, double[][] inputs, String[] expectedOutput, String[] allOutputTypes, boolean training,
-            boolean isPrediction, UIController uiController, int logEpoch) { }
+    public record NetworkArguments(int[] architecture, DataTypes.NetworkData initialWeights, double[][] inputs, String[] expectedOutput, String[] allOutputTypes, boolean training,
+                                   boolean isPrediction, UIController uiController, int logEpoch) { }
 }

@@ -605,7 +605,7 @@
                      <VBox.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" />
                      </VBox.margin>
-                     <Label text="Обновлять вкладку &quot;Результаты&quot; каждую ">
+                     <Label text="Сохранять статистику каждую">
                         <font>
                            <Font name="Segoe UI Semibold" size="14.0" />
                         </font>
@@ -625,24 +625,14 @@
                         <Insets bottom="5.0" left="15.0" right="15.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <HBox prefHeight="30.0" prefWidth="606.0">
+                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#startTraining" prefHeight="30.0" prefWidth="636.0" style="-fx-font-size: 16; -fx-font-family: Segoe UI Semobold; -fx-border-width: 1.5;" text="Запустить нейронную сеть" textAlignment="CENTER">
+                     <font>
+                        <Font name="Segoe UI Semibold" size="20.0" />
+                     </font>
                      <VBox.margin>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="5.0" />
+                        <Insets bottom="15.0" left="50.0" right="50.0" top="5.0" />
                      </VBox.margin>
-                     <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#startTraining" prefHeight="30.0" prefWidth="295.0" text="Запустить на обучающих данных" textAlignment="CENTER">
-                        <font>
-                           <Font name="Segoe UI Semibold" size="14.0" />
-                        </font>
-                     </Button>
-                     <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#startTesting" prefHeight="30.0" prefWidth="295.0" text="Запустить на тестовых данных" textAlignment="CENTER">
-                        <font>
-                           <Font name="Segoe UI Semibold" size="14.0" />
-                        </font>
-                        <HBox.margin>
-                           <Insets left="15.0" />
-                        </HBox.margin>
-                     </Button>
-                  </HBox>
+                  </Button>
                </VBox>
             </HBox>
          </AnchorPane>
@@ -663,7 +653,7 @@
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
-                     <Label alignment="CENTER" prefHeight="20.0" prefWidth="636.0" text="Пользовательские значения" textAlignment="CENTER">
+                     <Label alignment="CENTER" prefHeight="20.0" prefWidth="636.0" text="Симулятор" textAlignment="CENTER">
                         <font>
                            <Font name="Segoe UI Semibold" size="20.0" />
                         </font>
@@ -713,27 +703,40 @@
                   </VBox>
                   <VBox fx:id="chartVBox" stylesheets="@../LightStyle.css">
                      <children>
-                        <HBox alignment="CENTER">
+                        <HBox prefHeight="30.0" prefWidth="616.0">
                            <children>
-                              <Label style="-fx-border-width: 1;" text="График средней ошибки" textAlignment="CENTER">
+                              <Button ellipsisString="&lt;" mnemonicParsing="false" prefHeight="22.0" prefWidth="28.0" style="-fx-font-family: &quot;Segoe UI Semibold&quot;;" text="&lt;" textAlignment="CENTER">
                                  <font>
-                                    <Font name="Segoe UI Semibold" size="20.0" />
+                                    <Font name="Segoe UI" size="14.0" />
                                  </font>
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
+                              </Button>
+                              <Label alignment="CENTER" prefHeight="30.0" prefWidth="300.0" style="-fx-border-width: 1; -fx-border-color: #4769ff; -fx-border-radius: 7.5;" text="График средней ошибки" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="Segoe UI Semibold" size="20.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="5.0" right="5.0" />
+                                 </HBox.margin>
                               </Label>
+                              <Button ellipsisString="&gt;" mnemonicParsing="false" prefHeight="22.0" prefWidth="28.0" style="-fx-font-family: &quot;Segoe UI Semibold&quot;;" text="&gt;" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="Segoe UI" size="14.0" />
+                                 </font>
+                              </Button>
                               <Button fx:id="newWindowChartButton" alignment="CENTER" mnemonicParsing="false" onAction="#newWindowChart" text="В новом окне" textAlignment="CENTER">
                                  <font>
                                     <Font name="Segoe UI" size="14.0" />
                                  </font>
                                  <HBox.margin>
-                                    <Insets left="275.0" />
+                                    <Insets left="150.0" />
                                  </HBox.margin>
                               </Button>
                            </children>
                            <VBox.margin>
-                              <Insets left="10.0" right="10.0" top="10.0" />
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </VBox.margin>
                         </HBox>
                         <AnchorPane fx:id="chartParent">
