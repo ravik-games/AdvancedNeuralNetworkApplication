@@ -1,5 +1,8 @@
 package ANNA.Functions;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class ErrorFunctions {
 
     /**
@@ -13,8 +16,8 @@ public class ErrorFunctions {
 
         //Throw error when lengths mismatch
         if(ideal.length != actual.length){
-            System.err.println("CRITICAL ERROR: length of ideal values and length of actual values in error function doesn't match");
-            System.exit(1);
+            Logger.getLogger(ErrorFunctions.class.getName()).log(Level.WARNING, "Length of ideal values and length of actual values in error function doesn't match");
+            return -1;
         }
 
         //MSE function
@@ -37,8 +40,8 @@ public class ErrorFunctions {
 
         //Throw error when lengths mismatch
         if(ideal.length != actual.length){
-            System.err.println("CRITICAL ERROR: length of ideal values and length of actual values in error function doesn't match");
-            System.exit(1);
+            Logger.getLogger(ErrorFunctions.class.getName()).log(Level.WARNING, "Length of ideal values and length of actual values in error function doesn't match");
+            return -1;
         }
 
         //MSE numerator function
@@ -61,8 +64,8 @@ public class ErrorFunctions {
 
         //Throw error when lengths mismatch
         if(ideal.length != actual.length){
-            System.err.println("CRITICAL ERROR: length of ideal values and length of actual values in error function doesn't match");
-            System.exit(1);
+            Logger.getLogger(ErrorFunctions.class.getName()).log(Level.WARNING, "Length of ideal values and length of actual values in error function doesn't match");
+            return -1;
         }
 
         //Arc tangent numerator function

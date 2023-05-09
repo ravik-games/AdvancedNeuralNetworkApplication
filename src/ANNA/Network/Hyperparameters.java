@@ -36,7 +36,7 @@ public class Hyperparameters {
      * <p>
      * Affects: TODO Test what does learning rate affect
      */
-    public static double LEARNING_RATE = 0.1;
+    public static double LEARNING_RATE = 0.015;
 
     /**
      * Helps to prevent oscillations and getting stuck in local minimums.

@@ -7,7 +7,8 @@ import ANNA.UI.PopupController;
 import ANNA.UI.UIController;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class NeuralNetwork {
 
@@ -19,55 +20,98 @@ public class NeuralNetwork {
         //Remember arguments
         lastArguments = arguments;
         //Create and set network structure
-        structure = new NetworkStructure(arguments.architecture(), arguments.initialWeights());
-        if(structure.abortRun)
+        structure = new NetworkStructure(arguments.networkData());
+        if(structure.abortRun){
+            abortNetworkMessage();
             return;
+        }
+        lastArguments.uiController().outputController.clearCharts();
 
         //Log start time
         long startTime = System.nanoTime();
         System.out.println("\n--- Starting neural network ---");
 
         //Main loop
-        int batchSize = Hyperparameters.BATCH_SIZE <= 0? arguments.inputs().length : Hyperparameters.BATCH_SIZE;
+        int batchSize = Hyperparameters.BATCH_SIZE <= 0? arguments.trainSet().inputs().length : Hyperparameters.BATCH_SIZE;
         for (int i = 0; i < Hyperparameters.NUMBER_OF_EPOCHS; i++) {
 
             //Epoch
-            double meanError = 0;
+            DataTypes.Evaluation trainEvaluation = new DataTypes.Evaluation(lastArguments.trainSet().allOutputTypes().length, lastArguments.trainSet().inputs().length);
+            DataTypes.Evaluation testEvaluation = new DataTypes.Evaluation(lastArguments.testSet().allOutputTypes().length, lastArguments.testSet().inputs().length);
+            //Training
             for (int j = 0; j < batchSize; j++) {
                 //Prepare variables
                 double[] actualValues;
                 if(arguments.isPrediction){
                     actualValues = new double[1];
-                    actualValues[0] = Double.parseDouble(arguments.expectedOutput()[j]);
+                    actualValues[0] = Double.parseDouble(arguments.trainSet().expectedOutput()[j]);
                 }
                 else {
-                    actualValues = getActualValuesArray(arguments.expectedOutput()[j], arguments.allOutputTypes());
+                    actualValues = getActualValuesArray(arguments.trainSet().expectedOutput()[j], arguments.trainSet().allOutputTypes());
                 }
-
                 //Iteration
-                double[] outputValues = iteration(arguments.inputs()[j]);
+                double[] outputValues = iteration(arguments.trainSet().inputs()[j]);
+                if (outputValues == null){
+                    abortNetworkMessage();
+                    return;
+                }
                 //Learning
-                if(arguments.training)
-                    backpropagation(actualValues);
-                //Error calculation
-                meanError += calculateError(outputValues, actualValues);
-                if(Double.compare(meanError, Double.NaN) == 0 || Double.compare(meanError, Double.POSITIVE_INFINITY) == 0 || Double.compare(meanError, Double.NEGATIVE_INFINITY) == 0){
-                    System.err.println("Unexpected calculation error, aborting");
+                backpropagation(actualValues);
+
+                //Iteration evaluation
+                if(iterationEvaluation(trainEvaluation, outputValues, actualValues) != 0){
+                    abortNetworkMessage();
                     return;
                 }
             }
-            //Calculation mean error
-            meanError = meanError / batchSize;
+
+            //Testing
+            for (int j = 0; j < arguments.testSet().inputs().length; j++) {
+                //Prepare variables
+                double[] actualValues;
+                if(arguments.isPrediction){
+                    actualValues = new double[1];
+                    actualValues[0] = Double.parseDouble(arguments.testSet().expectedOutput()[j]);
+                }
+                else {
+                    actualValues = getActualValuesArray(arguments.testSet().expectedOutput()[j], arguments.testSet().allOutputTypes());
+                }
+                //Iteration
+                double[] outputValues = iteration(arguments.testSet().inputs()[j]);
+                if (outputValues == null){
+                    abortNetworkMessage();
+                    return;
+                }
+
+                //Iteration evaluation
+                if(iterationEvaluation(testEvaluation, outputValues, actualValues) != 0){
+                    abortNetworkMessage();
+                    return;
+                }
+            }
+            //Calculation of mean error
+            trainEvaluation.setMeanError(trainEvaluation.getMeanError() / batchSize);
+            testEvaluation.setMeanError(testEvaluation.getMeanError() / arguments.testSet().inputs().length);
 
             //Log data
             if(i == 0 || i == Hyperparameters.NUMBER_OF_EPOCHS - 1 || (arguments.logEpoch() != 0 && (i + 1) % arguments.logEpoch() == 0)){
                 boolean justStarted = i == 0;
 
-                System.out.println("\n---------- " + (i + 1) + " Epoch ----------");
-                System.out.println("Mean error of epoch:\t" + meanError);
+                //Print epoch info to console
+                System.out.println("\n---------- " + (i + 1) + "/" + Hyperparameters.NUMBER_OF_EPOCHS + " Epoch ----------");
+                System.out.println("Mean train error of epoch:\t" + trainEvaluation.getMeanError());
+                System.out.println("Mean test error of epoch:\t" + testEvaluation.getMeanError());
+                System.out.println("\nMean train accuracy of epoch:\t" + trainEvaluation.getAccuracy());
+                System.out.println("Mean test accuracy of epoch:\t" + testEvaluation.getAccuracy());
+                System.out.println("\nMean train precision of epoch:\t" + trainEvaluation.getMeanPrecision());
+                System.out.println("Mean test precision of epoch:\t" + testEvaluation.getMeanPrecision());
+                System.out.println("\nMean train recall of epoch:\t" + trainEvaluation.getMeanRecall());
+                System.out.println("Mean test recall of epoch:\t" + testEvaluation.getMeanRecall());
+                System.out.println("\nMean train F-score of epoch:\t" + trainEvaluation.getMeanFScore());
+                System.out.println("Mean test F-score of epoch: \t" + testEvaluation.getMeanFScore() + "\n");
 
                 if(arguments.uiController() != null){
-                    arguments.uiController().outputController.updateTrainGraph(false, justStarted, meanError, i + 1);
+                    arguments.uiController().outputController.updateErrorChart(justStarted, trainEvaluation.getMeanError(), testEvaluation.getMeanError(), i + 1);
                 }
             }
         }
@@ -79,19 +123,49 @@ public class NeuralNetwork {
         //Print time in seconds, milliseconds and nanoseconds
     }
 
+    //Collect data about iteration
+    private int iterationEvaluation(DataTypes.Evaluation evaluation, double[] outputValues, double[] actualValues){
+        //Error calculation
+        double lastError = calculateError(outputValues, actualValues);
+        if (lastError == -1){
+            return -1;
+        }
+        evaluation.addMeanError(lastError);
+
+        int predictedClassID = getOutputIDFromRawOutput(outputValues);
+        int actualClassID = getOutputIDFromRawOutput(actualValues);
+        //Count positives
+        if (predictedClassID == actualClassID)
+            evaluation.addPositive(1);
+        //Count predictions
+        evaluation.addClassInfo(1, predictedClassID, actualClassID);
+
+        if(Double.compare(evaluation.getMeanError(), Double.NaN) == 0 || Double.compare(evaluation.getMeanError(), Double.POSITIVE_INFINITY) == 0 ||
+                Double.compare(evaluation.getMeanError(), Double.NEGATIVE_INFINITY) == 0){
+            Logger.getLogger(getClass().getName()).log(Level.WARNING,"Unexpected calculation error");
+            return -1;
+        }
+        return 0;
+    }
+
     public void simulation(double[] inputs){
         //Validate arguments and inputs
         if(lastArguments == null || inputs == null){
-            PopupController.errorMessage("ERROR", "Ошибка симулятора", "", "Произошла ошибка при запуске симулятора. Отсутствуют необходимые значения");
+            PopupController.errorMessage("ERROR", "Ошибка симулятора", "", "Произошла ошибка при запуске симулятора. Отсутствуют необходимые значения.");
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred when starting the simulator. The required values are missing.");
             return;
         }
         //Run neural network
         double[] outputValues = iteration(inputs);
+        if (outputValues == null){
+            abortNetworkMessage();
+            return;
+        }
         //Update UI
         if(lastArguments.isPrediction())
             lastArguments.uiController().outputController.simulationResult(outputValues[0]);
         else
-            lastArguments.uiController().outputController.simulationResult(outputValues, getOutputValueFromRawOutput(outputValues, lastArguments.allOutputTypes()));
+            lastArguments.uiController().outputController.simulationResult(outputValues, lastArguments.trainSet().allOutputTypes()[getOutputIDFromRawOutput(outputValues)]);
     }
 
     //Convert ideal value to array of ideal values
@@ -117,14 +191,14 @@ public class NeuralNetwork {
     }
 
     //Inverting getActualValuesArray()
-    private String getOutputValueFromRawOutput(double[] rawOutput, String[] allOutputTypes){
+    private int getOutputIDFromRawOutput(double[] rawOutput){
         int idOfValue = 0;
-        for (int i = 0; i < rawOutput.length; i++) {
-            if(rawOutput[i] > rawOutput[idOfValue]) {
+        for (int i = 1; i < rawOutput.length; i++) {
+            if(rawOutput[i] > rawOutput[idOfValue]){
                 idOfValue = i;
             }
         }
-        return allOutputTypes[idOfValue];
+        return idOfValue;
     }
 
     //Contains main structure of NN.
@@ -149,7 +223,8 @@ public class NeuralNetwork {
                 }
 
                 //Calculate output
-                structure.getNeuronByPosition(i, j).calculateOutput(neuronInputs, neuronWeights);
+                if (!structure.getNeuronByPosition(i, j).calculateOutput(neuronInputs, neuronWeights))
+                    return null;
             }
         }
         //Get output values
@@ -230,18 +305,12 @@ public class NeuralNetwork {
         }
     }
 
-    public List<DataTypes.NeuronData> getRawWeights(){
-        if (structure == null)
-            return null;
-        return structure.getRawWeightsData();
-    }
-
     private void abortNetworkMessage(){
         PopupController.errorMessage("ERROR", "Произошла ошибка при работе нейронной сети.", "", "Произошла непредвиденная ошибка при запуски или работе нейронной сети.");
-        System.err.println("ERROR: Unexpected network error, aborting");
+        Logger.getLogger(getClass().getName()).log(Level.WARNING, "Unexpected network error, aborting");
     }
 
     //Structure class for network start arguments
-    public record NetworkArguments(int[] architecture, DataTypes.NetworkData initialWeights, double[][] inputs, String[] expectedOutput, String[] allOutputTypes, boolean training,
+    public record NetworkArguments(DataTypes.NetworkData networkData, DataTypes.Dataset trainSet, DataTypes.Dataset testSet,
                                    boolean isPrediction, UIController uiController, int logEpoch) { }
 }

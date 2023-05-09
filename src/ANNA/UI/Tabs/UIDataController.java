@@ -10,6 +10,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import java.io.File;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UIDataController {
     //Class for working with first tab (Data loading)
@@ -63,13 +65,19 @@ public class UIDataController {
     public void applyTrainData() {
         trainSetFile = getFileFromPath(trainDataPath.getText());
         if (!trainSetFile.exists()) {
-            PopupController.errorMessage("WARNING", "Ошибка", "", "Произошла ошибка при считывании тренировочной базы данных.");
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the training database. The file was not found.");
+            PopupController.errorMessage("WARNING", "Ошибка при считывании базы данных", "", "Произошла ошибка при считывании тренировочной базы данных. Файл не найден.");
             return;
         }
 
         trainDataLabel.setText(trainSetFile.getName());
         //Parse data and add it to the table
         rawTrainSet = Parser.parseData(trainSetFile);
+        if(rawTrainSet == null){
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the training database. Failed to read file.");
+            PopupController.errorMessage("WARNING", "Ошибка при считывании базы данных", "", "Произошла ошибка при считывании тренировочной базы данных. Не удалось прочитать файл.");
+            return;
+        }
         loadTable(trainDataTable, rawTrainSet);
     }
 
@@ -77,13 +85,19 @@ public class UIDataController {
     public void applyTestData() {
         testSetFile = getFileFromPath(testDataPath.getText());
         if (!testSetFile.exists()) {
-            PopupController.errorMessage("WARNING", "Ошибка", "", "Произошла ошибка при считывании тестовой базы данных.");
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the testing database. The file was not found.");
+            PopupController.errorMessage("WARNING", "Ошибка при считывании базы данных", "", "Произошла ошибка при считывании тестовой базы данных. Файл не найден.");
             return;
         }
 
         testDataLabel.setText(testSetFile.getName());
         //Parse data and add it to the table
         rawTestSet = Parser.parseData(testSetFile);
+        if(rawTestSet == null){
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the testing database. Failed to read file.");
+            PopupController.errorMessage("WARNING", "Ошибка при считывании базы данных", "", "Произошла ошибка при считывании тестовой базы данных. Не удалось прочитать файл.");
+            return;
+        }
         loadTable(testDataTable, rawTestSet);
     }
 
@@ -115,7 +129,7 @@ public class UIDataController {
         result = new File(path);
         int index = result.getName().lastIndexOf(".");
         if(index <= 0 || !result.getName().substring(index + 1).equals("csv")) {
-            System.err.println("ERROR: Selected file is not valid");
+            Logger.getLogger(getClass().getName()).log(Level.WARNING ,"Selected file is not valid");
             PopupController.errorMessage("WARNING", "Ошибка", "", "Выбранный файл не действителен.");
         }
         return result;

@@ -20,6 +20,8 @@ import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UIStructureController {
     //Class for working with second tab of UI (Structure creation)
@@ -36,6 +38,7 @@ public class UIStructureController {
     private UIOutputController outputController;
 
     public ObservableList<Node> trainInputSettings, testInputSettings, architectureSettings;
+    public int trainCheckColumn = 0, testCheckColumn = 0;
 
     public UIStructureController(UIController controller, VBox inputVBox, HBox architectureHBox, ChoiceBox<String> inputsChoiceBox, ChoiceBox<String> lastColumnChoiceBox,
                                  Label inputNeuronCounter, Label lastLayerNumber, Button inputNeuronRemoveButton, Button inputNeuronButton, Button inputNeuronAutoButton,
@@ -51,6 +54,20 @@ public class UIStructureController {
         this.mainController = controller;
         this.graphicOutput = graphicOutput;
         this.inputNeuronAutoButton = inputNeuronAutoButton;
+
+        //Update check column selections
+        lastColumnChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
+            if (inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(0))){
+                trainCheckColumn = t1.intValue() < 0 ? trainCheckColumn : t1.intValue();
+            }
+            else if (inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
+                testCheckColumn = t1.intValue() < 0 ? testCheckColumn : t1.intValue();
+            }
+            else {
+                trainCheckColumn = 0;
+                testCheckColumn = 0;
+            }
+        });
     }
 
     public void setControllerReferences(UIDataController dataController, UINetworkController networkController, UIOutputController outputController){
@@ -72,16 +89,21 @@ public class UIStructureController {
                 inputNeuronButton.setDisable(true);
                 inputNeuronRemoveButton.setDisable(true);
                 inputNeuronAutoButton.setDisable(true);
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "There is no training database.");
                 PopupController.errorMessage("WARNING", "Ошибка", "", "Отсутствует обучающая база данных.");
                 return;
             }
             //If settings is not valid, create new.
             if(trainInputSettings == null){
                 trainInputSettings = FXCollections.observableArrayList(addInputValue(dataController.rawTrainSet, 0));
+                trainCheckColumn = 0;
             }
             inputVBox.getChildren().addAll(2, trainInputSettings);
             inputNeuronCounter.setText(String.valueOf(trainInputSettings.size() / 2));
             lastColumnChoiceBox.getItems().addAll(dataController.rawTrainSet.get(0));
+
+            System.out.println(trainCheckColumn);
+            lastColumnChoiceBox.setValue(lastColumnChoiceBox.getItems().get(trainCheckColumn));
             inputNeuronButton.setDisable(false);
             inputNeuronRemoveButton.setDisable(false);
             inputNeuronAutoButton.setDisable(false);
@@ -93,16 +115,19 @@ public class UIStructureController {
                 inputNeuronButton.setDisable(true);
                 inputNeuronRemoveButton.setDisable(true);
                 inputNeuronAutoButton.setDisable(true);
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "There is no test database.");
                 PopupController.errorMessage("WARNING", "Ошибка", "", "Отсутствует тестовая база данных.");
                 return;
             }
             //If settings is not valid, create new.
             if(testInputSettings == null){
                 testInputSettings = FXCollections.observableArrayList(addInputValue(dataController.rawTestSet, 0));
+                testCheckColumn = 0;
             }
             inputVBox.getChildren().addAll(2, testInputSettings);
             inputNeuronCounter.setText(String.valueOf(testInputSettings.size() / 2));
             lastColumnChoiceBox.getItems().addAll(dataController.rawTestSet.get(0));
+            lastColumnChoiceBox.setValue(lastColumnChoiceBox.getItems().get(testCheckColumn));
             inputNeuronButton.setDisable(false);
             inputNeuronRemoveButton.setDisable(false);
             inputNeuronAutoButton.setDisable(false);
@@ -137,15 +162,17 @@ public class UIStructureController {
             for (int i = 0; i < dataController.rawTrainSet.get(0).size() - 1; i++) {
                 trainInputSettings.addAll(addInputValue(dataController.rawTrainSet, i));
             }
+            trainCheckColumn = lastColumnChoiceBox.getItems().size() - 1;
+            System.out.println(trainCheckColumn);
         }
         else if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
             testInputSettings.clear();
             for (int i = 0; i < dataController.rawTestSet.get(0).size() - 1; i++) {
                 testInputSettings.addAll(addInputValue(dataController.rawTestSet, i));
             }
+            testCheckColumn = lastColumnChoiceBox.getItems().size() - 1;
         }
         updateInputTable();
-        lastColumnChoiceBox.setValue(lastColumnChoiceBox.getItems().get(lastColumnChoiceBox.getItems().size() - 1));
     }
 
     //Create input neuron value

@@ -6,6 +6,8 @@ import javafx.stage.FileChooser;
 import java.awt.*;
 import java.io.File;
 import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PopupController {
     //Method for showing errors to user
@@ -32,7 +34,7 @@ public class PopupController {
         open.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(".csv files", "*.csv"));
         file = open.showOpenDialog(null);
         if(file == null) {
-            System.err.println("ERROR: Selected file is not valid");
+            Logger.getLogger(PopupController.class.getName()).log(Level.WARNING, "Selected file is not valid");
             errorMessage("WARNING", "Ошибка", "", "Выбранный файл не действителен.");
             return null;
         }

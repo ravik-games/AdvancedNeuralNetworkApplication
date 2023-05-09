@@ -7,7 +7,8 @@ import ANNA.Network.neurons.Neuron;
 import ANNA.UI.PopupController;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class NetworkStructure {
     //Class, containing data about neurons and network structure
@@ -24,25 +25,30 @@ public class NetworkStructure {
 
 
     //Initialize structure
-    public NetworkStructure(int[] structure, DataTypes.NetworkData weights){
-        abortRun = !setStructure(structure, weights);
+    public NetworkStructure(DataTypes.NetworkData networkData){
+        abortRun = !setStructure(networkData);
     }
 
     /**
-     * @param newStructure Array of Integers. Represents number of neurons in each layer.
-     * @param weights Class WeightsData. Contains all information about initial weights.
+     * @param networkData Class WeightsData. Contains all information about initial weights and network structure (represents number of neurons in each layer).
      */
-    public boolean setStructure(int[] newStructure, DataTypes.NetworkData weights){
+    public boolean setStructure(DataTypes.NetworkData networkData){
         //Clear previous values
         structure.clear();
         neuronsList.clear();
 
-        //Initialize new neurons
-        for(int i = 0; i < newStructure.length; i++) {
+        if (networkData == null){
+            PopupController.errorMessage("ERROR", "Произошла ошибка при инициализации структуры", "", "Произошла ошибка при инициализации структуры нейронной сети. Отсутствует информация о строении сети.");
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred during initialization of the neural network structure. There is no information about the network structure.");
+            return false;
+        }
 
-            ArrayList<Neuron> layer = new ArrayList<>(newStructure.length);
+        //Initialize new neurons
+        for(int i = 0; i < networkData.getStructure().length; i++) {
+
+            ArrayList<Neuron> layer = new ArrayList<>(networkData.getStructure().length);
             //Create new neurons in layer
-            for (int j = 0; j < newStructure[i]; j++) {
+            for (int j = 0; j < networkData.getStructure()[i]; j++) {
                 neuronTypes neuronType;
                 ActivationFunctions.types activationFunction;
 
@@ -50,7 +56,7 @@ public class NetworkStructure {
                     neuronType = neuronTypes.INPUT;
                     activationFunction = ActivationFunctions.types.LINEAR;
                 }
-                else if (i == newStructure.length - 1) {//Output layer
+                else if (i == networkData.getStructure().length - 1) {//Output layer
                     neuronType = neuronTypes.OUTPUT;
                     activationFunction = ActivationFunctions.types.SIGMOID;
                 }
@@ -66,19 +72,12 @@ public class NetworkStructure {
 
         //Create synapses
         //Using pre-defined weights if we can, else random
-        if (weights != null){
-            if(weights.getStructure() != newStructure){
-                PopupController.errorMessage("ERROR", "Ошибка при загрузке весов", "", "Обнаружено расхождение текущей структуры нейронной сети и структуры загружаемых весов.");
-                System.err.println("WARNING: There is a conflict between the current structure of the neural network and the structure of the weights to be loaded.");
-                return false;
-            }
-            if (weights.getWeightsList() == null)
-                return false;
-            for (int i = 0; i < weights.getWeightsList().size(); i++) {
+        if (networkData.getWeightsList() != null && networkData.getWeightsList().size() != 0){
+            for (int i = 0; i < networkData.getWeightsList().size(); i++) {
                 //Set input connections
-                neuronsList.get(i).setInputConnections(weights.getWeights(i).inputConnections());
+                neuronsList.get(i).setInputConnections(networkData.getWeights(i).inputConnections());
                 //Set output connections
-                neuronsList.get(i).setOutputConnections(weights.getWeights(i).outputConnections());
+                neuronsList.get(i).setOutputConnections(networkData.getWeights(i).outputConnections());
             }
             return true;
         }
@@ -179,10 +178,6 @@ public class NetworkStructure {
             str.append("\n");
         }
         System.out.println(str);
-    }
-
-    public List<DataTypes.NeuronData> getRawWeightsData(){
-        return neuronsList;
     }
 
     public enum neuronTypes{

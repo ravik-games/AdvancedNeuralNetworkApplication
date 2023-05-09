@@ -14,7 +14,7 @@ class NeuralNetworkTest {
         Hyperparameters.USE_BIAS_NEURONS = true;
 
         int[] architecture = new int[]{2, 2, 1};
-        double[][] initialWeights = null;
+        DataTypes.NetworkData initialWeights = null;
         double[][] inputs = new double[][]{{1, 2}, {2, 3}, {3, 4}};
         String[] expectedOutput = new String[]{"3", "5", "7"};
         String[] allOutputTypes = null;
@@ -22,7 +22,7 @@ class NeuralNetworkTest {
         boolean isPrediction = true;
         UIController uiController = null;
         int logEpoch = 1;
-        NeuralNetwork.NetworkArguments arguments = new NeuralNetwork.NetworkArguments(architecture, initialWeights, inputs, expectedOutput, allOutputTypes, training, isPrediction,
+        NeuralNetwork.NetworkArguments arguments = new NeuralNetwork.NetworkArguments(architecture, initialWeights, inputs, expectedOutput, allOutputTypes, isPrediction,
                 uiController, logEpoch);
 
         NeuralNetwork network = new NeuralNetwork();
@@ -37,7 +37,8 @@ class NeuralNetworkTest {
         Hyperparameters.MOMENTUM = 0.3;
 
         int[] architecture = new int[]{2, 2, 1};
-        double[][] initialWeights = new double[][]{{0, 0, 0.45, 0.78, 0}, {0, 0, -0.12, 0.13, 0}, {0.45, -0.12, 0, 0, 1.5}, {0.78, 0.13, 0, 0, -2.3}, {0, 0, 1.5, -2.3, 0}};
+        //double[][] initialWeights = new double[][]{{0, 0, 0.45, 0.78, 0}, {0, 0, -0.12, 0.13, 0}, {0.45, -0.12, 0, 0, 1.5}, {0.78, 0.13, 0, 0, -2.3}, {0, 0, 1.5, -2.3, 0}};
+        DataTypes.NetworkData initialWeights = null;
         double[][] inputs = new double[][]{{1, 0}};
         String[] expectedOutput = new String[]{"1"};
         List<String> allOutputTypes = new ArrayList<>();
@@ -46,7 +47,7 @@ class NeuralNetworkTest {
         boolean isPrediction = false;
         UIController uiController = null;
         int logEpoch = 1;
-        NeuralNetwork.NetworkArguments arguments = new NeuralNetwork.NetworkArguments(architecture, initialWeights, inputs, expectedOutput, allOutputTypes.toArray(new String[0]), training, isPrediction,
+        NeuralNetwork.NetworkArguments arguments = new NeuralNetwork.NetworkArguments(architecture, initialWeights, inputs, expectedOutput, allOutputTypes.toArray(new String[0]), isPrediction,
                 uiController, logEpoch);
 
         NeuralNetwork network = new NeuralNetwork();

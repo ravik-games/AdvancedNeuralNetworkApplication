@@ -1,13 +1,13 @@
 package ANNA.UI;
 
-import ANNA.UI.PopupController;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Parser {
     //Method for parsing raw set values
@@ -26,7 +26,8 @@ public class Parser {
                     return 0;
             }
             default -> {
-                PopupController.errorMessage("WARNING", "Ошибка", "", "Произошла ошибка при считывании базы данных. Ошибочные входные значения будут заменены нулями");
+                PopupController.errorMessage("WARNING", "Ошибка", "", "Произошла ошибка при считывании значения. Ошибочное значение будет заменено нулем.");
+                Logger.getLogger(Parser.class.getName()).log(Level.WARNING, "An error has occurred while reading the value. The wrong value will be replaced by zero.");
                 return 0;
             }
         }
@@ -62,9 +63,10 @@ public class Parser {
             }while(line != null);
 
         }catch (IOException e){
+            PopupController.errorMessage("WARNING", "Ошибка", "", "Произошла ошибка при считывании базы данных.\n" + e.getMessage());
+            Logger.getLogger(Parser.class.getName()).log(Level.WARNING, "An error occurred while reading the database. See stack trace.\n" + e.getMessage());
             e.printStackTrace();
-            PopupController.errorMessage("ERROR", "Ошибка", "", e.toString());
-            System.exit(1);
+            return null;
         }
         return result;
     }

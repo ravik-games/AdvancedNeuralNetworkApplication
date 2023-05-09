@@ -200,10 +200,13 @@
     -fx-border-insets: 1;
 }
 
-.chart-line-symbol {
-    -fx-background-insets: 0, 0;
-    -fx-background-radius: 0px;
-    -fx-padding: 0px;
+.chart-legend {
+    -fx-background-color: #ffffff;
+    -fx-padding: 0;
+}
+
+.chart-legend-item-symbol{
+    -fx-background-radius: 3;
 }
 
 .button {

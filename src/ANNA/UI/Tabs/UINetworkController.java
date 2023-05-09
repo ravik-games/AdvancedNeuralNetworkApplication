@@ -23,6 +23,8 @@ import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UINetworkController {
     //Class for working with third tab (Network control)
@@ -62,16 +64,6 @@ public class UINetworkController {
         main.runNeuralNetwork(arguments);
         //Enable simulator
         outputController.initializeSimulator(true);
-    }
-
-    //Start neural network on test data
-    public void startTesting() {
-        NeuralNetwork.NetworkArguments arguments = collectDataToArguments(false);
-        if(arguments == null)
-            return;
-        if(mainController.autoOpenResults.isSelected())
-            mainController.tabPane.getSelectionModel().select(3);
-        main.runNeuralNetwork(arguments);
     }
 
     //Create/update hyperparameters UI
@@ -119,19 +111,23 @@ public class UINetworkController {
     //Collect data from UI and create arguments for NN
     public NeuralNetwork.NetworkArguments collectDataToArguments(boolean trainData){
         if(trainData && (structureController.trainInputSettings == null || structureController.trainInputSettings.size() < 1)){
-            PopupController.errorMessage("WARNING", "Ошибка", "", "Не настроены входные нейроны для обучающих данных");
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Input neurons for training data are not configured.");
+            PopupController.errorMessage("WARNING", "Ошибка", "", "Не настроены входные нейроны для обучающих данных.");
             return null;
         }
         else if (!trainData && (structureController.testInputSettings == null || structureController.testInputSettings.size() < 1)){
-            PopupController.errorMessage("WARNING", "Ошибка", "", "Не настроены входные нейроны для тестовых данных");
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "Input neurons for the test data are not configured.");
+            PopupController.errorMessage("WARNING", "Ошибка", "", "Не настроены входные нейроны для тестовых данных.");
             return null;
         }
         if(trainData && (structureController.lastColumnChoiceBox.getValue().equals("...") || structureController.lastColumnChoiceBox.getValue() == null)){
-            PopupController.errorMessage("WARNING", "Ошибка", "", "Не выбран проверочный столбец для обучающих данных");
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "The test column for training data is not selected.");
+            PopupController.errorMessage("WARNING", "Ошибка", "", "Не выбран проверочный столбец для обучающих данных.");
             return null;
         }
         if(structureController.architectureSettings == null){
-            PopupController.errorMessage("WARNING", "Ошибка", "", "Не настроена структура нейронной сети");
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "The test column for test data is not selected.");
+            PopupController.errorMessage("WARNING", "Ошибка", "", "Не настроена структура нейронной сети.");
             return null;
         }
 
@@ -146,8 +142,7 @@ public class UINetworkController {
         ObservableList<Node> currentInputNeuronSet = trainData ? structureController.trainInputSettings : structureController.testInputSettings;
         List<List<String>> currentRawDataSet = trainData ? dataController.rawTrainSet : dataController.rawTestSet;
 
-        int[] architecture = new int[2 + structureController.architectureSettings.size() / 2];
-        DataTypes.NetworkData initialWeights = null;
+        DataTypes.NetworkData networkData = new DataTypes.NetworkData(new int[2 + structureController.architectureSettings.size() / 2], new ArrayList<>());
         double[][] inputs = new double[currentRawDataSet.size() - 1][currentInputNeuronSet.size() / 2];
         mainController.lastInputTypes = new Parser.inputTypes[currentInputNeuronSet.size() / 2];
         String[] expectedOutput = new String[currentRawDataSet.size() - 1];
@@ -155,11 +150,11 @@ public class UINetworkController {
         int logEpoch = Integer.parseInt(updateResultsEpoch.getText()); //TODO Check for only digits in field
 
         //Collect architecture data
-        architecture[0] = currentInputNeuronSet.size() / 2;
+        networkData.getStructure()[0] = currentInputNeuronSet.size() / 2;
         for(int i = 0; i < structureController.architectureSettings.size(); i+=2) {
             VBox vBox = (VBox) structureController.architectureSettings.get(i);
             TextField textField = (TextField) vBox.getChildren().get(2);
-            architecture[i / 2 + 1] = Integer.parseInt(textField.getText()); //TODO Check for only digits in field
+            networkData.getStructure()[i / 2 + 1] = Integer.parseInt(textField.getText()); //TODO Check for only digits in field
         }
 
         //Create inputs from existing data
@@ -191,10 +186,10 @@ public class UINetworkController {
 
         //Set output layer neuron counter
         if(isPrediction) {
-            architecture[architecture.length - 1] = 1;
+            networkData.getStructure()[networkData.getStructure().length - 1] = 1;
         }
         else {
-            architecture[architecture.length - 1] = allOutputTypes.size();
+            networkData.getStructure()[networkData.getStructure().length - 1] = allOutputTypes.size();
         }
 
         //Parse and update hyperparameters
@@ -204,8 +199,10 @@ public class UINetworkController {
             Hyperparameters.setValueByID(Hyperparameters.Identificator.values()[i / 2 - 1], textField.getText());
         }
 
-        mainController.lastArguments = new NeuralNetwork.NetworkArguments(architecture, initialWeights, inputs, expectedOutput, allOutputTypes.toArray(new String[0]),
-                trainData, isPrediction, mainController, logEpoch);
+        DataTypes.Dataset trainSet = new DataTypes.Dataset(inputs, expectedOutput, allOutputTypes.toArray(new String[0]));
+        DataTypes.Dataset testSet = new DataTypes.Dataset(inputs, expectedOutput, allOutputTypes.toArray(new String[0]));
+
+        mainController.lastArguments = new NeuralNetwork.NetworkArguments(networkData, trainSet, testSet, isPrediction, mainController, logEpoch);
 
         //Log end time
         long elapsedTime = System.nanoTime() - startTime;

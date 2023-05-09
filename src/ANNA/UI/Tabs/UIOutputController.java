@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UIOutputController {
     //Class for working with fourth tab (Results)
@@ -50,6 +52,8 @@ public class UIOutputController {
         this.mainController = controller;
         this.errorChart = errorChart;
 
+        errorChart.setCreateSymbols(false);
+
         //Load matrix
         try {
             //FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
@@ -60,8 +64,8 @@ public class UIOutputController {
         } catch (IOException e) {
             PopupController.errorMessage("ERROR", "Ошибка загрузки", "", "Произошла ошибка при загрузке дополнительных файлов.\n" + e.getMessage());
             e.printStackTrace();
-            System.err.println("CRITICAL ERROR: Couldn't load .fxml files");
-            //System.exit(1);
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE ,"Couldn't load .fxml files");
+            System.exit(1);
         }
     }
 
@@ -89,7 +93,7 @@ public class UIOutputController {
             return;
         }
 
-        for (int i = 0; i < mainController.lastArguments.architecture()[0]; i++) {
+        for (int i = 0; i < mainController.lastArguments.networkData().getStructure()[0]; i++) {
             simulatorHBox.getChildren().addAll(createSimulatorColumn(i));
         }
     }
@@ -153,22 +157,29 @@ public class UIOutputController {
     }
 
     //Show data on train graph
-    public void updateTrainGraph(boolean clear, boolean newSeries, double error, int epoch){
-        if(clear)
-            errorChart.getData().clear();
+    public void updateErrorChart(boolean newSeries, double trainError, double testError, int epoch){
 
         //Create series if not exist
         if(errorChart.getData().isEmpty() || errorChart.getData().get(errorChart.getData().size() - 1) == null || newSeries) {
-            XYChart.Series<Integer, Double> series = new XYChart.Series<>();
-            series.setName("Средняя ошибка эпохи");
-            errorChart.getData().add(series);
+            XYChart.Series<Integer, Double> trainSeries = new XYChart.Series<>();
+            XYChart.Series<Integer, Double> testSeries = new XYChart.Series<>();
+            trainSeries.setName("Обучающая выборка");
+            testSeries.setName("Тестовая выборка");
+            errorChart.getData().add(trainSeries);
+            errorChart.getData().add(testSeries);
         }
 
-        if(errorChart.getData().size() > 5){
+        if(errorChart.getData().size() > 2){
             errorChart.getData().remove(0);
         }
+
         //Add values to the chart
-        errorChart.getData().get(errorChart.getData().size() - 1).getData().add(new XYChart.Data<>(epoch, error));
+        errorChart.getData().get(errorChart.getData().size() - 2).getData().add(new XYChart.Data<>(epoch, trainError));
+        errorChart.getData().get(errorChart.getData().size() - 1).getData().add(new XYChart.Data<>(epoch, testError));
+    }
+
+    public void clearCharts(){
+        errorChart.getData().clear();
     }
 
     //Open element in new window

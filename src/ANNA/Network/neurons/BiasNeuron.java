@@ -6,7 +6,7 @@ import ANNA.Network.NetworkStructure;
 public class BiasNeuron extends Neuron{
 
     public BiasNeuron(int positionX, int positionY, int id, ActivationFunctions.types activationFunction, NetworkStructure.neuronTypes type) {
-        super(positionX, positionY, id, activationFunction, type);
+        super(id, activationFunction, type);
     }
     @Override
     protected double calculateRawOutput(double[] inputs, double[] weights) {

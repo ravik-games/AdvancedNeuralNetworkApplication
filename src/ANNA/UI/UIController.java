@@ -175,9 +175,6 @@ public class UIController {
     public void startTraining() {
         networkController.startTraining();
     }
-    public void startTesting() {
-        networkController.startTesting();
-    }
     public void prepareSimulation() {
         outputController.prepareSimulation();
     }
