@@ -2,12 +2,12 @@ package ANNA.UI.Tabs;
 
 import ANNA.UI.Parser;
 import ANNA.UI.PopupController;
-import ANNA.UI.UIController;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+
 import java.io.File;
 import java.util.List;
 import java.util.logging.Level;
@@ -17,32 +17,20 @@ public class UIDataController {
     //Class for working with first tab (Data loading)
 
     public File trainSetFile, testSetFile;
-    private TextField trainDataPath, testDataPath;
-    private Label trainDataLabel, testDataLabel;
-    private TableView<List<String>> trainDataTable, testDataTable;
-
-    private UIController mainController;
-    private UIStructureController structureController;
-    private UINetworkController networkController;
-    private UIOutputController outputController;
+    private final TextField trainDataPath, testDataPath;
+    private final Label trainDataLabel, testDataLabel;
+    private final TableView<List<String>> trainDataTable, testDataTable;
 
     public List<List<String>> rawTrainSet, rawTestSet;
 
-    public UIDataController(UIController controller, TextField trainDataPath, TextField testDataPath, Label trainDataLabel, Label testDataLabel,
+    public UIDataController(TextField trainDataPath, TextField testDataPath, Label trainDataLabel, Label testDataLabel,
                             TableView<List<String>> trainDataTable, TableView<List<String>> testDataTable){
-        mainController = controller;
         this.trainDataPath = trainDataPath;
         this.testDataPath = testDataPath;
         this.trainDataLabel = trainDataLabel;
         this.testDataLabel = testDataLabel;
         this.trainDataTable = trainDataTable;
         this.testDataTable = testDataTable;
-    }
-
-    public void setControllerReferences(UIStructureController structureController, UINetworkController networkController, UIOutputController outputController){
-        this.structureController = structureController;
-        this.networkController = networkController;
-        this.outputController = outputController;
     }
 
     //Select train set data

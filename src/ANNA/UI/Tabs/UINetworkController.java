@@ -56,7 +56,7 @@ public class UINetworkController {
 
     //Start neural network on train data
     public void startTraining() {
-        NeuralNetwork.NetworkArguments arguments = collectDataToArguments(true);
+        NeuralNetwork.NetworkArguments arguments = collectDataToArguments();
         if(arguments == null)
             return;
         if(mainController.autoOpenResults.isSelected())
@@ -109,58 +109,90 @@ public class UINetworkController {
     }
 
     //Collect data from UI and create arguments for NN
-    public NeuralNetwork.NetworkArguments collectDataToArguments(boolean trainData){
-        if(trainData && (structureController.trainInputSettings == null || structureController.trainInputSettings.size() < 1)){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "Input neurons for training data are not configured.");
-            PopupController.errorMessage("WARNING", "Ошибка", "", "Не настроены входные нейроны для обучающих данных.");
+    public NeuralNetwork.NetworkArguments collectDataToArguments(){
+        //Handling errors
+        boolean trainToTest = false;
+        if (structureController.trainInputSettings == null || structureController.trainInputSettings.size() < 1){
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Input neurons for training data are not configured.");
+            PopupController.errorMessage("ERROR", "Ошибка", "", "Не настроены входные нейроны для обучающих данных.");
             return null;
         }
-        else if (!trainData && (structureController.testInputSettings == null || structureController.testInputSettings.size() < 1)){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "Input neurons for the test data are not configured.");
-            PopupController.errorMessage("WARNING", "Ошибка", "", "Не настроены входные нейроны для тестовых данных.");
+        if (structureController.architectureSettings == null){
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "The structure of the neural network is not set up.");
+            PopupController.errorMessage("ERROR", "Ошибка", "", "Не настроена структура нейронной сети.");
             return null;
         }
-        if(trainData && (structureController.lastColumnChoiceBox.getValue().equals("...") || structureController.lastColumnChoiceBox.getValue() == null)){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "The test column for training data is not selected.");
-            PopupController.errorMessage("WARNING", "Ошибка", "", "Не выбран проверочный столбец для обучающих данных.");
-            return null;
+        if (structureController.testInputSettings == null || structureController.testInputSettings.size() < 1){
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "The input neurons for the test data are not configured. The training data will be used for testing.");
+            PopupController.errorMessage("WARNING", "Предупреждение", "", "Не настроены входные нейроны для тестовых данных. Для тестирования будут использованы обучающие данные.");
+            trainToTest = true;
         }
-        if(structureController.architectureSettings == null){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "The test column for test data is not selected.");
-            PopupController.errorMessage("WARNING", "Ошибка", "", "Не настроена структура нейронной сети.");
+        else if (structureController.trainInputSettings.size() != structureController.testInputSettings.size()){
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "The structure of the neural network is not the same for training and test data. The number of input neurons is different.");
+            PopupController.errorMessage("ERROR", "Ошибка", "", "Структура нейронной сети не совпадает для обучающих и тестовых данных. Количество входных нейронов различается.");
             return null;
         }
 
-        //Change mode
+
+        //Change mode DEPRECATED, USE ONLY FOR CLASSIFICATION (FALSE)
         boolean isPrediction = false;
 
         //Log preparation time
         long startTime = System.nanoTime();
         System.out.println("\n--- Starting preparation ---");
 
-        //Initialize local variables
-        ObservableList<Node> currentInputNeuronSet = trainData ? structureController.trainInputSettings : structureController.testInputSettings;
-        List<List<String>> currentRawDataSet = trainData ? dataController.rawTrainSet : dataController.rawTestSet;
-
-        DataTypes.NetworkData networkData = new DataTypes.NetworkData(new int[2 + structureController.architectureSettings.size() / 2], new ArrayList<>());
-        double[][] inputs = new double[currentRawDataSet.size() - 1][currentInputNeuronSet.size() / 2];
-        mainController.lastInputTypes = new Parser.inputTypes[currentInputNeuronSet.size() / 2];
-        String[] expectedOutput = new String[currentRawDataSet.size() - 1];
-        List<String> allOutputTypes = new ArrayList<>();
         int logEpoch = Integer.parseInt(updateResultsEpoch.getText()); //TODO Check for only digits in field
-
+        DataTypes.NetworkData networkData = new DataTypes.NetworkData(new int[2 + structureController.architectureSettings.size() / 2], new ArrayList<>());
+        DataTypes.Dataset trainData = collectDataset(true, isPrediction);
+        DataTypes.Dataset testData = collectDataset(trainToTest, isPrediction);
+        if(trainData == null || testData == null)
+            return null;
         //Collect architecture data
-        networkData.getStructure()[0] = currentInputNeuronSet.size() / 2;
+        networkData.getStructure()[0] = structureController.trainInputSettings.size() / 2;
         for(int i = 0; i < structureController.architectureSettings.size(); i+=2) {
             VBox vBox = (VBox) structureController.architectureSettings.get(i);
             TextField textField = (TextField) vBox.getChildren().get(2);
             networkData.getStructure()[i / 2 + 1] = Integer.parseInt(textField.getText()); //TODO Check for only digits in field
         }
 
+        //Set output layer neuron counter
+        /*if(isPrediction)
+            networkData.getStructure()[networkData.getStructure().length - 1] = 1;
+        else
+            networkData.getStructure()[networkData.getStructure().length - 1] = allOutputTypes.size();*/
+        networkData.getStructure()[networkData.getStructure().length - 1] = trainData.allOutputTypes().length;
+
+        mainController.lastArguments = new NeuralNetwork.NetworkArguments(networkData, trainData, testData, isPrediction, mainController, logEpoch);
+
+        //Log end time
+        long elapsedTime = System.nanoTime() - startTime;
+        System.out.println("\n--- Preparation finished ---");
+        System.out.println("\nElapsed time: " + (elapsedTime / 1000000000) + "s\t" + (elapsedTime / 1000000) + "ms\t" + elapsedTime + "ns\n");
+        //Print time in seconds, milliseconds and nanoseconds
+
+        return mainController.lastArguments;
+    }
+
+    private DataTypes.Dataset collectDataset(boolean trainData, boolean isPrediction){
+
+        //Initialize local variables
+        ObservableList<Node> currentInputNeuronSet = trainData ? structureController.trainInputSettings : structureController.testInputSettings;
+        List<List<String>> currentRawDataSet = trainData ? dataController.rawTrainSet : dataController.rawTestSet;
+
+        double[][] inputs = new double[currentRawDataSet.size() - 1][currentInputNeuronSet.size() / 2];
+        mainController.lastInputTypes = new Parser.inputTypes[currentInputNeuronSet.size() / 2];
+        String[] expectedOutput = new String[currentRawDataSet.size() - 1];
+        List<String> allOutputTypes = new ArrayList<>();
+
         //Create inputs from existing data
         int[] reassign = new int[currentInputNeuronSet.size() / 2]; //Each value corresponds to column number in raw data
         Parser.inputTypes[] types = new Parser.inputTypes[currentInputNeuronSet.size() / 2]; //Each value will be parsed according to set type
         int expectedColumn = currentRawDataSet.get(0).indexOf(structureController.lastColumnChoiceBox.getValue());
+        if(expectedColumn < 0){
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred when reading the dataset. The selected data of the training and test samples do not match.");
+            PopupController.errorMessage("ERROR", "Ошибка", "", "Произошла ошибка при считывании датасета. Выбранные данные обучающей и тестовой выборки не совпадают.");
+            return null;
+        }
         for(int i = 0; i < currentInputNeuronSet.size(); i+=2) {
             HBox hBox = (HBox) currentInputNeuronSet.get(i);
             ChoiceBox<String> column = (ChoiceBox<String>) hBox.getChildren().get(2);
@@ -184,14 +216,6 @@ public class UINetworkController {
             }
         }
 
-        //Set output layer neuron counter
-        if(isPrediction) {
-            networkData.getStructure()[networkData.getStructure().length - 1] = 1;
-        }
-        else {
-            networkData.getStructure()[networkData.getStructure().length - 1] = allOutputTypes.size();
-        }
-
         //Parse and update hyperparameters
         for (int i = 2; i < hyperparametersVBox.getChildren().size(); i+=2) {
             HBox hBox = (HBox) hyperparametersVBox.getChildren().get(i);
@@ -199,17 +223,6 @@ public class UINetworkController {
             Hyperparameters.setValueByID(Hyperparameters.Identificator.values()[i / 2 - 1], textField.getText());
         }
 
-        DataTypes.Dataset trainSet = new DataTypes.Dataset(inputs, expectedOutput, allOutputTypes.toArray(new String[0]));
-        DataTypes.Dataset testSet = new DataTypes.Dataset(inputs, expectedOutput, allOutputTypes.toArray(new String[0]));
-
-        mainController.lastArguments = new NeuralNetwork.NetworkArguments(networkData, trainSet, testSet, isPrediction, mainController, logEpoch);
-
-        //Log end time
-        long elapsedTime = System.nanoTime() - startTime;
-        System.out.println("\n--- Preparation finished ---");
-        System.out.println("\nElapsed time: " + (elapsedTime / 1000000000) + "s\t" + (elapsedTime / 1000000) + "ms\t" + elapsedTime + "ns\n");
-        //Print time in seconds, milliseconds and nanoseconds
-
-        return mainController.lastArguments;
+        return new DataTypes.Dataset(inputs, expectedOutput, allOutputTypes.toArray(new String[0]));
     }
 }

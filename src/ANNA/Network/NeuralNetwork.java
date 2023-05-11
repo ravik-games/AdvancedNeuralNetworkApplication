@@ -7,6 +7,7 @@ import ANNA.UI.PopupController;
 import ANNA.UI.UIController;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,10 +16,16 @@ public class NeuralNetwork {
     NetworkStructure structure;
     NetworkArguments lastArguments;
 
+    List<DataTypes.Evaluation> lastTrainEvaluation = new ArrayList<>();
+    List<DataTypes.Evaluation> lastTestEvaluation = new ArrayList<>();
+
     //Main method of NN
     public void run(NetworkArguments arguments){
-        //Remember arguments
+        //Remember arguments and clear last evaluations data
         lastArguments = arguments;
+        lastTrainEvaluation.clear();
+        lastTestEvaluation.clear();
+
         //Create and set network structure
         structure = new NetworkStructure(arguments.networkData());
         if(structure.abortRun){
@@ -92,6 +99,9 @@ public class NeuralNetwork {
             //Calculation of mean error
             trainEvaluation.setMeanError(trainEvaluation.getMeanError() / batchSize);
             testEvaluation.setMeanError(testEvaluation.getMeanError() / arguments.testSet().inputs().length);
+            //Store evaluations
+            lastTrainEvaluation.add(trainEvaluation);
+            lastTestEvaluation.add(testEvaluation);
 
             //Log data
             if(i == 0 || i == Hyperparameters.NUMBER_OF_EPOCHS - 1 || (arguments.logEpoch() != 0 && (i + 1) % arguments.logEpoch() == 0)){
@@ -101,8 +111,8 @@ public class NeuralNetwork {
                 System.out.println("\n---------- " + (i + 1) + "/" + Hyperparameters.NUMBER_OF_EPOCHS + " Epoch ----------");
                 System.out.println("Mean train error of epoch:\t" + trainEvaluation.getMeanError());
                 System.out.println("Mean test error of epoch:\t" + testEvaluation.getMeanError());
-                System.out.println("\nMean train accuracy of epoch:\t" + trainEvaluation.getAccuracy());
-                System.out.println("Mean test accuracy of epoch:\t" + testEvaluation.getAccuracy());
+                System.out.println("\nMean train accuracy of epoch:\t" + trainEvaluation.getMeanAccuracy());
+                System.out.println("Mean test accuracy of epoch:\t" + testEvaluation.getMeanAccuracy());
                 System.out.println("\nMean train precision of epoch:\t" + trainEvaluation.getMeanPrecision());
                 System.out.println("Mean test precision of epoch:\t" + testEvaluation.getMeanPrecision());
                 System.out.println("\nMean train recall of epoch:\t" + trainEvaluation.getMeanRecall());
@@ -111,7 +121,11 @@ public class NeuralNetwork {
                 System.out.println("Mean test F-score of epoch: \t" + testEvaluation.getMeanFScore() + "\n");
 
                 if(arguments.uiController() != null){
-                    arguments.uiController().outputController.updateErrorChart(justStarted, trainEvaluation.getMeanError(), testEvaluation.getMeanError(), i + 1);
+                    arguments.uiController().outputController.updateChart(justStarted, trainEvaluation, testEvaluation, i + 1);
+                    arguments.uiController().outputController.lastTrainEvaluation = lastTrainEvaluation;
+                    arguments.uiController().outputController.lastTestEvaluation = lastTestEvaluation;
+                    arguments.uiController().outputController.updateStatistics(justStarted);
+                    arguments.uiController().outputController.updateSingleClassMatrix(justStarted);
                 }
             }
         }
@@ -134,11 +148,10 @@ public class NeuralNetwork {
 
         int predictedClassID = getOutputIDFromRawOutput(outputValues);
         int actualClassID = getOutputIDFromRawOutput(actualValues);
-        //Count positives
-        if (predictedClassID == actualClassID)
-            evaluation.addPositive(1);
+
         //Count predictions
         evaluation.addClassInfo(1, predictedClassID, actualClassID);
+
 
         if(Double.compare(evaluation.getMeanError(), Double.NaN) == 0 || Double.compare(evaluation.getMeanError(), Double.POSITIVE_INFINITY) == 0 ||
                 Double.compare(evaluation.getMeanError(), Double.NEGATIVE_INFINITY) == 0){

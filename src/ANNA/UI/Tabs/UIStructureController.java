@@ -3,7 +3,6 @@ package ANNA.UI.Tabs;
 import ANNA.Network.NetworkStructure;
 import ANNA.UI.Parser;
 import ANNA.UI.PopupController;
-import ANNA.UI.UIController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -30,17 +29,14 @@ public class UIStructureController {
     public final ChoiceBox<String> lastColumnChoiceBox, inputsChoiceBox;
     private final Label inputNeuronCounter, lastLayerNumber;
     private final Button inputNeuronButton, inputNeuronRemoveButton, inputNeuronAutoButton;
-    private Canvas graphicOutput;
+    private final Canvas graphicOutput;
 
-    private UIController mainController;
     private UIDataController dataController;
-    private UINetworkController networkController;
-    private UIOutputController outputController;
 
     public ObservableList<Node> trainInputSettings, testInputSettings, architectureSettings;
     public int trainCheckColumn = 0, testCheckColumn = 0;
 
-    public UIStructureController(UIController controller, VBox inputVBox, HBox architectureHBox, ChoiceBox<String> inputsChoiceBox, ChoiceBox<String> lastColumnChoiceBox,
+    public UIStructureController(VBox inputVBox, HBox architectureHBox, ChoiceBox<String> inputsChoiceBox, ChoiceBox<String> lastColumnChoiceBox,
                                  Label inputNeuronCounter, Label lastLayerNumber, Button inputNeuronRemoveButton, Button inputNeuronButton, Button inputNeuronAutoButton,
                                  Canvas graphicOutput){
         this.inputVBox = inputVBox;
@@ -51,7 +47,6 @@ public class UIStructureController {
         this.lastLayerNumber = lastLayerNumber;
         this.inputNeuronButton = inputNeuronButton;
         this.inputNeuronRemoveButton = inputNeuronRemoveButton;
-        this.mainController = controller;
         this.graphicOutput = graphicOutput;
         this.inputNeuronAutoButton = inputNeuronAutoButton;
 
@@ -70,10 +65,8 @@ public class UIStructureController {
         });
     }
 
-    public void setControllerReferences(UIDataController dataController, UINetworkController networkController, UIOutputController outputController){
+    public void setControllerReferences(UIDataController dataController){
         this.dataController = dataController;
-        this.networkController = networkController;
-        this.outputController = outputController;
     }
 
     public void updateInputTable(){
@@ -102,7 +95,6 @@ public class UIStructureController {
             inputNeuronCounter.setText(String.valueOf(trainInputSettings.size() / 2));
             lastColumnChoiceBox.getItems().addAll(dataController.rawTrainSet.get(0));
 
-            System.out.println(trainCheckColumn);
             lastColumnChoiceBox.setValue(lastColumnChoiceBox.getItems().get(trainCheckColumn));
             inputNeuronButton.setDisable(false);
             inputNeuronRemoveButton.setDisable(false);
@@ -163,7 +155,6 @@ public class UIStructureController {
                 trainInputSettings.addAll(addInputValue(dataController.rawTrainSet, i));
             }
             trainCheckColumn = lastColumnChoiceBox.getItems().size() - 1;
-            System.out.println(trainCheckColumn);
         }
         else if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
             testInputSettings.clear();
@@ -209,7 +200,7 @@ public class UIStructureController {
         List<Node> children = new ArrayList<>(5);
 
         Label num = new Label(Integer.toString(number));
-        num.setFont(new Font("Segoe UI Semibold", 14));
+        num.setFont(new Font("Segoe UI SemiBold", 14));
         num.setPrefHeight(20);
         num.setPrefWidth(25);
 
@@ -286,7 +277,7 @@ public class UIStructureController {
         List<Node> children = new ArrayList<>(5);
 
         Label num = new Label(Integer.toString(number));
-        num.setFont(new Font("Segoe UI Semibold", 14));
+        num.setFont(new Font("Segoe UI SemiBold", 14));
         num.setAlignment(Pos.CENTER);
         num.setPrefHeight(30);
         num.setPrefWidth(100);
@@ -343,7 +334,7 @@ public class UIStructureController {
             }
             VBox vBox = (VBox) architectureSettings.get(i);
             TextField textField = (TextField) vBox.getChildren().get(2);
-            ChoiceBox<NetworkStructure.neuronTypes> choiceBox = (ChoiceBox) vBox.getChildren().get(4);
+            ChoiceBox<NetworkStructure.neuronTypes> choiceBox = (ChoiceBox<NetworkStructure.neuronTypes>) vBox.getChildren().get(4);
             if(textField.getText().equals("")) {
                 return;
             }
@@ -400,8 +391,6 @@ public class UIStructureController {
 
                 if(i == 0 || i == maxLayers - 1)
                     continue;
-
-                int min = Math.min(maxNeurons, data[i - 1]);
 
                 //Draw synapses
                 for (int k = 0; k < data[i - 1]; k++) {

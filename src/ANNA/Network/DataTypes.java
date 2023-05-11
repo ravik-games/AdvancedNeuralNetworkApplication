@@ -103,30 +103,23 @@ public class DataTypes {
     public record Dataset(double[][] inputs, String[] expectedOutput, String[] allOutputTypes){ }
 
     public static class Evaluation {
-        private final long size;
-        private double positive;
+        private final long classSize;
         private double meanError;
-        private final double[][] classesInfo;
+        private final double[][] classesInfoTable;
 
         public Evaluation(int classCount, long datasetSize){
-            size = datasetSize;
-            classesInfo = new double[classCount][classCount];
+            classSize = datasetSize;
+            classesInfoTable = new double[classCount][classCount];
         }
 
-        public long getSize() {
-            return size;
-        }
-        public double getPositive() {
-            return positive;
-        }
-        public void addPositive(long value){
-            positive += value;
-        }
-        public double[] getClassInfo(int id) {
-            return classesInfo[id];
-        }
         public void addClassInfo(double value, int firstID, int secondID){
-            classesInfo[firstID][secondID] += value;
+            classesInfoTable[firstID][secondID] += value;
+        }
+        public long getSize() {
+            return classSize * classesInfoTable.length;
+        }
+        public long getClassSize(){
+            return classSize;
         }
         public double getMeanError() {
             return meanError;
@@ -137,22 +130,31 @@ public class DataTypes {
         public void addMeanError(double value) {
             meanError += value;
         }
-        public double getAccuracy(){
-            return positive / size;
+        public double getClassAccuracy(int classID) {
+            return getClassHits(classID) / getClassSize();
+        }
+        public double getMeanAccuracy(){
+            return getHits() / getSize();
+        }
+        public double getClassHits(int classID){
+            return getClassTrueNegative(classID) + getClassTruePositive(classID);
+        }
+        public double getHits(){
+            return getTruePositive() + getTrueNegative();
         }
         public double getClassPrecision(int classID){
-            if(classesInfo[classID][classID] == 0)
+            if(classesInfoTable[classID][classID] == 0)
                 return 0;
-            return classesInfo[classID][classID] / Arrays.stream(classesInfo[classID]).sum();
+            return classesInfoTable[classID][classID] / Arrays.stream(classesInfoTable[classID]).sum();
         }
         public double getClassRecall(int classID){
-            if(classesInfo[classID][classID] == 0)
+            if(classesInfoTable[classID][classID] == 0)
                 return 0;
             double sum = 0;
-            for (double[] i : classesInfo) {
+            for (double[] i : classesInfoTable) {
                 sum += i[classID];
             }
-            return classesInfo[classID][classID] / sum;
+            return classesInfoTable[classID][classID] / sum;
         }
         public double getClassFScore(int classID, double beta){
             double precision = getClassPrecision(classID);
@@ -166,27 +168,93 @@ public class DataTypes {
         }
         public double getMeanPrecision(){
             double sum = 0;
-            for (int i = 0; i < classesInfo.length; i++) {
+            for (int i = 0; i < classesInfoTable.length; i++) {
                 sum += getClassPrecision(i);
             }
-            return sum / classesInfo.length;
+            return sum / classesInfoTable.length;
         }
         public double getMeanRecall(){
             double sum = 0;
-            for (int i = 0; i < classesInfo[0].length; i++) {
+            for (int i = 0; i < classesInfoTable[0].length; i++) {
                 sum += getClassRecall(i);
             }
-            return sum / classesInfo[0].length;
+            return sum / classesInfoTable[0].length;
         }
         public double getMeanFScore(double beta){
             double sum = 0;
-            for (int i = 0; i < classesInfo.length; i++) {
+            for (int i = 0; i < classesInfoTable.length; i++) {
                 sum += getClassFScore(i, beta);
             }
-            return sum / classesInfo.length;
+            return sum / classesInfoTable.length;
         }
         public double getMeanFScore(){
             return getMeanFScore(1);
+        }
+
+        public double getClassNegative(int classID) {
+            return getClassSize() - getClassPositive(classID);
+        }
+        public double getClassPositive(int classID) {
+            return Arrays.stream(classesInfoTable[classID]).sum();
+        }
+        public double getClassTruePositive(int classID) {
+            return classesInfoTable[classID][classID];
+        }
+        public double getClassFalsePositive(int classID) {
+            return getClassPositive(classID) - classesInfoTable[classID][classID];
+        }
+        public double getClassTrueNegative(int classID) {
+            return getClassNegative(classID) - getClassFalseNegative(classID);
+        }
+        public double getClassFalseNegative(int classID) {
+            double sum = 0;
+            for (double[] i : classesInfoTable) {
+                sum += i[classID];
+            }
+            return sum - getClassTruePositive(classID);
+        }
+
+        public double getTruePositive() {
+            double sum = 0;
+            for (int i = 0; i < classesInfoTable.length; i++) {
+                sum += getClassTruePositive(i);
+            }
+            return sum;
+        }
+        public double getTrueNegative() {
+            double sum = 0;
+            for (int i = 0; i < classesInfoTable.length; i++) {
+                sum += getClassTrueNegative(i);
+            }
+            return sum;
+        }
+        public double getFalsePositive() {
+            double sum = 0;
+            for (int i = 0; i < classesInfoTable.length; i++) {
+                sum += getClassFalsePositive(i);
+            }
+            return sum;
+        }
+        public double getFalseNegative() {
+            double sum = 0;
+            for (int i = 0; i < classesInfoTable.length; i++) {
+                sum += getClassFalseNegative(i);
+            }
+            return sum;
+        }
+
+        public String getClassInfoTableDebug(){
+            StringBuilder sb = new StringBuilder();
+            for (double[] doubles : classesInfoTable) {
+                for (int j = 0; j < classesInfoTable[0].length; j++) {
+                    sb.append(doubles[j]).append("\t\t");
+                }
+                sb.append("\n");
+            }
+            return sb.toString();
+        }
+        public enum Metrics{
+            LOSS, SIZE, HITS, ACCURACY, PRECISION, RECALL, F_SCORE
         }
     }
 }

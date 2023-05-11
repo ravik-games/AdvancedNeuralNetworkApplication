@@ -65,7 +65,7 @@ public class NetworkStructure {
                     activationFunction = ActivationFunctions.types.SIGMOID;
                 }
 
-                layer.add(initializeNeuron(i, j, neuronType, activationFunction));
+                layer.add(initializeNeuron(neuronType, activationFunction));
             }
             structure.add(layer);
         }
@@ -109,9 +109,9 @@ public class NetworkStructure {
     }
 
     //Initialize single neuron and add it to the arrays
-    private Neuron initializeNeuron(int positionY, int positionX, neuronTypes type, ActivationFunctions.types activationFunction){
+    private Neuron initializeNeuron(neuronTypes type, ActivationFunctions.types activationFunction){
         //Create new neuron and set it ID
-        Neuron neuron = new BasicNeuron(positionX, positionY, neuronsList.size(), activationFunction, type);
+        Neuron neuron = new BasicNeuron(neuronsList.size(), activationFunction, type);
         //Add to the array
         neuronsList.add(new DataTypes.NeuronData(neuron));
         //neuronsArray.add(value);

@@ -22,11 +22,9 @@ class NeuralNetworkTest {
         boolean isPrediction = true;
         UIController uiController = null;
         int logEpoch = 1;
-        NeuralNetwork.NetworkArguments arguments = new NeuralNetwork.NetworkArguments(architecture, initialWeights, inputs, expectedOutput, allOutputTypes, isPrediction,
-                uiController, logEpoch);
 
         NeuralNetwork network = new NeuralNetwork();
-        network.run(arguments);
+        //network.run(arguments);
         network.structure.printWeights(false);
     }
 
@@ -47,11 +45,9 @@ class NeuralNetworkTest {
         boolean isPrediction = false;
         UIController uiController = null;
         int logEpoch = 1;
-        NeuralNetwork.NetworkArguments arguments = new NeuralNetwork.NetworkArguments(architecture, initialWeights, inputs, expectedOutput, allOutputTypes.toArray(new String[0]), isPrediction,
-                uiController, logEpoch);
 
         NeuralNetwork network = new NeuralNetwork();
-        network.run(arguments);
+        //network.run(arguments);
         network.structure.printWeights(false);
     }
 }

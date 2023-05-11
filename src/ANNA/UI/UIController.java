@@ -8,6 +8,7 @@ import ANNA.UI.Tabs.UIOutputController;
 import ANNA.UI.Tabs.UIStructureController;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -16,20 +17,23 @@ import javafx.scene.layout.VBox;
 import java.util.List;
 
 public class UIController {
+    //Master class for all UI stuff
+
     public CheckBox autoOpenResults;
     public Button inputNeuronButton, layerAddButton, inputNeuronRemoveButton, inputNeuronAutoButton, layerRemoveButton, startSimulatorButton, newWindowChartButton, newWindowMatrixButton;
-    public VBox inputVBox, hyperparametersVBox;
+    public VBox inputVBox, hyperparametersVBox, statVBox;
     public HBox architectureHBox, simulatorHBox;
     public TabPane tabPane;
     public Canvas graphicOutput;
     public TextField updateResultsEpoch, trainDataPath, testDataPath, loadArchitecturePath, loadWeightsPath, loadHyperparametersPath,
             loadNeuralNetworkPath, saveArchitecturePath, saveWeightsPath, saveHyperparametersPath, saveNeuralNetworkPath;
     public TableView<List<String>> trainDataTable, testDataTable;
-    public Label trainDataLabel, testDataLabel, inputNeuronCounter, lastLayerNumber;
-    public LineChart<Integer, Double> errorChart;
-    public ChoiceBox<String> inputsChoiceBox, lastColumnChoiceBox;
+    public Label trainDataLabel, testDataLabel, inputNeuronCounter, lastLayerNumber, chartLabel, matrixLabel;
+    public LineChart<Integer, Double> chart;
+    public ChoiceBox<String> inputsChoiceBox, lastColumnChoiceBox, statClassChoiceBox, matrixDataChoiceBox;
     public TextArea simulatorOutput;
     public Pane chartParent, matrixParent;
+    public NumberAxis chartYAxis;
 
     public NeuralNetwork.NetworkArguments lastArguments;
     public Parser.inputTypes[] lastInputTypes;
@@ -45,15 +49,13 @@ public class UIController {
 
     //Initialize components
     public void initialize(){
-        dataController = new UIDataController(this, trainDataPath, testDataPath, trainDataLabel, testDataLabel, trainDataTable, testDataTable);
-        structureController = new UIStructureController(this, inputVBox, architectureHBox, inputsChoiceBox, lastColumnChoiceBox, inputNeuronCounter, lastLayerNumber, inputNeuronRemoveButton, inputNeuronButton, inputNeuronAutoButton, graphicOutput);
+        dataController = new UIDataController(trainDataPath, testDataPath, trainDataLabel, testDataLabel, trainDataTable, testDataTable);
+        structureController = new UIStructureController(inputVBox, architectureHBox, inputsChoiceBox, lastColumnChoiceBox, inputNeuronCounter, lastLayerNumber, inputNeuronRemoveButton, inputNeuronButton, inputNeuronAutoButton, graphicOutput);
         networkController = new UINetworkController(this, hyperparametersVBox, updateResultsEpoch);
-        outputController = new UIOutputController(this, simulatorOutput, startSimulatorButton, simulatorHBox, errorChart, matrixParent);
+        outputController = new UIOutputController(this, simulatorOutput, startSimulatorButton, simulatorHBox, statVBox, chart, matrixParent, chartLabel, matrixLabel, statClassChoiceBox, matrixDataChoiceBox);
 
-        dataController.setControllerReferences(structureController, networkController, outputController);
-        structureController.setControllerReferences(dataController, networkController, outputController);
+        structureController.setControllerReferences(dataController);
         networkController.setControllerReferences(dataController, structureController, outputController);
-        outputController.setControllerReferences(dataController, structureController, networkController);
 
         inputsChoiceBox.getItems().addAll("Обучающая база данных", "Тестовая база данных");
         inputsChoiceBox.setValue("Выберите базу данных");
@@ -199,5 +201,22 @@ public class UIController {
     }
     public void newWindowChart() {
         outputController.openChartInNewWindow(newWindowChartButton, chartParent);
+    }
+
+    //Change output selectors
+    public void changeChartLeft() {
+        outputController.switchSelector(0, true);
+    }
+    public void changeChartRight() {
+        outputController.switchSelector(0, false);
+    }
+    public void changeMatrixLeft() {
+        outputController.switchSelector(1, true);
+    }
+    public void changeMatrixRight() {
+        outputController.switchSelector(1, true);
+    }
+    public void setChartForceYZero(boolean value){
+        chartYAxis.setForceZeroInRange(value);
     }
 }
