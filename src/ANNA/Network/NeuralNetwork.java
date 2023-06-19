@@ -121,11 +121,7 @@ public class NeuralNetwork {
                 System.out.println("Mean test F-score of epoch: \t" + testEvaluation.getMeanFScore() + "\n");
 
                 if(arguments.uiController() != null){
-                    arguments.uiController().outputController.updateChart(justStarted, trainEvaluation, testEvaluation, i + 1);
-                    arguments.uiController().outputController.lastTrainEvaluation = lastTrainEvaluation;
-                    arguments.uiController().outputController.lastTestEvaluation = lastTestEvaluation;
-                    arguments.uiController().outputController.updateStatistics(justStarted);
-                    arguments.uiController().outputController.updateSingleClassMatrix(justStarted);
+                    arguments.uiController().updateResults(justStarted, i, lastTrainEvaluation, lastTestEvaluation);
                 }
             }
         }

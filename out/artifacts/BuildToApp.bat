@@ -1,1 +1,1 @@
-C:\Users\user\.jdks\liberica-18.0.2.1\bin\jpackage.exe --name ANNA --main-jar AdvancedNeuralNetworkApplication.jar --input input --win-console --dest output --type app-image
+"C:\Users\ravik games\.jdks\liberica-17.0.6\bin\jpackage.exe" --name ANNA --main-jar AdvancedNeuralNetworkApplication.jar --input input --win-console --dest output --type app-image

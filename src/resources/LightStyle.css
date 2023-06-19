@@ -64,7 +64,8 @@
 }
 
 .table-view .column-header .label {
-    -fx-font-family: "Segoe UI Semibold";
+    -fx-font-family: "Segoe UI Bold";
+    -fx-font-weight: bold;
     -fx-opacity: 1;
 }
 

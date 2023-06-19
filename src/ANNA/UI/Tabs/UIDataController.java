@@ -9,6 +9,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,12 +51,12 @@ public class UIDataController {
     }
 
     //Read and apply train data
-    public void applyTrainData() {
+    public boolean applyTrainData() {
         trainSetFile = getFileFromPath(trainDataPath.getText());
         if (!trainSetFile.exists()) {
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the training database. The file was not found.");
             PopupController.errorMessage("WARNING", "Ошибка при считывании базы данных", "", "Произошла ошибка при считывании тренировочной базы данных. Файл не найден.");
-            return;
+            return false;
         }
 
         trainDataLabel.setText(trainSetFile.getName());
@@ -64,18 +65,19 @@ public class UIDataController {
         if(rawTrainSet == null){
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the training database. Failed to read file.");
             PopupController.errorMessage("WARNING", "Ошибка при считывании базы данных", "", "Произошла ошибка при считывании тренировочной базы данных. Не удалось прочитать файл.");
-            return;
+            return false;
         }
         loadTable(trainDataTable, rawTrainSet);
+        return true;
     }
 
     //Read and apply test data
-    public void applyTestData() {
+    public boolean applyTestData() {
         testSetFile = getFileFromPath(testDataPath.getText());
         if (!testSetFile.exists()) {
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the testing database. The file was not found.");
             PopupController.errorMessage("WARNING", "Ошибка при считывании базы данных", "", "Произошла ошибка при считывании тестовой базы данных. Файл не найден.");
-            return;
+            return false;
         }
 
         testDataLabel.setText(testSetFile.getName());
@@ -84,15 +86,43 @@ public class UIDataController {
         if(rawTestSet == null){
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the testing database. Failed to read file.");
             PopupController.errorMessage("WARNING", "Ошибка при считывании базы данных", "", "Произошла ошибка при считывании тестовой базы данных. Не удалось прочитать файл.");
-            return;
+            return false;
         }
         loadTable(testDataTable, rawTestSet);
+        return true;
     }
 
     //Load table to TableView
     private void loadTable(TableView<java.util.List<String>> table, java.util.List<java.util.List<String>> rawData){
         table.getColumns().clear();
         table.getItems().clear();
+
+        //Create first column for row numbers
+        TableColumn<List<String>, String> numberColumn = new TableColumn<>("#");
+        numberColumn.setStyle("-fx-font-weight: bold;" +
+                            "-fx-font-style: italic");
+        numberColumn.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().get(0)));
+        numberColumn.setMinWidth(20);
+        numberColumn.setPrefWidth(50);
+        numberColumn.setMaxWidth(200);
+        //Set valid integer comparator
+        numberColumn.setComparator((o1, o2) -> {
+            if (o1 == null && o2 == null) return 0;
+            if (o1 == null) return -1;
+            if (o2 == null) return 1;
+
+            Integer i1=null;
+            try{ i1=Integer.valueOf(o1); } catch(NumberFormatException ignored){}
+            Integer i2=null;
+            try{ i2=Integer.valueOf(o2); } catch(NumberFormatException ignored){}
+
+            if(i1==null && i2==null) return o1.compareTo(o2);
+            if(i1==null) return -1;
+            if(i2==null) return 1;
+
+            return i1-i2;
+        });
+        table.getColumns().add(numberColumn);
 
         //Create columns and add them to the table
         for (int i = 0; i < rawData.get(0).size(); i++) {
@@ -106,8 +136,11 @@ public class UIDataController {
             table.getColumns().add(column);
         }
 
+        //Add data to table
         for (int i = 1; i < rawData.size(); i++) {
-            table.getItems().add(rawData.get(i));
+            ArrayList<String> list = new ArrayList<>(rawData.get(i));
+            list.set(0, Integer.toString(i));
+            table.getItems().add(list);
         }
     }
 

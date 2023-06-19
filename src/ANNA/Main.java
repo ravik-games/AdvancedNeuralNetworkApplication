@@ -8,10 +8,28 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
 public class Main extends Application {
     private NeuralNetwork network;
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+
+    //Logger setup
+    static {
+        try {
+            InputStream stream = Main.class.getClassLoader().getResourceAsStream("logger.properties");
+            LogManager.getLogManager().readConfiguration(stream);
+            //LOGGER.addHandler(new FileHandler("/logs/latest.log"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static void main(String[] args) {
+        LOGGER.info("Starting application...");
         launch(args);
     }
 

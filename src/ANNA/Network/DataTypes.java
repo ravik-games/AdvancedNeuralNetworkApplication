@@ -243,6 +243,10 @@ public class DataTypes {
             return sum;
         }
 
+        public double[][] getClassesInfoTable() {
+            return classesInfoTable;
+        }
+
         public String getClassInfoTableDebug(){
             StringBuilder sb = new StringBuilder();
             for (double[] doubles : classesInfoTable) {

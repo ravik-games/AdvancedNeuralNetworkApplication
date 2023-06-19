@@ -5,23 +5,28 @@ import ANNA.Network.DataTypes;
 import ANNA.UI.Parser;
 import ANNA.UI.PopupController;
 import ANNA.UI.Tabs.modules.UIClassMatrixController;
+import ANNA.UI.Tabs.modules.UIFullMatrixController;
 import ANNA.UI.UIController;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
+import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,10 +48,13 @@ public class UIOutputController {
 
     private final UIController mainController;
     private UIClassMatrixController classMatrixController;
+    private UIFullMatrixController fullMatrixController;
     private Main main;
 
     private int chartSelectionID = 0;
     private int matrixSelectionID = 0;
+    private int fullMatrixClassCount = 0;
+    private boolean matrixInNewWindow;
     private final List<StatisticsUI> statisticsUI = new ArrayList<>();
 
     public List<DataTypes.Evaluation> lastTrainEvaluation;
@@ -54,7 +62,7 @@ public class UIOutputController {
 
 
     public UIOutputController(UIController controller, TextArea simulatorOutput, Button startSimulatorButton, HBox simulatorHBox, VBox statVBox,
-                              LineChart<Integer, Double> chart, Pane matrixParent, Label chartLabel, Label matrixLabel, ChoiceBox<String> statClassChoiceBox, ChoiceBox<String> matrixDataChoiceBox){
+                              LineChart<Integer, Double> chart, Label chartLabel, Label matrixLabel, ChoiceBox<String> statClassChoiceBox, ChoiceBox<String> matrixDataChoiceBox){
         this.simulatorHBox = simulatorHBox;
         this.statVBox = statVBox;
         this.startSimulatorButton = startSimulatorButton;
@@ -68,13 +76,18 @@ public class UIOutputController {
 
         //Load matrix
         try {
-            //FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
+            //Single class matrix
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ConfusionMatrixSingle.fxml"));
             confusionMatrixSingle = loader.load();
             classMatrixController = loader.getController();
 
+            //Full matrix
+            loader = new FXMLLoader(getClass().getResource("/fxml/ConfusionMatrixFull.fxml"));
+            confusionMatrixFull = loader.load();
+            fullMatrixController = loader.getController();
+
+            //Set default to class matrix
             changeMatrix(MatrixSelector.CLASS_MATRIX);
-            matrixParent.getChildren().add(currentMatrix);
         } catch (IOException e) {
             PopupController.errorMessage("ERROR", "Ошибка загрузки", "", "Произошла ошибка при загрузке дополнительных файлов.\n" + e.getMessage());
             e.printStackTrace();
@@ -94,8 +107,7 @@ public class UIOutputController {
         matrixDataChoiceBox.getItems().add("Обучение");
         matrixDataChoiceBox.getItems().add("Тестирование");
         matrixDataChoiceBox.setValue("Обучение");
-        matrixDataChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> updateSingleClassMatrix(t1.intValue() == 0,
-                false));
+        matrixDataChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> updateMatrix(t1.intValue() == 0));
 
     }
 
@@ -178,7 +190,9 @@ public class UIOutputController {
     }
 
     //Show data on train graph
-    public void updateChart(boolean newSeries, DataTypes.Evaluation trainData, DataTypes.Evaluation testData, int epoch){
+    public void updateChart(boolean newSeries, int epoch){
+        DataTypes.Evaluation trainData = lastTrainEvaluation.get(lastTrainEvaluation.size() - 1);
+        DataTypes.Evaluation testData = lastTestEvaluation.get(lastTestEvaluation.size() - 1);
 
         //Create series if not exist
         if(chart.getData().isEmpty() || chart.getData().get(chart.getData().size() - 1) == null || newSeries) {
@@ -229,7 +243,7 @@ public class UIOutputController {
         List<XYChart.Data<Integer, Double>> trainValues = new ArrayList<>();
         List<XYChart.Data<Integer, Double>> testValues = new ArrayList<>();
 
-        //Collect data
+        //Collect and add data to chart
         switch (ChartSelector.values()[chartSelectionID]){
             case LOSS_CHART -> {
                 for (int i = 0; i < lastTrainEvaluation.size(); i++) {
@@ -276,13 +290,8 @@ public class UIOutputController {
     public void updateSingleClassMatrix(int newClass, boolean trainData, boolean clear){
         if(lastTrainEvaluation == null || lastTrainEvaluation.size() < 1 || lastTestEvaluation == null || lastTestEvaluation.size() < 1)
             return;
-        if(clear) {
+        if(clear)
             clearMatrix();
-            classMatrixController.matrixClassSelector.getItems().clear();
-            classMatrixController.matrixClassSelector.getItems().add("Все классы");
-            classMatrixController.matrixClassSelector.getItems().addAll(mainController.lastArguments.trainSet().allOutputTypes());
-            classMatrixController.matrixClassSelector.setValue("Все классы");
-        }
 
         int selectedClass = Math.max(0, newClass) - 1;
         DataTypes.Evaluation evaluation;
@@ -307,15 +316,140 @@ public class UIOutputController {
         classMatrixController.falseNegativeLabel.setText(falseNegativeText);
     }
 
+    public void updateFullMatrix(boolean clear){
+        updateFullMatrix(mainController.matrixDataChoiceBox.getItems().indexOf(mainController.matrixDataChoiceBox.getValue()) == 0, clear);
+    }
+    public void updateFullMatrix(boolean trainData, boolean clear){
+        if(lastTrainEvaluation == null || lastTrainEvaluation.size() < 1 || lastTestEvaluation == null || lastTestEvaluation.size() < 1)
+            return;
+        if(clear)
+            clearMatrix();
+
+        //Switch on data
+        DataTypes.Evaluation evaluation = trainData ? lastTrainEvaluation.get(lastTrainEvaluation.size() - 1) : lastTestEvaluation.get(lastTestEvaluation.size() - 1);
+        fullMatrixClassCount = evaluation.getClassesInfoTable().length;
+
+        //Limiting class count
+        double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+        if (fullMatrixClassCount > Math.floor(height / 30.8) && matrixInNewWindow){
+            fullMatrixController.matrixGrid.add(createNewCellWithLabel("Превышен лимит классов для отображения (" + Math.floor(height / 30.8) + ")",
+                    32), 0, 0);
+            RowConstraints row = new RowConstraints();
+            row.setPercentHeight(100);
+            row.setValignment(VPos.CENTER);
+
+            ColumnConstraints column = new ColumnConstraints();
+            column.setPercentWidth(100);
+            column.setHalignment(HPos.CENTER);
+
+            fullMatrixController.matrixGrid.getRowConstraints().add(row);
+            fullMatrixController.matrixGrid.getColumnConstraints().add(column);
+            return;
+        }
+        else if (fullMatrixClassCount > 6 && !matrixInNewWindow){
+            fullMatrixController.matrixGrid.add(createNewCellWithLabel("Превышен лимит классов для отображения (6), откройте матрицу в новом окне для просмотра",
+                    14), 0, 0);
+            RowConstraints row = new RowConstraints();
+            row.setPercentHeight(100);
+            row.setValignment(VPos.CENTER);
+
+            ColumnConstraints column = new ColumnConstraints();
+            column.setPercentWidth(100);
+            column.setHalignment(HPos.CENTER);
+
+            fullMatrixController.matrixGrid.getRowConstraints().add(row);
+            fullMatrixController.matrixGrid.getColumnConstraints().add(column);
+            return;
+        }
+
+        //Create and add data to matrix
+        for (int i = 0; i < fullMatrixClassCount; i++) {
+            for (int j = 0; j < fullMatrixClassCount; j++) {
+                double currentCount = evaluation.getClassesInfoTable()[i][j];
+                double expectedClassPositive = 0;
+                for (double[] k : evaluation.getClassesInfoTable()) {
+                    expectedClassPositive += k[j];
+                }
+                Pane pane = createNewCellWithLabel(currentCount == 0 ? "" : String.format("%.0f", currentCount), 14);
+
+                //Skip, if count == 0 and it's not diagonal
+                if(i != j && Double.compare(currentCount, 0) == 0) {
+                    pane.setStyle("-fx-border-width: 1; -fx-border-color: gray;");
+                    fullMatrixController.matrixGrid.add(pane, j + 1, i + 1);
+                    continue;
+                }
+
+                //Set color of pane
+                Color color = Color.hsb((i == j ? currentCount / expectedClassPositive : (1 - currentCount / expectedClassPositive)) * 100, 0.8, 0.9);
+                pane.setStyle("-fx-border-width: 1;" +
+                        "-fx-border-color: gray;" +
+                        "-fx-background-color: #" + colorFormat(color.getRed()) + colorFormat(color.getGreen()) + colorFormat(color.getBlue()) + colorFormat(color.getOpacity()));
+
+                fullMatrixController.matrixGrid.add(pane, j + 1, i + 1);
+            }
+
+            //Add column and row class labels
+            Pane rowLabelCell = createNewCellWithLabel(mainController.lastArguments.trainSet().allOutputTypes()[i], 14);
+            Pane columnLabelCell = createNewCellWithLabel(mainController.lastArguments.trainSet().allOutputTypes()[i], 14);
+            fullMatrixController.matrixGrid.add(rowLabelCell, 0, i + 1);
+            fullMatrixController.matrixGrid.add(columnLabelCell, i + 1, 0);
+        }
+
+        //Add empty cell in top right corner for design reasons
+        Pane pane = new Pane();
+        pane.setStyle("-fx-border-width: 1;-fx-border-color: gray;");
+        fullMatrixController.matrixGrid.add(pane, 0, 0);
+
+        //Configure rows and columns
+        double percent = 100f / (fullMatrixClassCount + 1);
+        for (int i = 0; i < fullMatrixClassCount + 1; i++) {
+            RowConstraints row = new RowConstraints();
+            row.setPercentHeight(percent);
+            row.setValignment(VPos.CENTER);
+
+            ColumnConstraints column = new ColumnConstraints();
+            column.setPercentWidth(percent);
+            column.setHalignment(HPos.CENTER);
+
+            fullMatrixController.matrixGrid.getRowConstraints().add(row);
+            fullMatrixController.matrixGrid.getColumnConstraints().add(column);
+        }
+    }
+
     public void clearMatrix(){
         switch (MatrixSelector.values()[matrixSelectionID]){
             case CLASS_MATRIX -> {
-                classMatrixController.truePositiveLabel.setText("...");
-                classMatrixController.trueNegativeLabel.setText("...");
-                classMatrixController.falsePositiveLabel.setText("...");
-                classMatrixController.falseNegativeLabel.setText("...");
+                classMatrixController.clear();
+                classMatrixController.matrixClassSelector.getItems().add("Все классы");
+                classMatrixController.matrixClassSelector.getItems().addAll(mainController.lastArguments.trainSet().allOutputTypes());
+                classMatrixController.matrixClassSelector.setValue("Все классы");
             }
+            case FULL_MATRIX -> fullMatrixController.clear();
         }
+    }
+
+    private String colorFormat(double value){
+        String str = Integer.toHexString((int) Math.round(value * 255));
+        return str.length() == 1 ? "0" + str : str;
+    }
+
+    private Pane createNewCellWithLabel(String text, int textSize){
+        AnchorPane pane = new AnchorPane();
+        Label label = new Label(text);
+        label.setFont(Font.font("Segoe UI SemiBold", textSize));
+        label.setAlignment(Pos.CENTER);
+        label.setTextAlignment(TextAlignment.CENTER);
+        label.setWrapText(true);
+
+        //Set label in center
+        AnchorPane.setLeftAnchor(label, 0d);
+        AnchorPane.setRightAnchor(label, 0d);
+        AnchorPane.setTopAnchor(label, 0d);
+        AnchorPane.setBottomAnchor(label, 0d);
+
+        pane.setStyle("-fx-border-width: 1;-fx-border-color: gray;");
+        pane.getChildren().add(label);
+        return pane;
     }
 
     //Switch between different output panes
@@ -358,17 +492,40 @@ public class UIOutputController {
     }
 
     private void changeMatrix(MatrixSelector selection){
+        if(matrixInNewWindow)
+            return;
         switch (selection){
             case CLASS_MATRIX -> {
                 currentMatrix = confusionMatrixSingle;
                 matrixLabel.setText("Матрица ошибок №1");
                 updateSingleClassMatrix(false);
             }
+            case FULL_MATRIX -> {
+                currentMatrix = confusionMatrixFull;
+                matrixLabel.setText("Матрица ошибок №2");
+                updateFullMatrix(true);
+            }
+        }
+        mainController.matrixParent.getChildren().clear();
+        mainController.matrixParent.getChildren().add(currentMatrix);
+    }
+
+    private void updateMatrix(boolean trainData){
+        switch (MatrixSelector.values()[matrixSelectionID]){
+            case CLASS_MATRIX -> updateSingleClassMatrix(trainData, false);
+            case FULL_MATRIX -> updateFullMatrix(trainData, true);
         }
     }
 
-    //Open element in new window
-    public void openElementInNewWindow(String title, Pane parent, Parent element, Button openButton, double minWidth, double minHeight){
+    private void updateMatrix(){
+        switch (MatrixSelector.values()[matrixSelectionID]){
+            case CLASS_MATRIX -> updateSingleClassMatrix(false);
+            case FULL_MATRIX -> updateFullMatrix(true);
+        }
+    }
+
+    //Open chart in new window
+    public Stage openElementInNewWindow(String title, Pane parent, Parent element, Button openButton, double minWidth, double minHeight){
         parent.getChildren().remove(element);
         Label label = new Label("Открыто в другом окне");
         label.setFont(new Font("Segoe UI SemiLight", 14));
@@ -385,6 +542,8 @@ public class UIOutputController {
         stage.setScene(scene);
         stage.setMinWidth(minWidth);
         stage.setMinHeight(minHeight);
+        stage.setWidth(minWidth);
+        stage.setHeight(minHeight);
         stage.show();
 
         stage.setOnCloseRequest(windowEvent -> {
@@ -394,13 +553,38 @@ public class UIOutputController {
             element.setStyle("-fx-background-color: white"); //Fix background color
             openButton.setDisable(false);
         });
+
+        return stage;
     }
     
     public void openChartInNewWindow(Button button, Pane parent){
-        openElementInNewWindow("График", parent, chart, button, 250, 250);
+        openElementInNewWindow("График", parent, chart, button, 250, 250).setOnCloseRequest(windowEvent -> {
+            //Override default close event
+            chart.getScene().setRoot(new Pane());
+            parent.getChildren().clear();
+            parent.getChildren().add(chart);
+            chart.setStyle("-fx-background-color: white"); //Fix background color
+            button.setDisable(false);
+        });
     }
     public void openMatrixInNewWindow(Button button, Pane parent){
-        openElementInNewWindow("Матрица", parent, currentMatrix, button, 616, 290);
+        matrixInNewWindow = true;
+        double minHeight = Math.max(290, Math.min(fullMatrixClassCount * 30.6, Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 50));
+        System.out.println(minHeight);
+
+        openElementInNewWindow("Матрица", parent, currentMatrix, button, Math.floor(minHeight * 2), minHeight).setOnCloseRequest(windowEvent -> {
+            //Override default close event
+            currentMatrix.getScene().setRoot(new Pane());
+            parent.getChildren().clear();
+            parent.getChildren().add(currentMatrix);
+            currentMatrix.setStyle("-fx-background-color: white"); //Fix background color
+            button.setDisable(false);
+
+            matrixInNewWindow = false;
+            updateMatrix();
+        });
+
+        updateMatrix();
     }
 
     //Show and update statistics

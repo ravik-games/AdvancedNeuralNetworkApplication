@@ -43,7 +43,7 @@ public class Parser {
             //Read all lines in file
             do{
                 //Parse one line
-                List<String> parsedLine = new ArrayList<>(List.of(line.split("[,;|](?=([^\\\"]*\\\"[^\\\"]*\\\")*(?![^\\\"]*\\\"))")));
+                List<String> parsedLine = new ArrayList<>(List.of(line.split("[,;|](?=([^\"]*\"[^\"]*\")*(?![^\"]*\"))")));
 
                 //set max length of parsed line
                 if(parsedLine.size() > maxLength)

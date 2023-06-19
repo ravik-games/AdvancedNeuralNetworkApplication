@@ -1,6 +1,7 @@
 package ANNA.UI;
 
 import ANNA.Main;
+import ANNA.Network.DataTypes;
 import ANNA.Network.NeuralNetwork;
 import ANNA.UI.Tabs.UIDataController;
 import ANNA.UI.Tabs.UINetworkController;
@@ -52,7 +53,7 @@ public class UIController {
         dataController = new UIDataController(trainDataPath, testDataPath, trainDataLabel, testDataLabel, trainDataTable, testDataTable);
         structureController = new UIStructureController(inputVBox, architectureHBox, inputsChoiceBox, lastColumnChoiceBox, inputNeuronCounter, lastLayerNumber, inputNeuronRemoveButton, inputNeuronButton, inputNeuronAutoButton, graphicOutput);
         networkController = new UINetworkController(this, hyperparametersVBox, updateResultsEpoch);
-        outputController = new UIOutputController(this, simulatorOutput, startSimulatorButton, simulatorHBox, statVBox, chart, matrixParent, chartLabel, matrixLabel, statClassChoiceBox, matrixDataChoiceBox);
+        outputController = new UIOutputController(this, simulatorOutput, startSimulatorButton, simulatorHBox, statVBox, chart, chartLabel, matrixLabel, statClassChoiceBox, matrixDataChoiceBox);
 
         structureController.setControllerReferences(dataController);
         networkController.setControllerReferences(dataController, structureController, outputController);
@@ -79,7 +80,8 @@ public class UIController {
     public void applyTestData() {
         lastColumnChoiceBox.setDisable(true);
         lastColumnChoiceBox.getItems().clear();
-        dataController.applyTestData();
+        if(!dataController.applyTestData())
+            return;
 
         //Reset inputs choice box
         inputsChoiceBox.setValue("Выберите базу данных");
@@ -97,7 +99,8 @@ public class UIController {
     public void applyTrainData() {
         lastColumnChoiceBox.setDisable(true);
         lastColumnChoiceBox.getItems().clear();
-        dataController.applyTrainData();
+        if(!dataController.applyTrainData())
+            return;
 
         //Reset inputs choice box
         inputsChoiceBox.setValue("Выберите базу данных");
@@ -218,5 +221,14 @@ public class UIController {
     }
     public void setChartForceYZero(boolean value){
         chartYAxis.setForceZeroInRange(value);
+    }
+
+    public void updateResults(boolean clear, int epoch, List<DataTypes.Evaluation> trainEvaluation, List<DataTypes.Evaluation> testEvaluation){
+        outputController.lastTrainEvaluation = trainEvaluation;
+        outputController.lastTestEvaluation = testEvaluation;
+        outputController.updateChart(clear, epoch + 1);
+        outputController.updateStatistics(clear);
+        outputController.updateSingleClassMatrix(clear);
+        outputController.updateFullMatrix(true);
     }
 }
