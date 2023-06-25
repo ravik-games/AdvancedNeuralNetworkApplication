@@ -279,6 +279,13 @@ public class UIOutputController {
         chart.getData().clear();
     }
 
+    public void setChartXLength(double number){
+        mainController.chartXAxis.setAutoRanging(number < 0);
+        mainController.chartXAxis.setLowerBound(0);
+        mainController.chartXAxis.setUpperBound(number * 1.1);
+        mainController.chartXAxis.setTickUnit(number / 10);
+    }
+
     //Update values in matrix
     public void updateSingleClassMatrix(boolean clear){
         updateSingleClassMatrix(classMatrixController.matrixClassSelector.getItems().indexOf(classMatrixController.matrixClassSelector.getValue()),
@@ -558,7 +565,7 @@ public class UIOutputController {
     }
     
     public void openChartInNewWindow(Button button, Pane parent){
-        openElementInNewWindow("График", parent, chart, button, 250, 250).setOnCloseRequest(windowEvent -> {
+        openElementInNewWindow("График", parent, chart, button, 500, 500).setOnCloseRequest(windowEvent -> {
             //Override default close event
             chart.getScene().setRoot(new Pane());
             parent.getChildren().clear();
@@ -570,7 +577,6 @@ public class UIOutputController {
     public void openMatrixInNewWindow(Button button, Pane parent){
         matrixInNewWindow = true;
         double minHeight = Math.max(290, Math.min(fullMatrixClassCount * 30.6, Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 50));
-        System.out.println(minHeight);
 
         openElementInNewWindow("Матрица", parent, currentMatrix, button, Math.floor(minHeight * 2), minHeight).setOnCloseRequest(windowEvent -> {
             //Override default close event

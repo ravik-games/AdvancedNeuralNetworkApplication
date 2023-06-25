@@ -5,13 +5,17 @@ import ANNA.Functions.LearningFunctions;
 import ANNA.Network.neurons.Neuron;
 import ANNA.UI.PopupController;
 import ANNA.UI.UIController;
+import javafx.application.Platform;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class NeuralNetwork {
+public class NeuralNetwork implements Runnable{
+
+    private Thread thread;
+    private static final Logger LOGGER = Logger.getLogger(NeuralNetwork.class.getName());
 
     NetworkStructure structure;
     NetworkArguments lastArguments;
@@ -19,24 +23,37 @@ public class NeuralNetwork {
     List<DataTypes.Evaluation> lastTrainEvaluation = new ArrayList<>();
     List<DataTypes.Evaluation> lastTestEvaluation = new ArrayList<>();
 
+    public void start(NetworkArguments arguments){
+        LOGGER.info("Network thread is starting...");
+        lastArguments = arguments;
+        if(thread == null || !thread.isAlive()){
+            thread = new Thread(this, "NetworkThread");
+            thread.setPriority(10);
+            thread.start();
+        }
+    }
+
+    @Override
+    public void run() {
+        runNetwork(lastArguments);
+    }
+
     //Main method of NN
-    public void run(NetworkArguments arguments){
+    private void runNetwork(NetworkArguments arguments){
         //Remember arguments and clear last evaluations data
         lastArguments = arguments;
         lastTrainEvaluation.clear();
         lastTestEvaluation.clear();
-
         //Create and set network structure
         structure = new NetworkStructure(arguments.networkData());
         if(structure.abortRun){
             abortNetworkMessage();
             return;
         }
-        lastArguments.uiController().outputController.clearCharts();
 
         //Log start time
         long startTime = System.nanoTime();
-        System.out.println("\n--- Starting neural network ---");
+        LOGGER.info("--- Starting neural network ---\n");
 
         //Main loop
         int batchSize = Hyperparameters.BATCH_SIZE <= 0? arguments.trainSet().inputs().length : Hyperparameters.BATCH_SIZE;
@@ -107,29 +124,39 @@ public class NeuralNetwork {
             if(i == 0 || i == Hyperparameters.NUMBER_OF_EPOCHS - 1 || (arguments.logEpoch() != 0 && (i + 1) % arguments.logEpoch() == 0)){
                 boolean justStarted = i == 0;
 
-                //Print epoch info to console
-                System.out.println("\n---------- " + (i + 1) + "/" + Hyperparameters.NUMBER_OF_EPOCHS + " Epoch ----------");
-                System.out.println("Mean train error of epoch:\t" + trainEvaluation.getMeanError());
-                System.out.println("Mean test error of epoch:\t" + testEvaluation.getMeanError());
-                System.out.println("\nMean train accuracy of epoch:\t" + trainEvaluation.getMeanAccuracy());
-                System.out.println("Mean test accuracy of epoch:\t" + testEvaluation.getMeanAccuracy());
-                System.out.println("\nMean train precision of epoch:\t" + trainEvaluation.getMeanPrecision());
-                System.out.println("Mean test precision of epoch:\t" + testEvaluation.getMeanPrecision());
-                System.out.println("\nMean train recall of epoch:\t" + trainEvaluation.getMeanRecall());
-                System.out.println("Mean test recall of epoch:\t" + testEvaluation.getMeanRecall());
-                System.out.println("\nMean train F-score of epoch:\t" + trainEvaluation.getMeanFScore());
-                System.out.println("Mean test F-score of epoch: \t" + testEvaluation.getMeanFScore() + "\n");
+                //Log epoch info
+                LOGGER.info("---------- " + (i + 1) + "/" + Hyperparameters.NUMBER_OF_EPOCHS + " Epoch ----------");
+                LOGGER.info("Mean train error of epoch:\t" + trainEvaluation.getMeanError());
+                LOGGER.info("Mean test error of epoch:\t" + testEvaluation.getMeanError() + "\n");
+                LOGGER.info("Mean train accuracy of epoch:\t" + trainEvaluation.getMeanAccuracy());
+                LOGGER.info("Mean test accuracy of epoch:\t" + testEvaluation.getMeanAccuracy() + "\n");
+                LOGGER.info("Mean train precision of epoch:\t" + trainEvaluation.getMeanPrecision());
+                LOGGER.info("Mean test precision of epoch:\t" + testEvaluation.getMeanPrecision() + "\n");
+                LOGGER.info("Mean train recall of epoch:\t" + trainEvaluation.getMeanRecall());
+                LOGGER.info("Mean test recall of epoch:\t" + testEvaluation.getMeanRecall() + "\n");
+                LOGGER.info("Mean train F-score of epoch:\t" + trainEvaluation.getMeanFScore());
+                LOGGER.info("Mean test F-score of epoch: \t" + testEvaluation.getMeanFScore() + "\n");
 
                 if(arguments.uiController() != null){
-                    arguments.uiController().updateResults(justStarted, i, lastTrainEvaluation, lastTestEvaluation);
+                    int finalI = i;
+
+                    //Clear charts
+                    if(justStarted)
+                        Platform.runLater(() -> {
+                            lastArguments.uiController().outputController.clearCharts();
+                            lastArguments.uiController().outputController.setChartXLength(Hyperparameters.NUMBER_OF_EPOCHS);
+                        });
+
+                    //Update results tab
+                    Platform.runLater(() -> arguments.uiController().updateResults(justStarted, finalI, lastTrainEvaluation, lastTestEvaluation));
                 }
             }
         }
 
         //Log end time
         long elapsedTime = System.nanoTime() - startTime;
-        System.out.println("\n--- Neural network finished ---");
-        System.out.println("\nElapsed time: " + (elapsedTime / 1000000000) + "s\t" + (elapsedTime / 1000000) + "ms\t" + elapsedTime + "ns\n");
+        LOGGER.info("--- Neural network finished ---");
+        LOGGER.info("Elapsed time: " + (elapsedTime / 1000000000) + "s\t" + (elapsedTime / 1000000) + "ms\t" + elapsedTime + "ns\n");
         //Print time in seconds, milliseconds and nanoseconds
     }
 

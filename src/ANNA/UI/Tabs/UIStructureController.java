@@ -376,9 +376,7 @@ public class UIStructureController {
                 }
                 else if(i < data.length - 1){
                     switch(types[i]){
-                        case HIDDEN -> {
-                            graphicsContext.setFill(Color.web("#4769ff"));
-                        }
+                        case HIDDEN -> graphicsContext.setFill(Color.web("#4769ff"));
                     }
                 }
                 else{

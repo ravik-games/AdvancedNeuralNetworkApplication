@@ -1,3 +1,0 @@
-[2023-06-19 18:31:20] [INFO] [ANNA.Main main] Starting application... 
-[2023-06-19 18:31:32] [INFO] [ANNA.UI.Tabs.UINetworkController collectDataToArguments] The input neurons for the test data are not configured. The training data will be used for testing. 
-[2023-06-19 18:32:14] [INFO] [ANNA.UI.Tabs.UINetworkController collectDataToArguments] The input neurons for the test data are not configured. The training data will be used for testing. 

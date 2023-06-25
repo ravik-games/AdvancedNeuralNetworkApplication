@@ -17,7 +17,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.List;
 
-public class UIController {
+public class UIController{
     //Master class for all UI stuff
 
     public CheckBox autoOpenResults;
@@ -31,10 +31,11 @@ public class UIController {
     public TableView<List<String>> trainDataTable, testDataTable;
     public Label trainDataLabel, testDataLabel, inputNeuronCounter, lastLayerNumber, chartLabel, matrixLabel;
     public LineChart<Integer, Double> chart;
+    public NumberAxis chartXAxis;
+    public NumberAxis chartYAxis;
     public ChoiceBox<String> inputsChoiceBox, lastColumnChoiceBox, statClassChoiceBox, matrixDataChoiceBox;
     public TextArea simulatorOutput;
     public Pane chartParent, matrixParent;
-    public NumberAxis chartYAxis;
 
     public NeuralNetwork.NetworkArguments lastArguments;
     public Parser.inputTypes[] lastInputTypes;
@@ -223,7 +224,7 @@ public class UIController {
         chartYAxis.setForceZeroInRange(value);
     }
 
-    public void updateResults(boolean clear, int epoch, List<DataTypes.Evaluation> trainEvaluation, List<DataTypes.Evaluation> testEvaluation){
+    public void updateResults(boolean clear, int epoch, List<DataTypes.Evaluation> trainEvaluation, List<DataTypes.Evaluation> testEvaluation) {
         outputController.lastTrainEvaluation = trainEvaluation;
         outputController.lastTestEvaluation = testEvaluation;
         outputController.updateChart(clear, epoch + 1);
