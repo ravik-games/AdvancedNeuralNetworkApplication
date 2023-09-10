@@ -1,4 +1,4 @@
-package ANNA.UI.Tabs;
+package ANNA.UI.tabs;
 
 import ANNA.UI.Parser;
 import ANNA.UI.PopupController;

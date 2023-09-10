@@ -1,8 +1,8 @@
-package ANNA.Network.neurons;
+package ANNA.network.neurons;
 
-import ANNA.Functions.ActivationFunctions;
-import ANNA.Network.Hyperparameters;
-import ANNA.Network.NetworkStructure;
+import ANNA.math.ActivationFunctions;
+import ANNA.network.Hyperparameters;
+import ANNA.network.NetworkStructure;
 
 public class BasicNeuron extends Neuron {
     public BasicNeuron(int id, ActivationFunctions.types activationFunction, NetworkStructure.neuronTypes type) {

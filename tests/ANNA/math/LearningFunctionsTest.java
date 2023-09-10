@@ -1,6 +1,6 @@
-package ANNA.Functions;
+package ANNA.math;
 
-import ANNA.Network.Hyperparameters;
+import ANNA.network.Hyperparameters;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

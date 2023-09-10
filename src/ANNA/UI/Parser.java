@@ -13,7 +13,7 @@ public class Parser {
 
     //Method for parsing raw set values
     public static double parseRawValue(String value, inputTypes type){
-        if(value.equals(""))
+        if(value.isEmpty())
             return 0;
         switch(type){
             case NUMBER -> {
@@ -69,7 +69,6 @@ public class Parser {
         }catch (IOException e){
             PopupController.errorMessage("WARNING", "Ошибка", "", "Произошла ошибка при считывании базы данных.\n" + e.getMessage());
             Logger.getLogger(Parser.class.getName()).log(Level.WARNING, "An error occurred while reading the database. See stack trace.\n" + e.getMessage());
-            e.printStackTrace();
             return null;
         }
         return result;

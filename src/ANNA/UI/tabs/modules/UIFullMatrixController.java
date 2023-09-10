@@ -1,4 +1,4 @@
-package ANNA.UI.Tabs.modules;
+package ANNA.UI.tabs.modules;
 
 import javafx.scene.layout.GridPane;
 

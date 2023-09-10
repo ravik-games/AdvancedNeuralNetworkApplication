@@ -1,6 +1,6 @@
-package ANNA.UI.Tabs;
+package ANNA.UI.tabs;
 
-import ANNA.Network.NetworkStructure;
+import ANNA.network.NetworkStructure;
 import ANNA.UI.Parser;
 import ANNA.UI.PopupController;
 import javafx.collections.FXCollections;

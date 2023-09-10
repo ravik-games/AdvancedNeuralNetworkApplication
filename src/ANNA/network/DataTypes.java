@@ -1,6 +1,6 @@
-package ANNA.Network;
+package ANNA.network;
 
-import ANNA.Network.neurons.Neuron;
+import ANNA.network.neurons.Neuron;
 
 import java.util.ArrayList;
 import java.util.Arrays;

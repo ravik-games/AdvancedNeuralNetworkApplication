@@ -1,8 +1,8 @@
-package ANNA.Network.neurons;
+package ANNA.network.neurons;
 
-import ANNA.Functions.ActivationFunctions;
-import ANNA.Network.Hyperparameters;
-import ANNA.Network.NetworkStructure;
+import ANNA.math.ActivationFunctions;
+import ANNA.network.Hyperparameters;
+import ANNA.network.NetworkStructure;
 import ANNA.UI.PopupController;
 
 import java.util.logging.Level;

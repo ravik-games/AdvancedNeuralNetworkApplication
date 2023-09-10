@@ -1,6 +1,6 @@
-package ANNA.Network;
+package ANNA.network;
 
-import ANNA.UI.UIController;
+import ANNA.UI.DefaultUIController;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ class NeuralNetworkTest {
         String[] allOutputTypes = null;
         boolean training = true;
         boolean isPrediction = true;
-        UIController uiController = null;
+        DefaultUIController defaultUiController = null;
         int logEpoch = 1;
 
         NeuralNetwork network = new NeuralNetwork();
@@ -43,7 +43,7 @@ class NeuralNetworkTest {
         allOutputTypes.add("1");
         boolean training = true;
         boolean isPrediction = false;
-        UIController uiController = null;
+        DefaultUIController defaultUiController = null;
         int logEpoch = 1;
 
         NeuralNetwork network = new NeuralNetwork();

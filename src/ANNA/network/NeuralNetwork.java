@@ -1,10 +1,10 @@
-package ANNA.Network;
+package ANNA.network;
 
-import ANNA.Functions.ErrorFunctions;
-import ANNA.Functions.LearningFunctions;
-import ANNA.Network.neurons.Neuron;
 import ANNA.UI.PopupController;
 import ANNA.UI.UIController;
+import ANNA.math.ErrorFunctions;
+import ANNA.math.LearningFunctions;
+import ANNA.network.neurons.Neuron;
 import javafx.application.Platform;
 
 import java.util.ArrayList;
@@ -142,10 +142,7 @@ public class NeuralNetwork implements Runnable{
 
                     //Clear charts
                     if(justStarted)
-                        Platform.runLater(() -> {
-                            lastArguments.uiController().outputController.clearCharts();
-                            lastArguments.uiController().outputController.setChartXLength(Hyperparameters.NUMBER_OF_EPOCHS);
-                        });
+                        Platform.runLater(() -> arguments.uiController().clearResults(Hyperparameters.NUMBER_OF_EPOCHS));
 
                     //Update results tab
                     Platform.runLater(() -> arguments.uiController().updateResults(justStarted, finalI, lastTrainEvaluation, lastTestEvaluation));
@@ -199,9 +196,9 @@ public class NeuralNetwork implements Runnable{
         }
         //Update UI
         if(lastArguments.isPrediction())
-            lastArguments.uiController().outputController.simulationResult(outputValues[0]);
+            lastArguments.uiController().simulationPredictionResult(outputValues[0]);
         else
-            lastArguments.uiController().outputController.simulationResult(outputValues, lastArguments.trainSet().allOutputTypes()[getOutputIDFromRawOutput(outputValues)]);
+            lastArguments.uiController().simulationClassificationResult(outputValues, lastArguments.trainSet().allOutputTypes()[getOutputIDFromRawOutput(outputValues)]);
     }
 
     //Convert ideal value to array of ideal values

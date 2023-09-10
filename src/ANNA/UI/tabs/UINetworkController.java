@@ -1,12 +1,12 @@
-package ANNA.UI.Tabs;
+package ANNA.UI.tabs;
 
 import ANNA.Main;
-import ANNA.Network.DataTypes;
-import ANNA.Network.Hyperparameters;
-import ANNA.Network.NeuralNetwork;
+import ANNA.network.DataTypes;
+import ANNA.network.Hyperparameters;
+import ANNA.network.NeuralNetwork;
 import ANNA.UI.Parser;
 import ANNA.UI.PopupController;
-import ANNA.UI.UIController;
+import ANNA.UI.DefaultUIController;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -29,14 +29,14 @@ public class UINetworkController {
     private final VBox hyperparametersVBox;
     private final TextField updateResultsEpoch;
 
-    private final UIController mainController;
+    private final DefaultUIController mainController;
     private UIDataController dataController;
     private UIStructureController structureController;
     private UIOutputController outputController;
     private Main main;
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
-    public UINetworkController(UIController controller, VBox hyperparametersVBox, TextField updateResultsEpoch){
+    public UINetworkController(DefaultUIController controller, VBox hyperparametersVBox, TextField updateResultsEpoch){
         this.mainController = controller;
         this.hyperparametersVBox = hyperparametersVBox;
         this.updateResultsEpoch = updateResultsEpoch;
