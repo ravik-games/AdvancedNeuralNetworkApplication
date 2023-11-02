@@ -1,7 +1,7 @@
 package ANNA;
 
+import ANNA.UI.UIController;
 import ANNA.network.NeuralNetwork;
-import ANNA.UI.DefaultUIController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -42,7 +42,7 @@ public class Main extends Application {
         primaryStage.resizableProperty().setValue(false);
         primaryStage.show();
 
-        DefaultUIController controller = loader.getController();
+        UIController controller = loader.getController();
         controller.setMain(this);
     }
 

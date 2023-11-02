@@ -9,6 +9,9 @@ import javafx.application.Platform;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Phaser;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,6 +19,7 @@ public class NeuralNetwork implements Runnable{
 
     private Thread thread;
     private static final Logger LOGGER = Logger.getLogger(NeuralNetwork.class.getName());
+    private final ExecutorService neuronExecutor = Executors.newWorkStealingPool();
 
     NetworkStructure structure;
     NetworkArguments lastArguments;
@@ -81,7 +85,6 @@ public class NeuralNetwork implements Runnable{
                 }
                 //Learning
                 backpropagation(actualValues);
-
                 //Iteration evaluation
                 if(iterationEvaluation(trainEvaluation, outputValues, actualValues) != 0){
                     abortNetworkMessage();
@@ -260,6 +263,7 @@ public class NeuralNetwork implements Runnable{
                     return null;
             }
         }
+
         //Get output values
         double[] outputLayer = new double[structure.getNeuronsAmountInLayer(structure.getLayersAmount() - 1)];
         for (int i = 0; i < structure.getNeuronsAmountInLayer(structure.getLayersAmount() - 1); i++) {
@@ -336,6 +340,61 @@ public class NeuralNetwork implements Runnable{
                 synapse.setWeight(weight);
             }
         }
+    }
+
+    // Failed attempt to increase performance. Use only in case of giant network, otherwise don't use at all.
+    private double[] multithreadingIteration(double[] inputs) {
+        //Set input neurons values
+        for (int i = 0; i < structure.getNeuronsAmountInLayer(0); i++) {
+            structure.getNeuronByPosition(0, i).setLastOutput(inputs[i]);
+        }
+
+        //Setup phaser for multithreading
+        Phaser phaser = new Phaser(1);
+
+        //Process through all hidden and output neurons
+        for (int i = 1; i < structure.getLayersAmount(); i++) {
+            phaser.bulkRegister(structure.getNeuronsAmountInLayer(i)); // Register all current tasks
+            //System.out.println(phaser.getRegisteredParties() + " registration   " + i);
+            for (int j = 0; j < structure.getNeuronsAmountInLayer(i); j++) {
+                int finalI = i;
+                int finalJ = j;
+                try {
+                    neuronExecutor.submit(() -> {
+                        // Prepare input values
+                        int currentID = structure.getIDByPosition(finalI, finalJ);
+                        ArrayList<DataTypes.Synapse> inputConnections = structure.getInputConnections(currentID);
+                        double[] neuronInputs = new double[inputConnections.size()];
+                        double[] neuronWeights = new double[inputConnections.size()];
+
+                        for (int k = 0; k < inputConnections.size(); k++) {
+                            neuronInputs[k] = structure.getNeuronByID(inputConnections.get(k).getNeuronID()).getLastOutput(); // Get output of neuron
+                            neuronWeights[k] = inputConnections.get(k).getWeight(); // Get weight of synapse
+                        }
+
+                        //Calculate output
+                        if (!structure.getNeuronByPosition(finalI, finalJ).calculateOutput(neuronInputs, neuronWeights))
+                            throw new ArithmeticException();
+                        phaser.arriveAndDeregister();
+                        //System.out.println(phaser.getRegisteredParties() + " done");
+                    });
+                }
+                catch (Exception e){ // Stop network if error is occurred
+                    return null;
+                }
+            }
+            phaser.arriveAndAwaitAdvance(); // Main thread is waiting for all tasks to finish
+        }
+
+        phaser.forceTermination(); // Release resources
+
+        // Get output values
+        double[] outputLayer = new double[structure.getNeuronsAmountInLayer(structure.getLayersAmount() - 1)];
+        for (int i = 0; i < structure.getNeuronsAmountInLayer(structure.getLayersAmount() - 1); i++) {
+            Neuron currentNeuron = structure.getNeuronByPosition(structure.getLayersAmount() - 1, i);
+            outputLayer[i] = currentNeuron.getLastOutput();
+        }
+        return outputLayer;
     }
 
     private void abortNetworkMessage(){

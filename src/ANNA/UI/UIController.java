@@ -1,5 +1,6 @@
 package ANNA.UI;
 
+import ANNA.Main;
 import ANNA.network.DataTypes;
 
 import java.util.List;
@@ -13,4 +14,6 @@ public interface UIController {
     void simulationClassificationResult(double[] outputValues, String outputCategory);
 
     void simulationPredictionResult(double outputValue);
+
+    void setMain(Main main);
 }

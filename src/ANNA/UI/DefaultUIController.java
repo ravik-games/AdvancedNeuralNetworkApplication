@@ -44,19 +44,14 @@ public class DefaultUIController implements UIController{
     public UIStructureController structureController;
     public UINetworkController networkController;
     public UIOutputController outputController;
-    public void setMain(Main main){
-        networkController.setMain(main);
-        outputController.setMain(main);
-    }
 
     //Initialize components
     public void initialize(){
         dataController = new UIDataController(trainDataPath, testDataPath, trainDataLabel, testDataLabel, trainDataTable, testDataTable);
-        structureController = new UIStructureController(inputVBox, architectureHBox, inputsChoiceBox, lastColumnChoiceBox, inputNeuronCounter, lastLayerNumber, inputNeuronRemoveButton, inputNeuronButton, inputNeuronAutoButton, graphicOutput);
+        structureController = new UIStructureController(this, inputVBox, architectureHBox, inputsChoiceBox, lastColumnChoiceBox, inputNeuronCounter, lastLayerNumber, inputNeuronRemoveButton, inputNeuronButton, inputNeuronAutoButton, graphicOutput);
         networkController = new UINetworkController(this, hyperparametersVBox, updateResultsEpoch);
         outputController = new UIOutputController(this, simulatorOutput, startSimulatorButton, simulatorHBox, statVBox, chart, chartLabel, matrixLabel, statClassChoiceBox, matrixDataChoiceBox);
 
-        structureController.setControllerReferences(dataController);
         networkController.setControllerReferences(dataController, structureController, outputController);
 
         inputsChoiceBox.getItems().addAll("Обучающая база данных", "Тестовая база данных");
@@ -249,5 +244,11 @@ public class DefaultUIController implements UIController{
     @Override
     public void simulationPredictionResult(double outputValue) {
         outputController.simulationPredictionResult(outputValue);
+    }
+
+    @Override
+    public void setMain(Main main){
+        networkController.setMain(main);
+        outputController.setMain(main);
     }
 }
