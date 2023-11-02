@@ -10,6 +10,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -35,7 +37,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainWindow.fxml"));
+        ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/MainWindow", Locale.getDefault()); // Get current localization
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainWindow.fxml"), bundle);
         Parent root = loader.load();
         primaryStage.setTitle("Advanced Neural Network Application");
         primaryStage.setScene(new Scene(root, 1280, 720));
