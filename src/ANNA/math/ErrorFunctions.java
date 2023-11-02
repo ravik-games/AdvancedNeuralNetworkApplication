@@ -1,4 +1,4 @@
-package ANNA.Functions;
+package ANNA.math;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

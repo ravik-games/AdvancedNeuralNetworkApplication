@@ -1,9 +1,9 @@
-package ANNA.Network;
+package ANNA.network;
 
-import ANNA.Functions.ActivationFunctions;
-import ANNA.Network.neurons.BasicNeuron;
-import ANNA.Network.neurons.BiasNeuron;
-import ANNA.Network.neurons.Neuron;
+import ANNA.math.ActivationFunctions;
+import ANNA.network.neurons.BasicNeuron;
+import ANNA.network.neurons.BiasNeuron;
+import ANNA.network.neurons.Neuron;
 import ANNA.UI.PopupController;
 
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class NetworkStructure {
 
         //Create synapses
         //Using pre-defined weights if we can, else random
-        if (networkData.getWeightsList() != null && networkData.getWeightsList().size() != 0){
+        if (networkData.getWeightsList() != null && !networkData.getWeightsList().isEmpty()){
             for (int i = 0; i < networkData.getWeightsList().size(); i++) {
                 //Set input connections
                 neuronsList.get(i).setInputConnections(networkData.getWeights(i).inputConnections());

@@ -1,4 +1,4 @@
-package ANNA.UI.Tabs;
+package ANNA.UI.tabs;
 
 import ANNA.UI.Parser;
 import ANNA.UI.PopupController;
@@ -127,7 +127,7 @@ public class UIDataController {
         //Create columns and add them to the table
         for (int i = 0; i < rawData.get(0).size(); i++) {
             TableColumn<List<String>, String> column = new TableColumn<>(rawData.get(0).get(i));
-            int finalI = i;
+            int finalI = i + 1;
             //Create cell value factory to show data in table cells
             column.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().get(finalI)));
             column.setMinWidth(50);
@@ -139,7 +139,8 @@ public class UIDataController {
         //Add data to table
         for (int i = 1; i < rawData.size(); i++) {
             ArrayList<String> list = new ArrayList<>(rawData.get(i));
-            list.set(0, Integer.toString(i));
+            list.add(0, Integer.toString(i));
+            //list.set(0, Integer.toString(i));
             table.getItems().add(list);
         }
     }

@@ -1,7 +1,7 @@
 package ANNA;
 
-import ANNA.Network.NeuralNetwork;
 import ANNA.UI.UIController;
+import ANNA.network.NeuralNetwork;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -49,7 +49,7 @@ public class Main extends Application {
     public void runNeuralNetwork(NeuralNetwork.NetworkArguments arguments){
         if(network == null)
             network = new NeuralNetwork();
-        network.run(arguments);
+        network.start(arguments);
     }
 
     public void runSimulation(double[] inputs){

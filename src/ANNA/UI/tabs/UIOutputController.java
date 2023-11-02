@@ -1,12 +1,12 @@
-package ANNA.UI.Tabs;
+package ANNA.UI.tabs;
 
 import ANNA.Main;
-import ANNA.Network.DataTypes;
+import ANNA.network.DataTypes;
 import ANNA.UI.Parser;
 import ANNA.UI.PopupController;
-import ANNA.UI.Tabs.modules.UIClassMatrixController;
-import ANNA.UI.Tabs.modules.UIFullMatrixController;
-import ANNA.UI.UIController;
+import ANNA.UI.tabs.modules.UIClassMatrixController;
+import ANNA.UI.tabs.modules.UIFullMatrixController;
+import ANNA.UI.DefaultUIController;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.*;
@@ -46,7 +46,7 @@ public class UIOutputController {
     private final LineChart<Integer, Double> chart;
     private Parent currentMatrix, confusionMatrixFull, confusionMatrixSingle;
 
-    private final UIController mainController;
+    private final DefaultUIController mainController;
     private UIClassMatrixController classMatrixController;
     private UIFullMatrixController fullMatrixController;
     private Main main;
@@ -61,7 +61,7 @@ public class UIOutputController {
     public List<DataTypes.Evaluation> lastTestEvaluation;
 
 
-    public UIOutputController(UIController controller, TextArea simulatorOutput, Button startSimulatorButton, HBox simulatorHBox, VBox statVBox,
+    public UIOutputController(DefaultUIController controller, TextArea simulatorOutput, Button startSimulatorButton, HBox simulatorHBox, VBox statVBox,
                               LineChart<Integer, Double> chart, Label chartLabel, Label matrixLabel, ChoiceBox<String> statClassChoiceBox, ChoiceBox<String> matrixDataChoiceBox){
         this.simulatorHBox = simulatorHBox;
         this.statVBox = statVBox;
@@ -90,7 +90,6 @@ public class UIOutputController {
             changeMatrix(MatrixSelector.CLASS_MATRIX);
         } catch (IOException e) {
             PopupController.errorMessage("ERROR", "Ошибка загрузки", "", "Произошла ошибка при загрузке дополнительных файлов.\n" + e.getMessage());
-            e.printStackTrace();
             Logger.getLogger(getClass().getName()).log(Level.SEVERE ,"Couldn't load .fxml files");
             System.exit(1);
         }
@@ -180,11 +179,11 @@ public class UIOutputController {
     }
 
     //Add simulation output to UI
-    public void simulationResult(double[] outputValues, String outputCategory){
+    public void simulationClassificationResult(double[] outputValues, String outputCategory){
         String text = "Наиболее вероятная категория:\n" + outputCategory + "\nВыходные значения нейронной сети:\n" + Arrays.toString(outputValues);
         simulatorOutput.setText(text);
     }
-    public void simulationResult(double outputValue){
+    public void simulationPredictionResult(double outputValue){
         String text = "Прогнозируемое значение:\n" + outputValue;
         simulatorOutput.setText(text);
     }
@@ -230,7 +229,7 @@ public class UIOutputController {
 
     //Show full data on chart
     public void updateFullChart(){
-        if(lastTrainEvaluation == null || lastTrainEvaluation.size() < 1 || lastTestEvaluation == null || lastTestEvaluation.size() < 1)
+        if(lastTrainEvaluation == null || lastTrainEvaluation.isEmpty() || lastTestEvaluation == null || lastTestEvaluation.isEmpty())
             return;
         clearCharts();
         //Prepare chart
@@ -279,6 +278,13 @@ public class UIOutputController {
         chart.getData().clear();
     }
 
+    public void setChartXLength(double number){
+        mainController.chartXAxis.setAutoRanging(number < 0);
+        mainController.chartXAxis.setLowerBound(0);
+        mainController.chartXAxis.setUpperBound(number * 1.1);
+        mainController.chartXAxis.setTickUnit(number / 10);
+    }
+
     //Update values in matrix
     public void updateSingleClassMatrix(boolean clear){
         updateSingleClassMatrix(classMatrixController.matrixClassSelector.getItems().indexOf(classMatrixController.matrixClassSelector.getValue()),
@@ -288,7 +294,7 @@ public class UIOutputController {
         updateSingleClassMatrix(classMatrixController.matrixClassSelector.getItems().indexOf(classMatrixController.matrixClassSelector.getValue()), trainData, clear);
     }
     public void updateSingleClassMatrix(int newClass, boolean trainData, boolean clear){
-        if(lastTrainEvaluation == null || lastTrainEvaluation.size() < 1 || lastTestEvaluation == null || lastTestEvaluation.size() < 1)
+        if(lastTrainEvaluation == null || lastTrainEvaluation.isEmpty() || lastTestEvaluation == null || lastTestEvaluation.isEmpty())
             return;
         if(clear)
             clearMatrix();
@@ -320,7 +326,7 @@ public class UIOutputController {
         updateFullMatrix(mainController.matrixDataChoiceBox.getItems().indexOf(mainController.matrixDataChoiceBox.getValue()) == 0, clear);
     }
     public void updateFullMatrix(boolean trainData, boolean clear){
-        if(lastTrainEvaluation == null || lastTrainEvaluation.size() < 1 || lastTestEvaluation == null || lastTestEvaluation.size() < 1)
+        if(lastTrainEvaluation == null || lastTrainEvaluation.isEmpty() || lastTestEvaluation == null || lastTestEvaluation.isEmpty())
             return;
         if(clear)
             clearMatrix();
@@ -374,7 +380,7 @@ public class UIOutputController {
 
                 //Skip, if count == 0 and it's not diagonal
                 if(i != j && Double.compare(currentCount, 0) == 0) {
-                    pane.setStyle("-fx-border-width: 1; -fx-border-color: gray;");
+                    pane.setStyle("-fx-border-width: 1; -fx-border-color: rgb(128,128,128);");
                     fullMatrixController.matrixGrid.add(pane, j + 1, i + 1);
                     continue;
                 }
@@ -382,7 +388,7 @@ public class UIOutputController {
                 //Set color of pane
                 Color color = Color.hsb((i == j ? currentCount / expectedClassPositive : (1 - currentCount / expectedClassPositive)) * 100, 0.8, 0.9);
                 pane.setStyle("-fx-border-width: 1;" +
-                        "-fx-border-color: gray;" +
+                        "-fx-border-color: rgb(128,128,128);" +
                         "-fx-background-color: #" + colorFormat(color.getRed()) + colorFormat(color.getGreen()) + colorFormat(color.getBlue()) + colorFormat(color.getOpacity()));
 
                 fullMatrixController.matrixGrid.add(pane, j + 1, i + 1);
@@ -397,7 +403,7 @@ public class UIOutputController {
 
         //Add empty cell in top right corner for design reasons
         Pane pane = new Pane();
-        pane.setStyle("-fx-border-width: 1;-fx-border-color: gray;");
+        pane.setStyle("-fx-border-width: 1;-fx-border-color: rgb(128,128,128);");
         fullMatrixController.matrixGrid.add(pane, 0, 0);
 
         //Configure rows and columns
@@ -447,7 +453,7 @@ public class UIOutputController {
         AnchorPane.setTopAnchor(label, 0d);
         AnchorPane.setBottomAnchor(label, 0d);
 
-        pane.setStyle("-fx-border-width: 1;-fx-border-color: gray;");
+        pane.setStyle("-fx-border-width: 1;-fx-border-color: rgb(128,128,128);");
         pane.getChildren().add(label);
         return pane;
     }
@@ -558,7 +564,7 @@ public class UIOutputController {
     }
     
     public void openChartInNewWindow(Button button, Pane parent){
-        openElementInNewWindow("График", parent, chart, button, 250, 250).setOnCloseRequest(windowEvent -> {
+        openElementInNewWindow("График", parent, chart, button, 500, 500).setOnCloseRequest(windowEvent -> {
             //Override default close event
             chart.getScene().setRoot(new Pane());
             parent.getChildren().clear();
@@ -570,7 +576,6 @@ public class UIOutputController {
     public void openMatrixInNewWindow(Button button, Pane parent){
         matrixInNewWindow = true;
         double minHeight = Math.max(290, Math.min(fullMatrixClassCount * 30.6, Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 50));
-        System.out.println(minHeight);
 
         openElementInNewWindow("Матрица", parent, currentMatrix, button, Math.floor(minHeight * 2), minHeight).setOnCloseRequest(windowEvent -> {
             //Override default close event
@@ -599,11 +604,11 @@ public class UIOutputController {
             mainController.statClassChoiceBox.getItems().clear();
             mainController.statClassChoiceBox.setValue("Все классы");
         }
-        if(lastTrainEvaluation == null || lastTrainEvaluation.size() < 1 || lastTestEvaluation == null || lastTestEvaluation.size() < 1)
+        if(lastTrainEvaluation == null || lastTrainEvaluation.isEmpty() || lastTestEvaluation == null || lastTestEvaluation.isEmpty())
             return;
 
         //Create rows
-        if (statisticsUI.size() == 0) {
+        if (statisticsUI.isEmpty()) {
             createStatisticsUI();
         }
 
@@ -651,22 +656,7 @@ public class UIOutputController {
     private void createStatisticsUI(){
         for (int i = 0; i < DataTypes.Evaluation.Metrics.values().length; i++) {
             //Set name
-            String name = switch (DataTypes.Evaluation.Metrics.values()[i]){
-                case SIZE -> "Размер данных";
-                case LOSS -> "Ошибка последней эпохи (MSE)";
-                case HITS -> "Верно определено";
-                case ACCURACY -> "Точность (Accuracy)";
-                case PRECISION -> "Точность (Precision)";
-                case RECALL -> "Полнота (Recall)";
-                case F_SCORE -> "F-мера";
-            };
-
-            //Create and config labels
-            Label nameLabel = new Label(name);
-            nameLabel.setFont(new Font("Segoe UI SemiLight", 14));
-            nameLabel.setPadding(new Insets(5));
-            nameLabel.setPrefWidth(225);
-            nameLabel.setPrefHeight(35);
+            Label nameLabel = getStatisticsLabel(i);
 
             Label trainLabel = new Label("...");
             trainLabel.setFont(new Font("Segoe UI SemiLight", 14));
@@ -694,6 +684,26 @@ public class UIOutputController {
         }
         mainController.statClassChoiceBox.getItems().add("Все классы");
         mainController.statClassChoiceBox.getItems().addAll(mainController.lastArguments.trainSet().allOutputTypes());
+    }
+
+    private static Label getStatisticsLabel(int currentMetric) {
+        String name = switch (DataTypes.Evaluation.Metrics.values()[currentMetric]){
+            case SIZE -> "Размер данных";
+            case LOSS -> "Ошибка последней эпохи (MSE)";
+            case HITS -> "Верно определено";
+            case ACCURACY -> "Точность (Accuracy)";
+            case PRECISION -> "Точность (Precision)";
+            case RECALL -> "Полнота (Recall)";
+            case F_SCORE -> "F-мера";
+        };
+
+        //Create and config labels
+        Label nameLabel = new Label(name);
+        nameLabel.setFont(new Font("Segoe UI SemiLight", 14));
+        nameLabel.setPadding(new Insets(5));
+        nameLabel.setPrefWidth(225);
+        nameLabel.setPrefHeight(35);
+        return nameLabel;
     }
 
     private record StatisticsUI(DataTypes.Evaluation.Metrics metric, Label trainLabel, Label testLabel) { }

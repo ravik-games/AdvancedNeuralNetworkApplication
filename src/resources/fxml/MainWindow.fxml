@@ -26,7 +26,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../LightStyle.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ANNA.UI.UIController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../LightStyle.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ANNA.UI.DefaultUIController">
    <TabPane fx:id="tabPane" prefHeight="720.0" prefWidth="1280.0" tabClosingPolicy="UNAVAILABLE">
       <Tab text="Данные">
          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="1280.0">
@@ -37,7 +37,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                      <font>
-                        <Font name="Segoe UI Semibold" size="20.0" />
+                        <Font name="Segoe UI SemiBold" size="20.0" />
                      </font>
                   </Label>
                   <Separator prefWidth="200.0" />
@@ -90,7 +90,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                      <font>
-                        <Font name="Segoe UI Semibold" size="20.0" />
+                        <Font name="Segoe UI SemiBold" size="20.0" />
                      </font>
                   </Label>
                   <Separator prefWidth="200.0" />
@@ -145,7 +145,7 @@
                <VBox prefHeight="684.0" prefWidth="350.0">
                   <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="924.0" text="Входные нейроны" textAlignment="CENTER">
                      <font>
-                        <Font name="Segoe UI Semibold" size="20.0" />
+                        <Font name="Segoe UI SemiBold" size="20.0" />
                      </font>
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -167,7 +167,7 @@
                            </padding>
                            <Label prefHeight="20.0" prefWidth="25.0" text="№">
                               <font>
-                                 <Font name="Segoe UI Semibold" size="14.0" />
+                                 <Font name="Segoe UI SemiBold" size="14.0" />
                               </font>
                               <HBox.margin>
                                  <Insets />
@@ -176,7 +176,7 @@
                            <Separator orientation="VERTICAL" prefHeight="200.0" />
                            <Label prefHeight="20.0" prefWidth="130.0" text="Столбец">
                               <font>
-                                 <Font name="Segoe UI Semibold" size="14.0" />
+                                 <Font name="Segoe UI SemiBold" size="14.0" />
                               </font>
                               <HBox.margin>
                                  <Insets />
@@ -185,7 +185,7 @@
                            <Separator orientation="VERTICAL" prefHeight="200.0" />
                            <Label prefHeight="20.0" prefWidth="130.0" text="Тип">
                               <font>
-                                 <Font name="Segoe UI Semibold" size="14.0" />
+                                 <Font name="Segoe UI SemiBold" size="14.0" />
                               </font>
                               <HBox.margin>
                                  <Insets />
@@ -195,33 +195,35 @@
                         <Separator prefWidth="200.0" />
                         <VBox spacing="5.0">
                            <padding>
-                              <Insets left="5.0" right="5.0" />
+                              <Insets left="5.0" right="5.0"/>
                            </padding>
                            <VBox.margin>
-                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
                            </VBox.margin>
-                           <children>
-                              <HBox alignment="CENTER" spacing="5.0">
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin>
-                                 <Button fx:id="inputNeuronButton" disable="true" mnemonicParsing="false" onAction="#addInputNeuron" prefWidth="306.0" text="Добавить">
-                                    <font>
-                                       <Font name="Segoe UI" size="14.0" />
-                                    </font>
-                                 </Button>
-                                 <Button fx:id="inputNeuronRemoveButton" disable="true" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#removeInputNeuron" prefWidth="306.0" text="Удалить">
-                                    <font>
-                                       <Font name="Segoe UI" size="14.0" />
-                                    </font>
-                                 </Button>
-                              </HBox>
-                              <Button fx:id="inputNeuronAutoButton" disable="true" mnemonicParsing="false" onAction="#autoInputNeuron" prefWidth="306.0" text="Автонастройка">
+                           <HBox alignment="CENTER" spacing="5.0">
+                              <VBox.margin>
+                                 <Insets/>
+                              </VBox.margin>
+                              <Button fx:id="inputNeuronButton" disable="true" mnemonicParsing="false"
+                                      onAction="#addInputNeuron" prefWidth="306.0" text="Добавить">
                                  <font>
-                                    <Font name="Segoe UI" size="14.0" />
+                                    <Font name="Segoe UI" size="14.0"/>
                                  </font>
                               </Button>
-                           </children>
+                              <Button fx:id="inputNeuronRemoveButton" disable="true" layoutX="10.0" layoutY="10.0"
+                                      mnemonicParsing="false" onAction="#removeInputNeuron" prefWidth="306.0"
+                                      text="Удалить">
+                                 <font>
+                                    <Font name="Segoe UI" size="14.0"/>
+                                 </font>
+                              </Button>
+                           </HBox>
+                           <Button fx:id="inputNeuronAutoButton" disable="true" mnemonicParsing="false"
+                                   onAction="#autoInputNeuron" prefWidth="306.0" text="Автонастройка">
+                              <font>
+                                 <Font name="Segoe UI" size="14.0"/>
+                              </font>
+                           </Button>
                         </VBox>
                      </VBox>
                   </ScrollPane>
@@ -231,7 +233,7 @@
                      </VBox.margin>
                      <Label prefHeight="20.0" prefWidth="170.0" text="Проверочный столбец">
                         <font>
-                           <Font name="Segoe UI Semibold" size="14.0" />
+                           <Font name="Segoe UI SemiBold" size="14.0" />
                         </font>
                         <HBox.margin>
                            <Insets />
@@ -244,7 +246,7 @@
                <VBox layoutX="10.0" layoutY="10.0" prefHeight="684.0" prefWidth="924.0">
                   <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="924.0" text="Архитектура нейронной сети" textAlignment="CENTER">
                      <font>
-                        <Font name="Segoe UI Semibold" size="20.0" />
+                        <Font name="Segoe UI SemiBold" size="20.0" />
                      </font>
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -261,19 +263,19 @@
                            </padding>
                            <Label prefHeight="30.0" prefWidth="51.0" text="№ слоя">
                               <font>
-                                 <Font name="Segoe UI Semibold" size="14.0" />
+                                 <Font name="Segoe UI SemiBold" size="14.0" />
                               </font>
                            </Label>
                            <Separator prefWidth="200.0" />
                            <Label prefHeight="70.0" prefWidth="100.0" text="Количество нейронов" textAlignment="CENTER" wrapText="true">
                               <font>
-                                 <Font name="Segoe UI Semibold" size="14.0" />
+                                 <Font name="Segoe UI SemiBold" size="14.0" />
                               </font>
                            </Label>
                            <Separator prefWidth="200.0" />
                            <Label prefHeight="70.0" prefWidth="25.0" text="Тип">
                               <font>
-                                 <Font name="Segoe UI Semibold" size="14.0" />
+                                 <Font name="Segoe UI SemiBold" size="14.0" />
                               </font>
                            </Label>
                         </VBox>
@@ -284,19 +286,19 @@
                            </padding>
                            <Label alignment="CENTER" prefHeight="30.0" prefWidth="51.0" text="0">
                               <font>
-                                 <Font name="Segoe UI Semibold" size="14.0" />
+                                 <Font name="Segoe UI SemiBold" size="14.0" />
                               </font>
                            </Label>
                            <Separator prefWidth="200.0" />
                            <Label fx:id="inputNeuronCounter" alignment="CENTER" prefHeight="70.0" prefWidth="100.0" text="..." textAlignment="CENTER" wrapText="true">
                               <font>
-                                 <Font name="Segoe UI Semibold" size="14.0" />
+                                 <Font name="Segoe UI SemiBold" size="14.0" />
                               </font>
                            </Label>
                            <Separator prefWidth="200.0" />
                            <Label alignment="CENTER" prefHeight="70.0" prefWidth="100.0" text="INPUT">
                               <font>
-                                 <Font name="Segoe UI Semibold" size="14.0" />
+                                 <Font name="Segoe UI SemiBold" size="14.0" />
                               </font>
                            </Label>
                         </VBox>
@@ -323,19 +325,19 @@
                            </padding>
                            <Label fx:id="lastLayerNumber" alignment="CENTER" prefHeight="30.0" prefWidth="51.0" text="N">
                               <font>
-                                 <Font name="Segoe UI Semibold" size="14.0" />
+                                 <Font name="Segoe UI SemiBold" size="14.0" />
                               </font>
                            </Label>
                            <Separator prefWidth="200.0" />
                            <Label alignment="CENTER" prefHeight="70.0" prefWidth="100.0" text="Авто" textAlignment="CENTER" wrapText="true">
                               <font>
-                                 <Font name="Segoe UI Semibold" size="14.0" />
+                                 <Font name="Segoe UI SemiBold" size="14.0" />
                               </font>
                            </Label>
                            <Separator prefWidth="200.0" />
                            <Label alignment="CENTER" prefHeight="70.0" prefWidth="100.0" text="OUTPUT">
                               <font>
-                                 <Font name="Segoe UI Semibold" size="14.0" />
+                                 <Font name="Segoe UI SemiBold" size="14.0" />
                               </font>
                            </Label>
                         </VBox>
@@ -345,7 +347,7 @@
                   <Separator prefWidth="924.0" />
                   <Label alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="17.0" prefWidth="924.0" text="Визуализация" textAlignment="CENTER">
                      <font>
-                        <Font name="Segoe UI Semibold" size="20.0" />
+                        <Font name="Segoe UI SemiBold" size="20.0" />
                      </font>
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -366,7 +368,7 @@
                <VBox prefHeight="684.0" prefWidth="636.0">
                   <Label alignment="CENTER" prefHeight="50.0" prefWidth="636.0" text="Настройка гиперпараметров" textAlignment="CENTER">
                      <font>
-                        <Font name="Segoe UI Semibold" size="20.0" />
+                        <Font name="Segoe UI SemiBold" size="20.0" />
                      </font>
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -383,7 +385,7 @@
                            </padding>
                            <Label prefHeight="20.0" prefWidth="140.0" text="Название">
                               <font>
-                                 <Font name="Segoe UI Semibold" size="14.0" />
+                                 <Font name="Segoe UI SemiBold" size="14.0" />
                               </font>
                               <HBox.margin>
                                  <Insets />
@@ -392,7 +394,7 @@
                            <Separator orientation="VERTICAL" prefHeight="200.0" />
                            <Label prefHeight="20.0" prefWidth="150.0" text="Значение">
                               <font>
-                                 <Font name="Segoe UI Semibold" size="14.0" />
+                                 <Font name="Segoe UI SemiBold" size="14.0" />
                               </font>
                               <HBox.margin>
                                  <Insets />
@@ -401,7 +403,7 @@
                            <Separator orientation="VERTICAL" prefHeight="200.0" />
                            <Label prefHeight="20.0" prefWidth="280.0" text="Описание">
                               <font>
-                                 <Font name="Segoe UI Semibold" size="14.0" />
+                                 <Font name="Segoe UI SemiBold" size="14.0" />
                               </font>
                               <HBox.margin>
                                  <Insets />
@@ -416,7 +418,7 @@
                <VBox prefHeight="684.0" prefWidth="636.0">
                   <Label alignment="CENTER" prefHeight="50.0" prefWidth="636.0" text="Управление нейронной сетью" textAlignment="CENTER">
                      <font>
-                        <Font name="Segoe UI Semibold" size="20.0" />
+                        <Font name="Segoe UI SemiBold" size="20.0" />
                      </font>
                      <VBox.margin>
                         <Insets />
@@ -606,13 +608,13 @@
                      </VBox.margin>
                      <Label text="Сохранять статистику каждую">
                         <font>
-                           <Font name="Segoe UI Semibold" size="14.0" />
+                           <Font name="Segoe UI SemiBold" size="14.0" />
                         </font>
                      </Label>
                      <TextField fx:id="updateResultsEpoch" prefHeight="30.0" prefWidth="100.0" promptText="10" text="10" />
                      <Label layoutX="10.0" layoutY="10.0" text=" эпоху.">
                         <font>
-                           <Font name="Segoe UI Semibold" size="14.0" />
+                           <Font name="Segoe UI SemiBold" size="14.0" />
                         </font>
                      </Label>
                   </HBox>
@@ -626,7 +628,7 @@
                   </CheckBox>
                   <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#startTraining" prefHeight="30.0" prefWidth="636.0" style="-fx-font-size: 16; -fx-font-family: Segoe UI Semobold; -fx-border-width: 1.5;" text="Запустить нейронную сеть" textAlignment="CENTER">
                      <font>
-                        <Font name="Segoe UI Semibold" size="20.0" />
+                        <Font name="Segoe UI SemiBold" size="20.0" />
                      </font>
                      <VBox.margin>
                         <Insets bottom="15.0" left="50.0" right="50.0" top="5.0" />
@@ -638,491 +640,478 @@
       </Tab>
       <Tab text="Результаты">
          <AnchorPane>
-            <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" percentHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <VBox prefHeight="340.0" prefWidth="636.0" spacing="5.0" GridPane.rowIndex="1">
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                     <Label alignment="CENTER" prefHeight="20.0" prefWidth="636.0" text="Симулятор" textAlignment="CENTER">
+            <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                      AnchorPane.topAnchor="0.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0"/>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" percentHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+               </rowConstraints>
+               <VBox prefHeight="340.0" prefWidth="636.0" spacing="5.0" GridPane.rowIndex="1">
+                  <padding>
+                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                  </padding>
+                  <Label alignment="CENTER" prefHeight="20.0" prefWidth="636.0" text="Симулятор" textAlignment="CENTER">
+                     <font>
+                        <Font name="Segoe UI SemiBold" size="20.0"/>
+                     </font>
+                  </Label>
+                  <ScrollPane prefHeight="125.0" prefWidth="616.0" vbarPolicy="NEVER">
+                     <VBox.margin>
+                        <Insets/>
+                     </VBox.margin>
+                     <HBox fx:id="simulatorHBox" disable="true" prefHeight="110.0" prefWidth="612.0">
+                        <VBox alignment="TOP_CENTER" minWidth="90.0" prefHeight="100.0" prefWidth="90.0">
+                           <Label alignment="CENTER" prefHeight="50.0" prefWidth="90.0" text="№ входного нейрона"
+                                  textAlignment="CENTER" wrapText="true">
+                              <font>
+                                 <Font name="Segoe UI SemiBold" size="14.0"/>
+                              </font>
+                           </Label>
+                           <Separator prefWidth="200.0"/>
+                           <Label alignment="CENTER" prefHeight="50.0" prefWidth="90.0" text="Значение"
+                                  textAlignment="CENTER" wrapText="true">
+                              <font>
+                                 <Font name="Segoe UI SemiBold" size="14.0"/>
+                              </font>
+                           </Label>
+                        </VBox>
+                        <Separator orientation="VERTICAL" prefHeight="200.0"/>
+                     </HBox>
+                  </ScrollPane>
+                  <Button fx:id="startSimulatorButton" mnemonicParsing="false" onAction="#prepareSimulation"
+                          prefHeight="30.0" prefWidth="615.0" text="Рассчитать">
+                     <font>
+                        <Font name="Segoe UI Black" size="14.0"/>
+                     </font>
+                     <VBox.margin>
+                        <Insets/>
+                     </VBox.margin>
+                  </Button>
+                  <Label text="Результат:">
+                     <font>
+                        <Font name="Segoe UI SemiBold" size="14.0"/>
+                     </font>
+                     <VBox.margin>
+                        <Insets/>
+                     </VBox.margin>
+                  </Label>
+                  <TextArea fx:id="simulatorOutput" prefHeight="90.0" prefWidth="616.0">
+                     <font>
+                        <Font name="Segoe UI" size="14.0"/>
+                     </font>
+                  </TextArea>
+               </VBox>
+               <VBox stylesheets="@../LightStyle.css">
+                  <HBox prefHeight="30.0" prefWidth="616.0">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                     </VBox.margin>
+                     <Button ellipsisString="&lt;" mnemonicParsing="false" onAction="#changeChartLeft"
+                             prefHeight="22.0" prefWidth="28.0"
+                             style="-fx-font-family: &quot;Segoe UI SemiBold&quot;;" text="&lt;"
+                             textAlignment="CENTER">
                         <font>
-                           <Font name="Segoe UI Semibold" size="20.0" />
+                           <Font name="Segoe UI" size="14.0"/>
                         </font>
-                     </Label>
-                     <ScrollPane prefHeight="125.0" prefWidth="616.0" vbarPolicy="NEVER">
-                        <VBox.margin>
-                           <Insets />
-                        </VBox.margin>
-                        <HBox fx:id="simulatorHBox" disable="true" prefHeight="110.0" prefWidth="612.0">
-                           <VBox alignment="TOP_CENTER" minWidth="90.0" prefHeight="100.0" prefWidth="90.0">
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="90.0" text="№ входного нейрона" textAlignment="CENTER" wrapText="true">
-                                 <font>
-                                    <Font name="Segoe UI Semibold" size="14.0" />
-                                 </font>
-                              </Label>
-                              <Separator prefWidth="200.0" />
-                              <Label alignment="CENTER" prefHeight="50.0" prefWidth="90.0" text="Значение" textAlignment="CENTER" wrapText="true">
-                                 <font>
-                                    <Font name="Segoe UI Semibold" size="14.0" />
-                                 </font>
-                              </Label>
-                           </VBox>
-                           <Separator orientation="VERTICAL" prefHeight="200.0" />
-                        </HBox>
-                     </ScrollPane>
-                     <Button fx:id="startSimulatorButton" mnemonicParsing="false" onAction="#prepareSimulation" prefHeight="30.0" prefWidth="615.0" text="Рассчитать">
-                        <font>
-                           <Font name="Segoe UI Black" size="14.0" />
-                        </font>
-                        <VBox.margin>
-                           <Insets />
-                        </VBox.margin>
+                        <HBox.margin>
+                           <Insets/>
+                        </HBox.margin>
                      </Button>
-                     <Label text="Результат:">
+                     <Label fx:id="chartLabel" alignment="CENTER" prefHeight="30.0" prefWidth="300.0"
+                            style="-fx-border-width: 1; -fx-border-color: #4769ff; -fx-border-radius: 7.5;"
+                            text="График средней ошибки" textAlignment="CENTER">
                         <font>
-                           <Font name="Segoe UI Semibold" size="14.0" />
+                           <Font name="Segoe UI SemiBold" size="20.0"/>
                         </font>
-                        <VBox.margin>
-                           <Insets />
-                        </VBox.margin>
+                        <HBox.margin>
+                           <Insets left="5.0" right="5.0"/>
+                        </HBox.margin>
                      </Label>
-                     <TextArea fx:id="simulatorOutput" prefHeight="90.0" prefWidth="616.0">
+                     <Button ellipsisString="&gt;" mnemonicParsing="false" onAction="#changeChartRight"
+                             prefHeight="22.0" prefWidth="28.0"
+                             style="-fx-font-family: &quot;Segoe UI SemiBold&quot;;" text="&gt;"
+                             textAlignment="CENTER">
                         <font>
-                           <Font name="Segoe UI" size="14.0" />
+                           <Font name="Segoe UI" size="14.0"/>
                         </font>
-                     </TextArea>
-                  </VBox>
-                  <VBox fx:id="chartVBox" stylesheets="@../LightStyle.css">
-                     <children>
-                        <HBox prefHeight="30.0" prefWidth="616.0">
-                           <children>
-                              <Button ellipsisString="&lt;" mnemonicParsing="false" onAction="#changeChartLeft" prefHeight="22.0" prefWidth="28.0" style="-fx-font-family: &quot;Segoe UI Semibold&quot;;" text="&lt;" textAlignment="CENTER">
+                     </Button>
+                     <Button fx:id="newWindowChartButton" alignment="CENTER" mnemonicParsing="false"
+                             onAction="#newWindowChart" text="В новом окне" textAlignment="CENTER">
+                        <font>
+                           <Font name="Segoe UI" size="14.0"/>
+                        </font>
+                        <HBox.margin>
+                           <Insets left="150.0"/>
+                        </HBox.margin>
+                     </Button>
+                  </HBox>
+                  <AnchorPane fx:id="chartParent">
+                     <LineChart fx:id="chart" animated="false" createSymbols="false" legendSide="TOP"
+                                minHeight="100.0" minWidth="100.0" stylesheets="@../LightStyle.css"
+                                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <xAxis>
+                           <NumberAxis fx:id="chartXAxis" forceZeroInRange="false" label="Эпоха" lowerBound="1.0"
+                                       minorTickVisible="false" prefWidth="569.0" side="BOTTOM" tickUnit="1.0"/>
+                        </xAxis>
+                        <yAxis>
+                           <NumberAxis fx:id="chartYAxis" label="Средняя ошибка" minorTickCount="2" side="LEFT"
+                                       tickUnit="0.1" upperBound="1.1"/>
+                        </yAxis>
+                     </LineChart>
+                  </AnchorPane>
+               </VBox>
+               <VBox prefHeight="340.0" prefWidth="636.0" GridPane.columnIndex="1">
+                  <HBox prefHeight="30.0" prefWidth="616.0">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="10.0"/>
+                     </VBox.margin>
+                     <Button ellipsisString="&lt;" mnemonicParsing="false" onAction="#changeMatrixLeft"
+                             prefHeight="22.0" prefWidth="28.0"
+                             style="-fx-font-family: &quot;Segoe UI SemiBold&quot;;" text="&lt;"
+                             textAlignment="CENTER">
+                        <font>
+                           <Font name="Segoe UI" size="14.0"/>
+                        </font>
+                        <HBox.margin>
+                           <Insets/>
+                        </HBox.margin>
+                     </Button>
+                     <Label fx:id="matrixLabel" alignment="CENTER" prefHeight="30.0" prefWidth="250.0"
+                            style="-fx-border-width: 1; -fx-border-color: #4769ff; -fx-border-radius: 7.5;"
+                            text="Матрица ошибок" textAlignment="CENTER">
+                        <font>
+                           <Font name="Segoe UI SemiBold" size="20.0"/>
+                        </font>
+                        <HBox.margin>
+                           <Insets left="5.0" right="5.0"/>
+                        </HBox.margin>
+                     </Label>
+                     <Button ellipsisString="&gt;" mnemonicParsing="false" onAction="#changeMatrixRight"
+                             prefHeight="22.0" prefWidth="28.0"
+                             style="-fx-font-family: &quot;Segoe UI SemiBold&quot;;" text="&gt;"
+                             textAlignment="CENTER">
+                        <font>
+                           <Font name="Segoe UI" size="14.0"/>
+                        </font>
+                     </Button>
+                     <ChoiceBox fx:id="matrixDataChoiceBox" prefHeight="32.0" prefWidth="125.0"
+                                style="-fx-font-size: 14;">
+                        <HBox.margin>
+                           <Insets left="38.0" right="37.0"/>
+                        </HBox.margin>
+                     </ChoiceBox>
+                     <Button fx:id="newWindowMatrixButton" alignment="CENTER" mnemonicParsing="false"
+                             onAction="#newWindowMatrix" text="В новом окне" textAlignment="CENTER">
+                        <font>
+                           <Font name="Segoe UI" size="14.0"/>
+                        </font>
+                        <HBox.margin>
+                           <Insets/>
+                        </HBox.margin>
+                     </Button>
+                  </HBox>
+                  <AnchorPane fx:id="matrixParent"/>
+               </VBox>
+               <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP"/>
+               <Separator prefWidth="200.0" GridPane.rowIndex="1" GridPane.valignment="TOP"/>
+               <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1"/>
+               <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+               <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <GridPane.margin>
+                     <Insets/>
+                  </GridPane.margin>
+                  <padding>
+                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                  </padding>
+                  <HBox>
+                     <Label alignment="BOTTOM_LEFT" prefHeight="20.0" text="Общая статистика">
+                        <font>
+                           <Font name="Segoe UI SemiBold" size="20.0"/>
+                        </font>
+                        <padding>
+                           <Insets left="15.0" right="150.0"/>
+                        </padding>
+                     </Label>
+                     <Label alignment="CENTER_RIGHT" text="Класс" textAlignment="RIGHT">
+                        <font>
+                           <Font name="Segoe UI SemiBold" size="20.0"/>
+                        </font>
+                        <padding>
+                           <Insets left="15.0" right="15.0"/>
+                        </padding>
+                     </Label>
+                     <ChoiceBox fx:id="statClassChoiceBox" prefHeight="32.0" prefWidth="200.0"/>
+                  </HBox>
+                  <ScrollPane hbarPolicy="NEVER" prefHeight="280.0" prefWidth="620.0">
+                     <AnchorPane minHeight="0.0" minWidth="0.0">
+                        <VBox fx:id="statVBox" prefWidth="616.0">
+                           <HBox>
+                              <Label alignment="CENTER" prefHeight="35.0" prefWidth="225.0"
+                                     text="Название" wrapText="true" HBox.hgrow="NEVER">
                                  <font>
-                                    <Font name="Segoe UI" size="14.0" />
+                                    <Font name="Segoe UI SemiBold" size="14.0"/>
                                  </font>
                                  <HBox.margin>
-                                    <Insets />
+                                    <Insets/>
                                  </HBox.margin>
-                              </Button>
-                              <Label fx:id="chartLabel" alignment="CENTER" prefHeight="30.0" prefWidth="300.0" style="-fx-border-width: 1; -fx-border-color: #4769ff; -fx-border-radius: 7.5;" text="График средней ошибки" textAlignment="CENTER">
-                                 <font>
-                                    <Font name="Segoe UI Semibold" size="20.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets left="5.0" right="5.0" />
-                                 </HBox.margin>
-                              </Label>
-                              <Button ellipsisString="&gt;" mnemonicParsing="false" onAction="#changeChartRight" prefHeight="22.0" prefWidth="28.0" style="-fx-font-family: &quot;Segoe UI Semibold&quot;;" text="&gt;" textAlignment="CENTER">
-                                 <font>
-                                    <Font name="Segoe UI" size="14.0" />
-                                 </font>
-                              </Button>
-                              <Button fx:id="newWindowChartButton" alignment="CENTER" mnemonicParsing="false" onAction="#newWindowChart" text="В новом окне" textAlignment="CENTER">
-                                 <font>
-                                    <Font name="Segoe UI" size="14.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets left="150.0" />
-                                 </HBox.margin>
-                              </Button>
-                           </children>
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </VBox.margin>
-                        </HBox>
-                        <AnchorPane fx:id="chartParent">
-                           <children>
-                              <LineChart fx:id="chart" animated="false" createSymbols="false" legendSide="TOP" minHeight="100.0" minWidth="100.0" stylesheets="@../LightStyle.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <xAxis>
-                                    <NumberAxis forceZeroInRange="false" label="Эпоха" lowerBound="1.0" minorTickVisible="false" prefWidth="569.0" side="BOTTOM" tickUnit="1.0" />
-                                 </xAxis>
-                                 <yAxis>
-                                    <NumberAxis fx:id="chartYAxis" label="Средняя ошибка" minorTickCount="2" side="LEFT" tickUnit="0.1" upperBound="1.1" />
-                                 </yAxis>
-                              </LineChart>
-                           </children>
-                        </AnchorPane>
-                     </children>
-                  </VBox>
-                  <VBox fx:id="matrixVBox" prefHeight="340.0" prefWidth="636.0" GridPane.columnIndex="1">
-                     <children>
-                        <HBox prefHeight="30.0" prefWidth="616.0">
-                           <children>
-                              <Button ellipsisString="&lt;" mnemonicParsing="false" onAction="#changeMatrixLeft" prefHeight="22.0" prefWidth="28.0" style="-fx-font-family: &quot;Segoe UI Semibold&quot;;" text="&lt;" textAlignment="CENTER">
-                                 <font>
-                                    <Font name="Segoe UI" size="14.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets />
-                                 </HBox.margin>
-                              </Button>
-                              <Label fx:id="matrixLabel" alignment="CENTER" prefHeight="30.0" prefWidth="250.0" style="-fx-border-width: 1; -fx-border-color: #4769ff; -fx-border-radius: 7.5;" text="Матрица ошибок" textAlignment="CENTER">
-                                 <font>
-                                    <Font name="Segoe UI Semibold" size="20.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets left="5.0" right="5.0" />
-                                 </HBox.margin>
-                              </Label>
-                              <Button ellipsisString="&gt;" mnemonicParsing="false" onAction="#changeMatrixRight" prefHeight="22.0" prefWidth="28.0" style="-fx-font-family: &quot;Segoe UI Semibold&quot;;" text="&gt;" textAlignment="CENTER">
-                                 <font>
-                                    <Font name="Segoe UI" size="14.0" />
-                                 </font>
-                              </Button>
-                              <ChoiceBox fx:id="matrixDataChoiceBox" prefHeight="32.0" prefWidth="125.0" style="-fx-font-size: 14;">
-                                 <HBox.margin>
-                                    <Insets left="38.0" right="37.0" />
-                                 </HBox.margin>
-                              </ChoiceBox>
-                              <Button fx:id="newWindowMatrixButton" alignment="CENTER" mnemonicParsing="false" onAction="#newWindowMatrix" text="В новом окне" textAlignment="CENTER">
-                                 <font>
-                                    <Font name="Segoe UI" size="14.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets />
-                                 </HBox.margin>
-                              </Button>
-                           </children>
-                           <VBox.margin>
-                              <Insets bottom="5.0" left="10.0" right="10.0" top="10.0" />
-                           </VBox.margin>
-                        </HBox>
-                        <AnchorPane fx:id="matrixParent" />
-                     </children>
-                  </VBox>
-                  <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-                  <Separator prefWidth="200.0" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-                  <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" />
-                  <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <children>
-                        <HBox>
-                           <children>
-                              <Label alignment="BOTTOM_LEFT" prefHeight="20.0" text="Общая статистика">
-                                 <font>
-                                    <Font name="Segoe UI Semibold" size="20.0" />
-                                 </font>
                                  <padding>
-                                    <Insets left="15.0" right="150.0" />
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                  </padding>
                               </Label>
-                              <Label alignment="CENTER_RIGHT" text="Класс" textAlignment="RIGHT">
+                              <Separator orientation="VERTICAL"/>
+                              <Label alignment="CENTER" prefHeight="35.0" prefWidth="188.0"
+                                     text="Обучение" wrapText="true">
                                  <font>
-                                    <Font name="Segoe UI Semibold" size="20.0" />
+                                    <Font name="Segoe UI SemiBold" size="14.0"/>
                                  </font>
                                  <padding>
-                                    <Insets left="15.0" right="15.0" />
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                  </padding>
+                                 <HBox.margin>
+                                    <Insets/>
+                                 </HBox.margin>
                               </Label>
-                              <ChoiceBox fx:id="statClassChoiceBox" prefHeight="32.0" prefWidth="200.0" />
-                           </children>
-                        </HBox>
-                        <ScrollPane hbarPolicy="NEVER" prefHeight="280.0" prefWidth="620.0">
-                          <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0">
-                                 <children>
-                                    <VBox fx:id="statVBox" prefWidth="616.0">
-                                       <children>
-                                          <HBox>
-                                             <children>
-                                                <Label alignment="CENTER" prefHeight="35.0" prefWidth="225.0" text="Название" wrapText="true" HBox.hgrow="NEVER">
-                                                   <font>
-                                                      <Font name="Segoe UI Semibold" size="14.0" />
-                                                   </font>
-                                                   <HBox.margin>
-                                                      <Insets />
-                                                   </HBox.margin>
-                                                   <padding>
-                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                   </padding>
-                                                </Label>
-                                                <Separator orientation="VERTICAL" />
-                                                <Label alignment="CENTER" prefHeight="35.0" prefWidth="188.0" text="Обучение" wrapText="true">
-                                                   <font>
-                                                      <Font name="Segoe UI Semibold" size="14.0" />
-                                                   </font>
-                                                   <padding>
-                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                   </padding>
-                                                   <HBox.margin>
-                                                      <Insets />
-                                                   </HBox.margin>
-                                                </Label>
-                                                <Separator orientation="VERTICAL" />
-                                                <Label alignment="CENTER" prefHeight="35.0" prefWidth="188.0" text="Тестирование" wrapText="true">
-                                                   <font>
-                                                      <Font name="Segoe UI Semibold" size="14.0" />
-                                                   </font>
-                                                   <padding>
-                                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                   </padding>
-                                                   <HBox.margin>
-                                                      <Insets />
-                                                   </HBox.margin>
-                                                </Label>
-                                             </children>
-                                          </HBox>
-                                          <Separator prefWidth="200.0" />
-                                       </children>
-                                    </VBox>
-                                 </children>
-                              </AnchorPane>
-                          </content>
-                        </ScrollPane>
-                     </children>
-                     <GridPane.margin>
-                        <Insets />
-                     </GridPane.margin>
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                  </VBox>
-               </children>
+                              <Separator orientation="VERTICAL"/>
+                              <Label alignment="CENTER" prefHeight="35.0" prefWidth="188.0"
+                                     text="Тестирование" wrapText="true">
+                                 <font>
+                                    <Font name="Segoe UI SemiBold" size="14.0"/>
+                                 </font>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                 </padding>
+                                 <HBox.margin>
+                                    <Insets/>
+                                 </HBox.margin>
+                              </Label>
+                           </HBox>
+                           <Separator prefWidth="200.0"/>
+                        </VBox>
+                     </AnchorPane>
+                  </ScrollPane>
+               </VBox>
             </GridPane>
          </AnchorPane>
       </Tab>
       <Tab text="О приложении">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-               <children>
-                  <GridPane layoutX="302.0" layoutY="260.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" percentHeight="6.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" percentHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" percentHeight="5.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label text="Разработчик" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                           <font>
-                              <Font name="Segoe UI Semibold" size="20.0" />
-                           </font>
-                           <GridPane.margin>
-                              <Insets top="5.0" />
-                           </GridPane.margin>
-                        </Label>
-                        <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Label text="О приложении" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                           <font>
-                              <Font name="Segoe UI Semibold" size="20.0" />
-                           </font>
-                           <GridPane.margin>
-                              <Insets top="5.0" />
-                           </GridPane.margin>
-                        </Label>
-                        <Label text="Обратная связь" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
-                           <font>
-                              <Font name="Segoe UI Semibold" size="20.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="50.0" prefWidth="620.0" spacing="15.0" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
-                           <children>
-                              <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/forms.png" />
-                                 </image>
-                              </ImageView>
-                              <Hyperlink alignment="CENTER" onAction="#openFeedbackForm" text="Форма обратной связи по приложению">
-                                 <font>
-                                    <Font name="Segoe UI Semibold" size="16.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets />
-                                 </HBox.margin>
-                              </Hyperlink>
-                           </children>
-                           <GridPane.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </GridPane.margin>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="50.0" prefWidth="620.0" spacing="15.0" GridPane.rowIndex="7">
-                           <children>
-                              <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/email.png" />
-                                 </image>
-                              </ImageView>
-                              <Label text="Электронная почта: ravikgames1111@gmail.com">
-                                 <font>
-                                    <Font name="Segoe UI Semibold" size="16.0" />
-                                 </font>
-                                 <padding>
-                                    <Insets left="3.0" />
-                                 </padding>
-                              </Label>
-                           </children>
-                           <GridPane.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </GridPane.margin>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="50.0" prefWidth="620.0" spacing="15.0" GridPane.rowIndex="6">
-                           <children>
-                              <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/vk.png" />
-                                 </image>
-                              </ImageView>
-                              <Hyperlink alignment="CENTER" onAction="#openVK" text="VK разработчика">
-                                 <font>
-                                    <Font name="Segoe UI Semibold" size="16.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets />
-                                 </HBox.margin>
-                              </Hyperlink>
-                           </children>
-                           <GridPane.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </GridPane.margin>
-                        </HBox>
-                        <Separator halignment="LEFT" orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowSpan="8" />
-                        <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-                        <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <children>
-                              <Label text="Алексей Близниченко ">
-                                 <font>
-                                    <Font name="Segoe UI Semibold" size="18.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets />
-                                 </HBox.margin>
-                              </Label>
-                              <Label text="&quot;ravik&quot;">
-                                 <font>
-                                    <Font name="Segoe UI Semibold Italic" size="18.0" />
-                                 </font>
-                              </Label>
-                              <ImageView fitHeight="125.0" fitWidth="125.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/ravik_logo.png" />
-                                 </image>
-                                 <HBox.margin>
-                                    <Insets left="25.0" />
-                                 </HBox.margin>
-                              </ImageView>
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="50.0" prefWidth="620.0" spacing="15.0" GridPane.rowIndex="3">
-                           <children>
-                              <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/github.png" />
-                                 </image>
-                              </ImageView>
-                              <Hyperlink alignment="CENTER" onAction="#openGitHub" text="GitHub страница проекта">
-                                 <font>
-                                    <Font name="Segoe UI Semibold" size="16.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets />
-                                 </HBox.margin>
-                              </Hyperlink>
-                           </children>
-                           <GridPane.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </GridPane.margin>
-                        </HBox>
-                        <Separator prefWidth="200.0" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-                        <Separator prefWidth="200.0" GridPane.rowIndex="5" GridPane.valignment="TOP" />
-                        <Separator prefWidth="200.0" GridPane.rowIndex="4" GridPane.valignment="TOP" />
-                        <VBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <children>
-                              <Label text="Наставник:">
-                                 <font>
-                                    <Font name="Segoe UI" size="16.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin>
-                              </Label>
-                              <Label text="Глеч Екатерина Викторовна">
-                                 <font>
-                                    <Font name="Segoe UI Semibold" size="18.0" />
-                                 </font>
-                              </Label>
-                              <Label text="При поддержке:">
-                                 <font>
-                                    <Font name="Segoe UI" size="16.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="10.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <Hyperlink alignment="CENTER" onAction="#openMAN" text="ГБОУ ЦДО &quot;Малая Академия Наук&quot; города Севастополя">
-                                 <font>
-                                    <Font name="Segoe UI Semibold" size="18.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin>
-                                 <padding>
-                                    <Insets left="-1.0" />
-                                 </padding>
-                              </Hyperlink>
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </VBox>
-                        <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.rowSpan="3">
-                           <children>
-                              <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/man.jpg" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/altair.jpg" />
-                                 </image>
-                                 <HBox.margin>
-                                    <Insets left="100.0" />
-                                 </HBox.margin>
-                              </ImageView>
-                           </children>
-                        </HBox>
-                        <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.valignment="TOP" />
-                        <Separator halignment="RIGHT" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP" />
-                        <Label text="ANNA (Advanced Neural Network Application) – это open-source приложение для создания, настройки и использования нейронных сетей прямого распространения. Приложение имеет модульную структуру и позволяет пользователю детально настроить архитектуру и гиперпараметры нейронной сети. Приложение находится в разработке и может содержать ошибки. Просьба сообщать о найденных неисправностях в форму ниже." wrapText="true" GridPane.rowIndex="1">
-                           <font>
-                              <Font name="Segoe UI Semilight" size="16.0" />
-                           </font>
-                           <GridPane.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </GridPane.margin>
-                        </Label>
-                        <Label text="Краткое руководство пользования:&#10;1. Загрузить обучающую выборку данных во вкладке «Данные»&#10;2. Настроить входные нейроны и проверочный столбец (вкладка «Архитектура»)&#10;3. Настроить структуру нейронной сети&#10;4. Настроить гиперпараметры (вкладка «Управление»; необязательно)&#10;5. «Запустить на обучающих данных»&#10;" wrapText="true" GridPane.rowIndex="2">
-                           <font>
-                              <Font name="Segoe UI Semilight" size="16.0" />
-                           </font>
-                           <GridPane.margin>
-                              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-                           </GridPane.margin>
-                        </Label>
-                     </children>
-                  </GridPane>
-               </children>
-            </AnchorPane>
-        </content>
+         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+            <GridPane layoutX="302.0" layoutY="260.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0"/>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0"/>
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" percentHeight="6.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                  <RowConstraints minHeight="10.0" percentHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                  <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                  <RowConstraints minHeight="10.0" percentHeight="5.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                  <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                  <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                  <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+               </rowConstraints>
+               <Label text="Разработчик" GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                      GridPane.valignment="CENTER">
+                  <font>
+                     <Font name="Segoe UI SemiBold" size="20.0"/>
+                  </font>
+                  <GridPane.margin>
+                     <Insets top="5.0"/>
+                  </GridPane.margin>
+               </Label>
+               <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+               <Label text="О приложении" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                  <font>
+                     <Font name="Segoe UI SemiBold" size="20.0"/>
+                  </font>
+                  <GridPane.margin>
+                     <Insets top="5.0"/>
+                  </GridPane.margin>
+               </Label>
+               <Label text="Обратная связь" GridPane.halignment="CENTER" GridPane.rowIndex="4"
+                      GridPane.valignment="CENTER">
+                  <font>
+                     <Font name="Segoe UI SemiBold" size="20.0"/>
+                  </font>
+               </Label>
+               <HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="50.0" prefWidth="620.0" spacing="15.0"
+                     GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                  <GridPane.margin>
+                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                  </GridPane.margin>
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@../images/forms.png"/>
+                  </ImageView>
+                  <Hyperlink alignment="CENTER" onAction="#openFeedbackForm"
+                             text="Форма обратной связи по приложению">
+                     <font>
+                        <Font name="Segoe UI SemiBold" size="16.0"/>
+                     </font>
+                     <HBox.margin>
+                        <Insets/>
+                     </HBox.margin>
+                  </Hyperlink>
+               </HBox>
+               <HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="50.0" prefWidth="620.0" spacing="15.0"
+                     GridPane.rowIndex="7">
+                  <GridPane.margin>
+                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                  </GridPane.margin>
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@../images/email.png"/>
+                  </ImageView>
+                  <Label text="Электронная почта: ravikgames1111@gmail.com">
+                     <font>
+                        <Font name="Segoe UI SemiBold" size="16.0"/>
+                     </font>
+                     <padding>
+                        <Insets left="3.0"/>
+                     </padding>
+                  </Label>
+               </HBox>
+               <HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="50.0" prefWidth="620.0" spacing="15.0"
+                     GridPane.rowIndex="6">
+                  <GridPane.margin>
+                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                  </GridPane.margin>
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@../images/vk.png"/>
+                  </ImageView>
+                  <Hyperlink alignment="CENTER" onAction="#openVK" text="VK разработчика">
+                     <font>
+                        <Font name="Segoe UI SemiBold" size="16.0"/>
+                     </font>
+                     <HBox.margin>
+                        <Insets/>
+                     </HBox.margin>
+                  </Hyperlink>
+               </HBox>
+               <Separator halignment="LEFT" orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowSpan="8"/>
+               <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                          GridPane.valignment="TOP"/>
+               <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <padding>
+                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                  </padding>
+                  <Label text="Алексей Близниченко ">
+                     <font>
+                        <Font name="Segoe UI SemiBold" size="18.0"/>
+                     </font>
+                     <HBox.margin>
+                        <Insets/>
+                     </HBox.margin>
+                  </Label>
+                  <Label text="&quot;ravik&quot;">
+                     <font>
+                        <Font name="Segoe UI SemiBold Italic" size="18.0"/>
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="125.0" fitWidth="125.0" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets left="25.0"/>
+                     </HBox.margin>
+                     <Image url="@../images/ravik_logo.png"/>
+                  </ImageView>
+               </HBox>
+               <HBox alignment="CENTER_LEFT" fillHeight="false" prefHeight="50.0" prefWidth="620.0" spacing="15.0"
+                     GridPane.rowIndex="3">
+                  <GridPane.margin>
+                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                  </GridPane.margin>
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@../images/github.png"/>
+                  </ImageView>
+                  <Hyperlink alignment="CENTER" onAction="#openGitHub" text="GitHub страница проекта">
+                     <font>
+                        <Font name="Segoe UI SemiBold" size="16.0"/>
+                     </font>
+                     <HBox.margin>
+                        <Insets/>
+                     </HBox.margin>
+                  </Hyperlink>
+               </HBox>
+               <Separator prefWidth="200.0" GridPane.rowIndex="1" GridPane.valignment="TOP"/>
+               <Separator prefWidth="200.0" GridPane.rowIndex="5" GridPane.valignment="TOP"/>
+               <Separator prefWidth="200.0" GridPane.rowIndex="4" GridPane.valignment="TOP"/>
+               <VBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <padding>
+                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                  </padding>
+                  <Label text="Наставник:">
+                     <font>
+                        <Font name="Segoe UI" size="16.0"/>
+                     </font>
+                     <VBox.margin>
+                        <Insets/>
+                     </VBox.margin>
+                  </Label>
+                  <Label text="Глеч Екатерина Викторовна">
+                     <font>
+                        <Font name="Segoe UI SemiBold" size="18.0"/>
+                     </font>
+                  </Label>
+                  <Label text="При поддержке:">
+                     <font>
+                        <Font name="Segoe UI" size="16.0"/>
+                     </font>
+                     <VBox.margin>
+                        <Insets top="10.0"/>
+                     </VBox.margin>
+                  </Label>
+                  <Hyperlink alignment="CENTER" onAction="#openMAN"
+                             text="ГБОУ ЦДО &quot;Малая Академия Наук&quot; города Севастополя">
+                     <font>
+                        <Font name="Segoe UI SemiBold" size="18.0"/>
+                     </font>
+                     <VBox.margin>
+                        <Insets/>
+                     </VBox.margin>
+                     <padding>
+                        <Insets left="-1.0"/>
+                     </padding>
+                  </Hyperlink>
+               </VBox>
+               <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.rowSpan="3">
+                  <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <Image url="@../images/man.jpg"/>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets left="100.0"/>
+                     </HBox.margin>
+                     <Image url="@../images/altair.jpg"/>
+                  </ImageView>
+               </HBox>
+               <Separator prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                          GridPane.valignment="TOP"/>
+               <Separator halignment="RIGHT" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6"
+                          GridPane.valignment="TOP"/>
+               <Label text="ANNA (Advanced Neural Network Application) – это open-source приложение для создания, настройки и использования нейронных сетей прямого распространения. Приложение имеет модульную структуру и позволяет пользователю детально настроить архитектуру и гиперпараметры нейронной сети. Приложение находится в разработке и может содержать ошибки. Просьба сообщать о найденных неисправностях в форму ниже."
+                      wrapText="true" GridPane.rowIndex="1">
+                  <font>
+                     <Font name="Segoe UI SemiLight" size="16.0"/>
+                  </font>
+                  <GridPane.margin>
+                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                  </GridPane.margin>
+               </Label>
+               <Label text="Краткое руководство пользования:&#10;1. Загрузить обучающую выборку данных во вкладке «Данные»&#10;2. Настроить входные нейроны и проверочный столбец (вкладка «Архитектура»)&#10;3. Настроить структуру нейронной сети&#10;4. Настроить гиперпараметры (вкладка «Управление»; необязательно)&#10;5. «Запустить на обучающих данных»&#10;"
+                      wrapText="true" GridPane.rowIndex="2">
+                  <font>
+                     <Font name="Segoe UI SemiLight" size="16.0"/>
+                  </font>
+                  <GridPane.margin>
+                     <Insets bottom="5.0" left="10.0" right="10.0" top="5.0"/>
+                  </GridPane.margin>
+               </Label>
+            </GridPane>
+         </AnchorPane>
       </Tab>
    </TabPane>
 </VBox>

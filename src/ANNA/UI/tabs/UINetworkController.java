@@ -1,21 +1,18 @@
-package ANNA.UI.Tabs;
+package ANNA.UI.tabs;
 
 import ANNA.Main;
-import ANNA.Network.DataTypes;
-import ANNA.Network.Hyperparameters;
-import ANNA.Network.NeuralNetwork;
+import ANNA.network.DataTypes;
+import ANNA.network.Hyperparameters;
+import ANNA.network.NeuralNetwork;
 import ANNA.UI.Parser;
 import ANNA.UI.PopupController;
-import ANNA.UI.UIController;
+import ANNA.UI.DefaultUIController;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -32,13 +29,14 @@ public class UINetworkController {
     private final VBox hyperparametersVBox;
     private final TextField updateResultsEpoch;
 
-    private final UIController mainController;
+    private final DefaultUIController mainController;
     private UIDataController dataController;
     private UIStructureController structureController;
     private UIOutputController outputController;
     private Main main;
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
-    public UINetworkController(UIController controller, VBox hyperparametersVBox, TextField updateResultsEpoch){
+    public UINetworkController(DefaultUIController controller, VBox hyperparametersVBox, TextField updateResultsEpoch){
         this.mainController = controller;
         this.hyperparametersVBox = hyperparametersVBox;
         this.updateResultsEpoch = updateResultsEpoch;
@@ -83,7 +81,7 @@ public class UINetworkController {
 
         //Name of hyperparameters
         Label nameLabel = new Label(name);
-        nameLabel.setFont(new Font("Segoe UI SemiBold", 12));
+        nameLabel.setFont(Font.font("Segoe UI SemiBold", 12));
         nameLabel.setPrefWidth(140);
         nameLabel.setWrapText(true);
 
@@ -92,7 +90,7 @@ public class UINetworkController {
         valueField.setPrefWidth(150);
 
         Text descriptionLabel = new Text(description);
-        descriptionLabel.setFont(new Font("Segoe UI SemiLight", 12));
+        descriptionLabel.setFont(Font.font("Segoe UI SemiLight", 12));
         descriptionLabel.setWrappingWidth(280);
 
         hBox.getChildren().add(nameLabel);
@@ -113,22 +111,22 @@ public class UINetworkController {
         //Handling errors
         boolean trainToTest = false;
         if (structureController.trainInputSettings == null || structureController.trainInputSettings.size() < 1){
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Input neurons for training data are not configured.");
+            LOGGER.log(Level.WARNING, "Input neurons for training data are not configured.");
             PopupController.errorMessage("ERROR", "Ошибка", "", "Не настроены входные нейроны для обучающих данных.");
             return null;
         }
         if (structureController.architectureSettings == null){
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "The structure of the neural network is not set up.");
+            LOGGER.log(Level.WARNING, "The structure of the neural network is not set up.");
             PopupController.errorMessage("ERROR", "Ошибка", "", "Не настроена структура нейронной сети.");
             return null;
         }
         if (structureController.testInputSettings == null || structureController.testInputSettings.size() < 1){
-            Logger.getLogger(getClass().getName()).log(Level.INFO, "The input neurons for the test data are not configured. The training data will be used for testing.");
+            LOGGER.log(Level.WARNING, "The input neurons for the test data are not configured. The training data will be used for testing.");
             PopupController.errorMessage("WARNING", "Предупреждение", "", "Не настроены входные нейроны для тестовых данных. Для тестирования будут использованы обучающие данные.");
             trainToTest = true;
         }
         else if (structureController.trainInputSettings.size() != structureController.testInputSettings.size()){
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "The structure of the neural network is not the same for training and test data. The number of input neurons is different.");
+            LOGGER.log(Level.WARNING, "The structure of the neural network is not the same for training and test data. The number of input neurons is different.");
             PopupController.errorMessage("ERROR", "Ошибка", "", "Структура нейронной сети не совпадает для обучающих и тестовых данных. Количество входных нейронов различается.");
             return null;
         }
@@ -139,9 +137,9 @@ public class UINetworkController {
 
         //Log preparation time
         long startTime = System.nanoTime();
-        System.out.println("\n--- Starting preparation ---");
+        LOGGER.info("--- Starting preparation ---");
 
-        int logEpoch = Integer.parseInt(updateResultsEpoch.getText()); //TODO Check for only digits in field
+        int logEpoch = (int) Parser.parseRawValue(updateResultsEpoch.getText(), Parser.inputTypes.NUMBER);
         DataTypes.NetworkData networkData = new DataTypes.NetworkData(new int[2 + structureController.architectureSettings.size() / 2], new ArrayList<>());
         DataTypes.Dataset trainData = collectDataset(true, isPrediction);
         DataTypes.Dataset testData = collectDataset(trainToTest, isPrediction);
@@ -152,22 +150,18 @@ public class UINetworkController {
         for(int i = 0; i < structureController.architectureSettings.size(); i+=2) {
             VBox vBox = (VBox) structureController.architectureSettings.get(i);
             TextField textField = (TextField) vBox.getChildren().get(2);
-            networkData.getStructure()[i / 2 + 1] = Integer.parseInt(textField.getText()); //TODO Check for only digits in field
+            networkData.getStructure()[i / 2 + 1] = (int) Parser.parseRawValue(textField.getText(), Parser.inputTypes.NUMBER);
         }
 
         //Set output layer neuron counter
-        /*if(isPrediction)
-            networkData.getStructure()[networkData.getStructure().length - 1] = 1;
-        else
-            networkData.getStructure()[networkData.getStructure().length - 1] = allOutputTypes.size();*/
-        networkData.getStructure()[networkData.getStructure().length - 1] = trainData.allOutputTypes().length;
+        networkData.getStructure()[networkData.getStructure().length - 1] = trainData.allOutputTypes().length; //TODO For classification only
 
         mainController.lastArguments = new NeuralNetwork.NetworkArguments(networkData, trainData, testData, isPrediction, mainController, logEpoch);
 
         //Log end time
         long elapsedTime = System.nanoTime() - startTime;
-        System.out.println("\n--- Preparation finished ---");
-        System.out.println("\nElapsed time: " + (elapsedTime / 1000000000) + "s\t" + (elapsedTime / 1000000) + "ms\t" + elapsedTime + "ns\n");
+        LOGGER.info("--- Preparation finished ---");
+        LOGGER.info("Elapsed time: " + (elapsedTime / 1000000000) + "s\t" + (elapsedTime / 1000000) + "ms\t" + elapsedTime + "ns\n");
         //Print time in seconds, milliseconds and nanoseconds
 
         return mainController.lastArguments;
@@ -189,7 +183,7 @@ public class UINetworkController {
         Parser.inputTypes[] types = new Parser.inputTypes[currentInputNeuronSet.size() / 2]; //Each value will be parsed according to set type
         int expectedColumn = currentRawDataSet.get(0).indexOf(structureController.lastColumnChoiceBox.getValue());
         if(expectedColumn < 0){
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred when reading the dataset. The selected data of the training and test samples do not match.");
+            LOGGER.log(Level.WARNING, "An error occurred when reading the dataset. The selected data of the training and test samples do not match.");
             PopupController.errorMessage("ERROR", "Ошибка", "", "Произошла ошибка при считывании датасета. Выбранные данные обучающей и тестовой выборки не совпадают.");
             return null;
         }

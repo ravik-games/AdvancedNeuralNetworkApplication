@@ -1,8 +1,9 @@
-package ANNA.UI.Tabs;
+package ANNA.UI.tabs;
 
-import ANNA.Network.NetworkStructure;
+import ANNA.UI.DefaultUIController;
 import ANNA.UI.Parser;
 import ANNA.UI.PopupController;
+import ANNA.network.NetworkStructure;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -31,14 +32,16 @@ public class UIStructureController {
     private final Button inputNeuronButton, inputNeuronRemoveButton, inputNeuronAutoButton;
     private final Canvas graphicOutput;
 
-    private UIDataController dataController;
+    private final DefaultUIController mainController;
+    private List<List<String>> rawTestSet, rawTrainSet;
 
     public ObservableList<Node> trainInputSettings, testInputSettings, architectureSettings;
     public int trainCheckColumn = 0, testCheckColumn = 0;
 
-    public UIStructureController(VBox inputVBox, HBox architectureHBox, ChoiceBox<String> inputsChoiceBox, ChoiceBox<String> lastColumnChoiceBox,
-                                 Label inputNeuronCounter, Label lastLayerNumber, Button inputNeuronRemoveButton, Button inputNeuronButton, Button inputNeuronAutoButton,
-                                 Canvas graphicOutput){
+    public UIStructureController(DefaultUIController mainController, VBox inputVBox, HBox architectureHBox, ChoiceBox<String> inputsChoiceBox,
+                                 ChoiceBox<String> lastColumnChoiceBox, Label inputNeuronCounter, Label lastLayerNumber, Button inputNeuronRemoveButton,
+                                 Button inputNeuronButton, Button inputNeuronAutoButton, Canvas graphicOutput){
+        this.mainController = mainController;
         this.inputVBox = inputVBox;
         this.architectureHBox = architectureHBox;
         this.lastColumnChoiceBox = lastColumnChoiceBox;
@@ -65,19 +68,18 @@ public class UIStructureController {
         });
     }
 
-    public void setControllerReferences(UIDataController dataController){
-        this.dataController = dataController;
-    }
-
     public void updateInputTable(){
         inputVBox.getChildren().remove(2, inputVBox.getChildren().size() - 1);
         lastColumnChoiceBox.getItems().clear();
         lastColumnChoiceBox.setValue("...");
         inputNeuronCounter.setText("...");
+        
+        rawTrainSet = mainController.dataController.rawTrainSet;
+        rawTestSet = mainController.dataController.rawTestSet;
 
         //Switch on selected data set
         if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(0))){
-            if(dataController.trainSetFile == null || !dataController.trainSetFile.exists()){
+            if(mainController.dataController.trainSetFile == null || !mainController.dataController.trainSetFile.exists()){
                 inputsChoiceBox.setValue("Выберите базу данных");
                 inputNeuronButton.setDisable(true);
                 inputNeuronRemoveButton.setDisable(true);
@@ -88,12 +90,12 @@ public class UIStructureController {
             }
             //If settings is not valid, create new.
             if(trainInputSettings == null){
-                trainInputSettings = FXCollections.observableArrayList(addInputValue(dataController.rawTrainSet, 0));
+                trainInputSettings = FXCollections.observableArrayList(addInputValue(rawTrainSet, 0));
                 trainCheckColumn = 0;
             }
             inputVBox.getChildren().addAll(2, trainInputSettings);
             inputNeuronCounter.setText(String.valueOf(trainInputSettings.size() / 2));
-            lastColumnChoiceBox.getItems().addAll(dataController.rawTrainSet.get(0));
+            lastColumnChoiceBox.getItems().addAll(rawTrainSet.get(0));
 
             lastColumnChoiceBox.setValue(lastColumnChoiceBox.getItems().get(trainCheckColumn));
             inputNeuronButton.setDisable(false);
@@ -102,7 +104,7 @@ public class UIStructureController {
             lastColumnChoiceBox.setDisable(false);
         }
         else if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
-            if(dataController.testSetFile == null || !dataController.testSetFile.exists()){
+            if(mainController.dataController.testSetFile == null || !mainController.dataController.testSetFile.exists()){
                 inputsChoiceBox.setValue("Выберите базу данных");
                 inputNeuronButton.setDisable(true);
                 inputNeuronRemoveButton.setDisable(true);
@@ -113,12 +115,12 @@ public class UIStructureController {
             }
             //If settings is not valid, create new.
             if(testInputSettings == null){
-                testInputSettings = FXCollections.observableArrayList(addInputValue(dataController.rawTestSet, 0));
+                testInputSettings = FXCollections.observableArrayList(addInputValue(rawTestSet, 0));
                 testCheckColumn = 0;
             }
             inputVBox.getChildren().addAll(2, testInputSettings);
             inputNeuronCounter.setText(String.valueOf(testInputSettings.size() / 2));
-            lastColumnChoiceBox.getItems().addAll(dataController.rawTestSet.get(0));
+            lastColumnChoiceBox.getItems().addAll(rawTestSet.get(0));
             lastColumnChoiceBox.setValue(lastColumnChoiceBox.getItems().get(testCheckColumn));
             inputNeuronButton.setDisable(false);
             inputNeuronRemoveButton.setDisable(false);
@@ -135,11 +137,11 @@ public class UIStructureController {
     //Add new input neuron value
     public void addInputNeuron() {
         if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(0))){
-            trainInputSettings.addAll(addInputValue(dataController.rawTrainSet, trainInputSettings.size() / 2));
+            trainInputSettings.addAll(addInputValue(rawTrainSet, trainInputSettings.size() / 2));
             updateInputTable();
         }
         else if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
-            testInputSettings.addAll(addInputValue(dataController.rawTestSet, testInputSettings.size() / 2));
+            testInputSettings.addAll(addInputValue(rawTestSet, testInputSettings.size() / 2));
             updateInputTable();
         }
     }
@@ -151,15 +153,15 @@ public class UIStructureController {
 
         if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(0))){
             trainInputSettings.clear();
-            for (int i = 0; i < dataController.rawTrainSet.get(0).size() - 1; i++) {
-                trainInputSettings.addAll(addInputValue(dataController.rawTrainSet, i));
+            for (int i = 0; i < rawTrainSet.get(0).size() - 1; i++) {
+                trainInputSettings.addAll(addInputValue(rawTrainSet, i));
             }
             trainCheckColumn = lastColumnChoiceBox.getItems().size() - 1;
         }
         else if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
             testInputSettings.clear();
-            for (int i = 0; i < dataController.rawTestSet.get(0).size() - 1; i++) {
-                testInputSettings.addAll(addInputValue(dataController.rawTestSet, i));
+            for (int i = 0; i < rawTestSet.get(0).size() - 1; i++) {
+                testInputSettings.addAll(addInputValue(rawTestSet, i));
             }
             testCheckColumn = lastColumnChoiceBox.getItems().size() - 1;
         }
@@ -335,7 +337,7 @@ public class UIStructureController {
             VBox vBox = (VBox) architectureSettings.get(i);
             TextField textField = (TextField) vBox.getChildren().get(2);
             ChoiceBox<NetworkStructure.neuronTypes> choiceBox = (ChoiceBox<NetworkStructure.neuronTypes>) vBox.getChildren().get(4);
-            if(textField.getText().equals("")) {
+            if(textField.getText().isEmpty()) {
                 return;
             }
             data[i / 2 + 1] = Integer.parseInt(textField.getText());
@@ -376,9 +378,7 @@ public class UIStructureController {
                 }
                 else if(i < data.length - 1){
                     switch(types[i]){
-                        case HIDDEN -> {
-                            graphicsContext.setFill(Color.web("#4769ff"));
-                        }
+                        case HIDDEN -> graphicsContext.setFill(Color.web("#4769ff"));
                     }
                 }
                 else{
