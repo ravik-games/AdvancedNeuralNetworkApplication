@@ -1,6 +1,6 @@
 # Advanced Neural Network Application
 
-Приложение для создания и использования нейронных сетей - ANNA.
+Приложение для создания и использования нейронных сетей - anna.
 Приложение позволяет Пользователю создать, настроить и обучить нейронную сеть прямого распространения (FFNN) для решения задач классификации и прогнозирования (в разработке).
 
 **На данный момент вмещает в себя большую часть задуманного функционала, в том числе:**
@@ -27,10 +27,10 @@ _При обнаружении ошибок, просьба сообщать в 
 
 # English
 
-An application for creating and using neural networks - ANNA.
+An application for creating and using neural networks - anna.
 The application allows the User to create, configure and train a forward propagation neural network (FFNN) to solve classification and prediction tasks (in development).
 
-**Currently contains most of the conceived functionality, including:**
+**Currently, contains most of the conceived functionality, including:**
 - Loading training/test data;
 - Configuring the neural network architecture;
 - Setting up hyperparameters;
