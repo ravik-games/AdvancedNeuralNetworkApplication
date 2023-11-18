@@ -1,6 +1,6 @@
 package anna.ui.tabs;
 
-import anna.Main;
+import anna.Application;
 import anna.network.DataTypes;
 import anna.network.Hyperparameters;
 import anna.network.NeuralNetwork;
@@ -35,8 +35,8 @@ public class UINetworkController {
     private UIDataController dataController;
     private UIStructureController structureController;
     private UIOutputController outputController;
-    private Main main;
-    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+    private Application application;
+    private static final Logger LOGGER = Logger.getLogger(Application.class.getName());
     private static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
 
     public UINetworkController(DefaultUIController controller, VBox hyperparametersVBox, TextField updateResultsEpoch){
@@ -45,8 +45,8 @@ public class UINetworkController {
         this.updateResultsEpoch = updateResultsEpoch;
     }
 
-    public void setMain(Main main){
-        this.main = main;
+    public void setMain(Application application){
+        this.application = application;
     }
 
     public void setControllerReferences(UIDataController dataController, UIStructureController structureController, UIOutputController outputController){
@@ -62,7 +62,7 @@ public class UINetworkController {
             return;
         if(mainController.autoOpenResults.isSelected())
             mainController.tabPane.getSelectionModel().select(3);
-        main.runNeuralNetwork(arguments);
+        application.runNeuralNetwork(arguments);
         //Enable simulator
         outputController.initializeSimulator(true);
     }

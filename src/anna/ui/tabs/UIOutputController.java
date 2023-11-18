@@ -1,6 +1,6 @@
 package anna.ui.tabs;
 
-import anna.Main;
+import anna.Application;
 import anna.network.DataTypes;
 import anna.ui.Parser;
 import anna.ui.PopupController;
@@ -48,7 +48,7 @@ public class UIOutputController {
     private final DefaultUIController mainController;
     private UIClassMatrixController classMatrixController;
     private UIFullMatrixController fullMatrixController;
-    private Main main;
+    private Application application;
 
     private int chartSelectionID = 0;
     private int matrixSelectionID = 0;
@@ -111,8 +111,8 @@ public class UIOutputController {
 
     }
 
-    public void setMain(Main main){
-        this.main = main;
+    public void setMain(Application application){
+        this.application = application;
     }
 
     //Create/update simulator table
@@ -176,7 +176,7 @@ public class UIOutputController {
             inputs[i / 2 - 1] = Parser.parseRawValue(field.getText(), mainController.lastInputTypes[i / 2 - 1]);
         }
 
-        main.runSimulation(inputs);
+        application.runSimulation(inputs);
     }
 
     //Add simulation output to UI
