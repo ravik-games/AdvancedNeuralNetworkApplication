@@ -66,6 +66,12 @@ public class NeuralNetwork implements Runnable{
         int batchSize = Hyperparameters.BATCH_SIZE <= 0? arguments.trainSet().inputs().length : Hyperparameters.BATCH_SIZE;
         for (int i = 0; i < Hyperparameters.NUMBER_OF_EPOCHS; i++) {
 
+            //Log new epoch header
+            if(i == 0 || i == Hyperparameters.NUMBER_OF_EPOCHS - 1 || (arguments.logEpoch() != 0 && (i + 1) % arguments.logEpoch() == 0))
+                LOGGER.info("---------- " + (i + 1) + "/" + Hyperparameters.NUMBER_OF_EPOCHS + " Epoch ----------");
+
+            //long calculationStartTime = System.nanoTime();
+
             //Epoch
             DataTypes.Evaluation trainEvaluation = new DataTypes.Evaluation(lastArguments.trainSet().allOutputTypes().length, lastArguments.trainSet().inputs().length);
             DataTypes.Evaluation testEvaluation = new DataTypes.Evaluation(lastArguments.testSet().allOutputTypes().length, lastArguments.testSet().inputs().length);
@@ -93,7 +99,11 @@ public class NeuralNetwork implements Runnable{
                     abortNetworkMessage();
                     return;
                 }
+
+                //printProgressBar("Training " + i, j, batchSize - 1, calculationStartTime);
             }
+
+            //calculationStartTime = System.nanoTime();
 
             //Testing
             for (int j = 0; j < arguments.testSet().inputs().length; j++) {
@@ -118,6 +128,8 @@ public class NeuralNetwork implements Runnable{
                     abortNetworkMessage();
                     return;
                 }
+
+                //printProgressBar("Testing", j, arguments.testSet().inputs().length - 1, calculationStartTime);
             }
             //Calculation of mean error
             trainEvaluation.setMeanError(trainEvaluation.getMeanError() / batchSize);
@@ -131,7 +143,6 @@ public class NeuralNetwork implements Runnable{
                 boolean justStarted = i == 0;
 
                 //Log epoch info
-                LOGGER.info("---------- " + (i + 1) + "/" + Hyperparameters.NUMBER_OF_EPOCHS + " Epoch ----------");
                 LOGGER.info("Mean train error of epoch:\t" + trainEvaluation.getMeanError());
                 LOGGER.info("Mean test error of epoch:\t" + testEvaluation.getMeanError() + "\n");
                 LOGGER.info("Mean train accuracy of epoch:\t" + trainEvaluation.getMeanAccuracy());
@@ -343,6 +354,20 @@ public class NeuralNetwork implements Runnable{
                 synapse.setWeight(weight);
             }
         }
+    }
+
+    // Prints progress bar
+    private static void printProgressBar(String name, long currentOperations, long allOperations, long startNanoseconds) {
+        int percentage = Math.round((float) currentOperations / allOperations * 100);
+        String progressBar = "=".repeat(percentage / 10) + " ".repeat(10 - percentage / 10);
+        long elapsedNanoseconds = System.nanoTime() - startNanoseconds;
+        long estimatedSeconds = currentOperations == 0 ? 0 : elapsedNanoseconds / currentOperations * allOperations / 1000000000;
+        String elapsedTime = String.format("%02d:%02d", elapsedNanoseconds / 1000000000 / 60, elapsedNanoseconds / 1000000000 % 60);
+        String estimatedTime = String.format("%02d:%02d", estimatedSeconds / 60, estimatedSeconds % 60);
+
+        if(currentOperations == 0)
+            System.out.println();
+        System.out.printf("%1$s %2$s <%3$s> (%4$s / %5$s)%6$s", name, percentage + "%", progressBar, elapsedTime, estimatedTime, currentOperations == allOperations ? "\n" : "\r");
     }
 
     // Failed attempt to increase performance. Use only in case of giant network, otherwise don't use at all.

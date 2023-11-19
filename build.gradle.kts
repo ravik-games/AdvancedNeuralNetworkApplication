@@ -22,6 +22,11 @@ sourceSets {
             srcDir("src/resources")
         }
     }
+    test {
+        java {
+            srcDir("test")
+        }
+    }
 }
 
 // IntelliJ IDEA add src as source dir
@@ -37,7 +42,7 @@ dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
 
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.9.2")
 }
 
 javafx {
