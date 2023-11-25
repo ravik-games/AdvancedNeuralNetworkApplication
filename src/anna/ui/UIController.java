@@ -1,6 +1,6 @@
 package anna.ui;
 
-import anna.Main;
+import anna.Application;
 import anna.network.DataTypes;
 
 import java.util.List;
@@ -15,5 +15,5 @@ public interface UIController {
 
     void simulationPredictionResult(double outputValue);
 
-    void setMain(Main main);
+    void setMain(Application application);
 }

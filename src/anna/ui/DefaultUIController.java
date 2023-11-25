@@ -1,6 +1,6 @@
 package anna.ui;
 
-import anna.Main;
+import anna.Application;
 import anna.network.DataTypes;
 import anna.network.NeuralNetwork;
 import anna.ui.tabs.UIDataController;
@@ -251,8 +251,8 @@ public class DefaultUIController implements UIController{
     }
 
     @Override
-    public void setMain(Main main){
-        networkController.setMain(main);
-        outputController.setMain(main);
+    public void setMain(Application application){
+        networkController.setMain(application);
+        outputController.setMain(application);
     }
 }

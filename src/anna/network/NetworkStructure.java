@@ -7,6 +7,7 @@ import anna.network.neurons.Neuron;
 import anna.ui.PopupController;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -147,6 +148,8 @@ public class NetworkStructure {
     public int getNeuronsAmountInLayer(int layer){
         return structure.get(layer).size();
     }
+
+    public long getOverallNeuronsAmount() { return structure.stream().mapToLong(List::size).sum();}
 
     public void printWeights(boolean delta){
         StringBuilder str = new StringBuilder();
