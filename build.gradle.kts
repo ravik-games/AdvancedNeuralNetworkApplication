@@ -47,7 +47,7 @@ dependencies {
 
 javafx {
     version = "21"
-    modules("javafx.controls", "javafx.fxml")
+    modules("javafx.controls", "javafx.fxml", "javafx.web")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

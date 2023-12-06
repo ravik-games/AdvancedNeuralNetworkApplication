@@ -41,6 +41,18 @@ public class Parser {
         }
     }
 
+    //Get file from path
+    public static File getFileFromPath(String path, String extension){
+        File result;
+        result = new File(path);
+        int index = result.getName().lastIndexOf(".");
+        if(index <= 0 || !result.getName().substring(index + 1).equals(extension)) {
+            Logger.getLogger(Parser.class.getName()).log(Level.WARNING ,"Selected file is not valid");
+            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.fileNotValid"));
+        }
+        return result;
+    }
+
     //Parse data from file to 2D list
     public static List<List<String>> parseData(File file){
         List<List<String>> result = new ArrayList<>();

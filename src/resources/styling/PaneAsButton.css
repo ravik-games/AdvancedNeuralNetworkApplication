@@ -1,0 +1,15 @@
+.button-pane {
+    -fx-background-radius: 2.5;
+    -fx-border-color: #4769ff;
+    -fx-border-width: 2.5;
+    -fx-border-radius: 2.5;
+    -fx-background-color: #ffffff;
+}
+
+.button-pane:hover {
+    -fx-background-color: #f8faff;
+}
+
+.button-pane:disabled, .button-pane:default:disabled {
+    -fx-opacity: 0.4;
+}

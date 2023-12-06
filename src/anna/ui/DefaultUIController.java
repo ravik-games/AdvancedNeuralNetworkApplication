@@ -7,39 +7,54 @@ import anna.ui.tabs.UIDataController;
 import anna.ui.tabs.UINetworkController;
 import anna.ui.tabs.UIOutputController;
 import anna.ui.tabs.UIStructureController;
+import javafx.animation.FadeTransition;
+import javafx.animation.Transition;
+import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.*;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class DefaultUIController implements UIController{
+public class DefaultUIController implements UIController {
     //Master class for all UI stuff
 
-    private static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
+    protected static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
+    protected Application application;
 
-    public CheckBox autoOpenResults;
-    public Button inputNeuronButton, layerAddButton, inputNeuronRemoveButton, inputNeuronAutoButton, layerRemoveButton, startSimulatorButton, newWindowChartButton, newWindowMatrixButton;
+    public CheckBox autoOpenResults, autoDatasetCheckBox, previewAutoDatasetCheckBox;
+    public Button inputNeuronButton, layerAddButton, inputNeuronRemoveButton, inputNeuronAutoButton, layerRemoveButton, startSimulatorButton, newWindowChartButton,
+            newWindowMatrixButton, loadTrainDataButton, loadTestDataButton;
     public VBox inputVBox, hyperparametersVBox, statVBox;
-    public HBox architectureHBox, simulatorHBox;
-    public TabPane tabPane;
+    public HBox architectureHBox, simulatorHBox, rootPane, sideMenuPane;
+    public TabPane tabPane, dataLoaderPane;
     public Canvas graphicOutput;
-    public TextField updateResultsEpoch, trainDataPath, testDataPath, loadArchitecturePath, loadWeightsPath, loadHyperparametersPath,
+    public TextField trainingPartField, testingPartField, updateResultsEpoch, trainDataPath, testDataPath, loadArchitecturePath, loadWeightsPath, loadHyperparametersPath,
             loadNeuralNetworkPath, saveArchitecturePath, saveWeightsPath, saveHyperparametersPath, saveNeuralNetworkPath;
-    public TableView<List<String>> trainDataTable, testDataTable;
-    public Label trainDataLabel, testDataLabel, inputNeuronCounter, lastLayerNumber, chartLabel, matrixLabel;
+    public TableView<List<String>> trainDataTable, testDataTable, generalDataTable;
+    public Label trainDataLabel, testDataLabel, generalDataLabel, inputNeuronCounter, lastLayerNumber, chartLabel, matrixLabel;
     public LineChart<Integer, Double> chart;
     public NumberAxis chartXAxis;
     public NumberAxis chartYAxis;
     public ChoiceBox<String> inputsChoiceBox, lastColumnChoiceBox, statClassChoiceBox, matrixDataChoiceBox;
     public TextArea simulatorOutput;
-    public Pane chartParent, matrixParent;
+    public Pane chartParent, matrixParent, dataPartitionPane;
+    public FontIcon datasetInfo, autoPartitionInfo;
+    public StackPane menuStackPane;
+    public Separator menuSeparator;
+
 
     public NeuralNetwork.NetworkArguments lastArguments;
     public Parser.inputTypes[] lastInputTypes;
@@ -49,10 +64,16 @@ public class DefaultUIController implements UIController{
     public UINetworkController networkController;
     public UIOutputController outputController;
 
+    protected boolean sideMenuOpen;
+
     //Initialize components
     public void initialize(){
-        dataController = new UIDataController(trainDataPath, testDataPath, trainDataLabel, testDataLabel, trainDataTable, testDataTable);
-        structureController = new UIStructureController(this, inputVBox, architectureHBox, inputsChoiceBox, lastColumnChoiceBox, inputNeuronCounter, lastLayerNumber, inputNeuronRemoveButton, inputNeuronButton, inputNeuronAutoButton, graphicOutput);
+        // Set invisible for fade in animation
+        rootPane.setOpacity(0);
+
+        dataController = new UIDataController(trainDataPath, testDataPath, trainDataLabel, testDataLabel, generalDataLabel, trainDataTable, testDataTable, generalDataTable,
+                trainingPartField, testingPartField);
+        /*structureController = new UIStructureController(this, inputVBox, architectureHBox, inputsChoiceBox, lastColumnChoiceBox, inputNeuronCounter, lastLayerNumber, inputNeuronRemoveButton, inputNeuronButton, inputNeuronAutoButton, graphicOutput);
         networkController = new UINetworkController(this, hyperparametersVBox, updateResultsEpoch);
         outputController = new UIOutputController(this, simulatorOutput, startSimulatorButton, simulatorHBox, statVBox, chart, chartLabel, matrixLabel, statClassChoiceBox, matrixDataChoiceBox);
 
@@ -70,18 +91,21 @@ public class DefaultUIController implements UIController{
         networkController.initializeHyperparameters();
 
         //Clear simulator
-        outputController.initializeSimulator(false);
-    }
+        outputController.initializeSimulator(false);*/
 
-    public void browseForTestData() {
-        dataController.browseForTestData();
+        // Set correct order for side menu animation
+        menuStackPane.setViewOrder(1);
+
+        //Setup all hints
+        setupHints();
+
+        // Wait for initialization to fade in
+        Platform.runLater(() -> fadeNode(rootPane, 200, false));
     }
 
     public void applyTestData() {
         lastColumnChoiceBox.setDisable(true);
         lastColumnChoiceBox.getItems().clear();
-        if(!dataController.applyTestData())
-            return;
 
         //Reset inputs choice box
         inputsChoiceBox.setValue(bundle.getString("tab.architecture.selectDatabase"));
@@ -92,15 +116,9 @@ public class DefaultUIController implements UIController{
         updateInputTable();
     }
 
-    public void browseForTrainData() {
-        dataController.browseForTrainData();
-    }
-
     public void applyTrainData() {
         lastColumnChoiceBox.setDisable(true);
         lastColumnChoiceBox.getItems().clear();
-        if(!dataController.applyTrainData())
-            return;
 
         //Reset inputs choice box
         inputsChoiceBox.setValue(bundle.getString("tab.architecture.selectDatabase"));
@@ -123,18 +141,6 @@ public class DefaultUIController implements UIController{
     public void loadNeuralNetwork() {
     }
 
-    public void browseForArchitecture() {
-    }
-
-    public void browseForWeights() {
-    }
-
-    public void browseForHyperparameters() {
-    }
-
-    public void browseForNeuralNetwork() {
-    }
-
     public void saveArchitecture() {
     }
 
@@ -145,18 +151,6 @@ public class DefaultUIController implements UIController{
     }
 
     public void saveNeuralNetwork() {
-    }
-
-    public void browseSaveArchitecture() {
-    }
-
-    public void browseSaveWeights() {
-    }
-
-    public void browseSaveNeuralNetwork() {
-    }
-
-    public void browseSaveHyperparameters() {
     }
 
     public void updateInputTable() {
@@ -184,20 +178,6 @@ public class DefaultUIController implements UIController{
         outputController.prepareSimulation();
     }
 
-    //Open browser links
-    public void openFeedbackForm() {
-        PopupController.openURI("https://forms.yandex.ru/u/6443d915d046880af1ef091f/");
-    }
-    public void openVK() {
-        PopupController.openURI("https://vk.com/ravikgames");
-    }
-    public void openGitHub() {
-        PopupController.openURI("https://github.com/ravik-games/AdvancedNeuralNetworkApplication");
-    }
-    public void openMAN() {
-        PopupController.openURI("https://sevman.edusev.ru/");
-    }
-
     //Open new window
     public void newWindowMatrix() {
         outputController.openMatrixInNewWindow(newWindowMatrixButton, matrixParent);
@@ -212,12 +192,6 @@ public class DefaultUIController implements UIController{
     }
     public void changeChartRight() {
         outputController.switchSelector(0, false);
-    }
-    public void changeMatrixLeft() {
-        outputController.switchSelector(1, true);
-    }
-    public void changeMatrixRight() {
-        outputController.switchSelector(1, true);
     }
     public void setChartForceYZero(boolean value){
         chartYAxis.setForceZeroInRange(value);
@@ -240,6 +214,32 @@ public class DefaultUIController implements UIController{
         outputController.updateFullMatrix(true);
     }
 
+    public void cycleFadeNode(Node node, double ms, Runnable onChange) {
+        // Configure fade animation
+        FadeTransition fade = new FadeTransition(Duration.millis(ms / 2), node);
+        fade.setFromValue(1);
+        fade.setToValue(0);
+        fade.setAutoReverse(true);
+        fade.setCycleCount(2);
+        fade.play();
+
+        fade.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
+            if (fade.getDuration().equals(newValue)) {
+                onChange.run();
+            }
+        });
+    }
+
+    public Transition fadeNode(Node node, double ms, boolean disappear) {
+        // Configure fade animation
+        FadeTransition fade = new FadeTransition(Duration.millis(ms), node);
+        fade.setFromValue(disappear ? 1 : 0);
+        fade.setToValue(disappear ? 0 : 1);
+        fade.play();
+
+        return fade;
+    }
+
     @Override
     public void simulationClassificationResult(double[] outputValues, String outputCategory) {
         outputController.simulationClassificationResult(outputValues, outputCategory);
@@ -251,8 +251,130 @@ public class DefaultUIController implements UIController{
     }
 
     @Override
-    public void setMain(Application application){
-        networkController.setMain(application);
-        outputController.setMain(application);
+    public void setMain(Application application) {
+        this.application = application;
+        dataController.setMain(application);
+        //networkController.setMain(application);
+        //outputController.setMain(application);
+    }
+
+    public void setupHints() {
+        String style = """
+                -fx-font-family: Inter;
+                -fx-background-color: #ffffff;
+                -fx-opacity: 1;
+                -fx-text-fill: #000000;
+                -fx-font-size: 16;""";
+
+        Tooltip autoPartition = new Tooltip(bundle.getString("tab.data"));
+        autoPartition.setStyle(style);
+        Tooltip.install(autoPartitionInfo, autoPartition);
+    }
+
+    // Change data loading mode on checkbox state change
+    public void autoDatasetCheck() {
+        if (autoDatasetCheckBox.isSelected()) {
+            dataPartitionPane.setVisible(true);
+            dataPartitionPane.setManaged(true);
+            previewAutoDatasetCheckBox.setSelected(false);
+        }
+
+        fadeNode(dataPartitionPane, 300, !autoDatasetCheckBox.isSelected()).setOnFinished(event ->  {
+            if(!autoDatasetCheckBox.isSelected()) {
+                dataPartitionPane.setManaged(false);
+                dataPartitionPane.setVisible(false);
+            }
+        });
+        cycleFadeNode(dataLoaderPane, 300, () -> {
+            loadTrainDataButton.setDisable(false);
+            loadTestDataButton.setDisable(false);
+            dataLoaderPane.getSelectionModel().select(autoDatasetCheckBox.isSelected() ? 0 : 1);
+
+            // Clear tables
+            dataController.clearTables();
+        });
+    }
+
+    public void previewAutoDataset() {
+        // Re-split dataset and show it. Probably can cause some performance issues.
+        if (previewAutoDatasetCheckBox.isSelected())
+            dataController.splitDataset();
+
+        cycleFadeNode(dataLoaderPane, 300, () -> {
+            loadTrainDataButton.setDisable(previewAutoDatasetCheckBox.isSelected());
+            loadTestDataButton.setDisable(previewAutoDatasetCheckBox.isSelected());
+            dataLoaderPane.getSelectionModel().select(previewAutoDatasetCheckBox.isSelected() ? 1 : 0);
+        });
+    }
+
+    public void loadGeneralDataset() {
+        dataController.loadGeneralDataset();
+    }
+    public void loadTrainData() {
+        dataController.loadTrainingDataset();
+    }
+    public void loadTestData() {
+        dataController.loadTestingDataset();
+    }
+
+    protected void animateSideMenu(boolean hide) {
+        // Prepare animation
+        TranslateTransition transition = new TranslateTransition(Duration.millis(200), sideMenuPane);
+        transition.setFromX(hide ? 0 : -205);
+        transition.setToX(hide ? -205 : 0);
+
+        transition.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
+            // Add effects to tab pane
+            tabPane.setEffect(new GaussianBlur(hide ? (((double) 200 - newValue.toMillis()) / (double) 200) * 10 : (newValue.toMillis() / (double) 200) * 10));
+        });
+
+        transition.setOnFinished(event -> {
+            sideMenuOpen = !hide;
+            if (hide) {
+                sideMenuPane.setVisible(false);
+                menuSeparator.setVisible(true);
+                tabPane.setEffect(null);
+            }
+        });
+        if (!hide) {
+            sideMenuPane.setVisible(true);
+            menuSeparator.setVisible(false);
+        }
+
+        transition.play();
+
+    }
+    public void openSideMenu() {
+        animateSideMenu(sideMenuOpen);
+    }
+    public void closeSideMenu() {
+        if (sideMenuOpen) {
+            animateSideMenu(true);
+        }
+    }
+
+    public void openDataTab() {
+        if (tabPane.getSelectionModel().getSelectedIndex() != 0)
+            cycleFadeNode(tabPane, 400, () -> tabPane.getSelectionModel().select(0));
+    }
+
+    public void openArchitectureTab() {
+        if (tabPane.getSelectionModel().getSelectedIndex() != 1)
+            cycleFadeNode(tabPane, 400, () -> tabPane.getSelectionModel().select(1));
+    }
+
+    public void openManagementTab() {
+        if (tabPane.getSelectionModel().getSelectedIndex() != 2)
+            cycleFadeNode(tabPane, 400, () -> tabPane.getSelectionModel().select(2));
+    }
+
+    public void openResultsTab() {
+        if (tabPane.getSelectionModel().getSelectedIndex() != 3)
+            cycleFadeNode(tabPane, 400, () -> tabPane.getSelectionModel().select(3));
+    }
+
+    // Fade out and load main menu
+    public void returnToMenu() {
+        fadeNode(rootPane, 200, true).setOnFinished(event -> application.loadMainMenu());
     }
 }

@@ -30,7 +30,7 @@ public abstract class Neuron {
         if(inputs.length != weights.length - Boolean.compare(Hyperparameters.USE_BIAS_NEURONS, false)){
             //TODO Test conditions
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "CRITICAL ERROR: length of inputs and length of weights in neuron doesn't match");
-            PopupController.errorMessage("ERROR", "Критическая ошибка", "", "Произошла критическая ошибка при работе нейронной сети. Количество входных данных и весов нейрона не совпадает.");
+            PopupController.errorMessage("ERROR", "", "Произошла критическая ошибка при работе нейронной сети. Количество входных данных и весов нейрона не совпадает.");
             return false;
         }
 

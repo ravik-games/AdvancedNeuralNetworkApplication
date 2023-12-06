@@ -1,99 +1,125 @@
 package anna.ui.tabs;
 
-import anna.ui.Parser;
-import anna.ui.PopupController;
+import anna.Application;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.util.converter.IntegerStringConverter;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.function.UnaryOperator;
 
 public class UIDataController {
     //Class for working with first tab (Data loading)
 
-    public File trainSetFile, testSetFile;
-    private final TextField trainDataPath, testDataPath;
-    private final Label trainDataLabel, testDataLabel;
-    private final TableView<List<String>> trainDataTable, testDataTable;
+    public File trainSetFile, testSetFile, generalSetFile;
+    protected final TextField trainDataPath, testDataPath, trainingPartField, testingPartField;
+    protected final Label trainDataLabel, testDataLabel, generalDataLabel;
+    protected final TableView<List<String>> trainDataTable, testDataTable, generalDataTable;
 
-    public List<List<String>> rawTrainSet, rawTestSet;
+    public List<List<String>> rawTrainSet, rawTestSet, generalSet;
 
-    private static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
+    protected Application application;
+    protected static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
 
-    public UIDataController(TextField trainDataPath, TextField testDataPath, Label trainDataLabel, Label testDataLabel,
-                            TableView<List<String>> trainDataTable, TableView<List<String>> testDataTable){
+    // Initialize fields on Data tab
+    public UIDataController(TextField trainDataPath, TextField testDataPath, Label trainDataLabel, Label testDataLabel, Label generalDataLabel,
+                            TableView<List<String>> trainDataTable, TableView<List<String>> testDataTable, TableView<List<String>> generalDataTable,
+                            TextField trainingPartField, TextField testingPartField){
         this.trainDataPath = trainDataPath;
         this.testDataPath = testDataPath;
         this.trainDataLabel = trainDataLabel;
         this.testDataLabel = testDataLabel;
+        this.generalDataLabel = generalDataLabel;
         this.trainDataTable = trainDataTable;
         this.testDataTable = testDataTable;
+        this.generalDataTable = generalDataTable;
+        this.trainingPartField = trainingPartField;
+        this.testingPartField = testingPartField;
+
+        // Strict part fields to digits only
+        UnaryOperator<TextFormatter.Change> integerFilter = change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("([1-9][0-9]?)?")) {
+                return change;
+            }
+            return null;
+        };
+        trainingPartField.setTextFormatter(new TextFormatter<>(new IntegerStringConverter(), 0, integerFilter));
+        testingPartField.setTextFormatter(new TextFormatter<>(new IntegerStringConverter(), 0, integerFilter));
+        // Set number to change if other field is changed
+        trainingPartField.textProperty().addListener(((observable, oldValue, newValue) -> {
+            if (!newValue.isEmpty())
+                testingPartField.setText(String.valueOf(100 - Integer.parseInt(newValue)));
+        }));
+        testingPartField.textProperty().addListener(((observable, oldValue, newValue) -> {
+            if (!newValue.isEmpty())
+                trainingPartField.setText(String.valueOf(100 - Integer.parseInt(newValue)));
+        }));
+        // Set default value
+        trainingPartField.setText("75");
     }
 
-    //Select train set data
-    public void browseForTrainData() {
-        String path =  PopupController.openExplorer();
-        if(path == null)
-            return;
-        trainDataPath.setText(path);
+    public void setMain(Application application) {
+        this.application = application;
     }
 
-    //Select test set data
-    public void browseForTestData() {
-        String path =  PopupController.openExplorer();
-        if(path == null)
-            return;
-        testDataPath.setText(path);
-    }
-
-    //Read and apply train data
-    public boolean applyTrainData() {
-        trainSetFile = getFileFromPath(trainDataPath.getText());
-        if (!trainSetFile.exists()) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the training database. The file was not found.");
-            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.failedToGetTrainingDataFile"));
+    // Load general dataset and parse it
+    public boolean loadGeneralDataset() {
+        if (!application.getDataMaster().loadGeneralDataset())
             return false;
-        }
 
-        trainDataLabel.setText(trainSetFile.getName());
-        //Parse data and add it to the table
-        rawTrainSet = Parser.parseData(trainSetFile);
-        if(rawTrainSet == null){
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the training database. Failed to read file.");
-            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.failedToReadTrainingDataFile"));
-            return false;
-        }
-        loadTable(trainDataTable, rawTrainSet);
+        generalDataLabel.setText(application.getDataMaster().getGeneralSetFile().getName());
+        loadTable(generalDataTable, application.getDataMaster().getRawGeneralSet());
+
+        splitDataset();
+
         return true;
     }
 
-    //Read and apply test data
-    public boolean applyTestData() {
-        testSetFile = getFileFromPath(testDataPath.getText());
-        if (!testSetFile.exists()) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the testing database. The file was not found.");
-            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.failedToGetTestingDataFile"));
-            return false;
-        }
+    public void splitDataset() {
+        // Split dataset in parts
+        application.getDataMaster().splitGeneralDataset(Double.parseDouble(trainingPartField.getText()) / 100);
 
-        testDataLabel.setText(testSetFile.getName());
-        //Parse data and add it to the table
-        rawTestSet = Parser.parseData(testSetFile);
-        if(rawTestSet == null){
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the testing database. Failed to read file.");
-            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.failedToReadTestingDataFile"));
+        // Load new datasets in tables
+        trainDataLabel.setText("train");
+        testDataLabel.setText("test");
+        loadTable(trainDataTable, application.getDataMaster().getRawTrainSet());
+        loadTable(testDataTable, application.getDataMaster().getRawTestSet());
+    }
+
+    // Load training dataset and parse it
+    public boolean loadTrainingDataset() {
+        if (!application.getDataMaster().loadTrainingDataset())
             return false;
-        }
-        loadTable(testDataTable, rawTestSet);
+
+        trainDataLabel.setText(application.getDataMaster().getTrainSetFile().getName());
+        loadTable(trainDataTable, application.getDataMaster().getRawTrainSet());
         return true;
+    }
+
+    // Load general dataset and parse it
+    public boolean loadTestingDataset() {
+        if (!application.getDataMaster().loadTestingDataset())
+            return false;
+
+        testDataLabel.setText(application.getDataMaster().getTestSetFile().getName());
+        loadTable(testDataTable, application.getDataMaster().getRawTestSet());
+        return true;
+    }
+
+    public void clearTables() {
+        generalDataTable.getColumns().clear();
+        testDataTable.getColumns().clear();
+        trainDataTable.getColumns().clear();
+        generalDataLabel.setText("---");
+        trainDataLabel.setText("---");
+        testDataLabel.setText("---");
+
+        application.getDataMaster().clearData();
     }
 
     //Load table to TableView
@@ -101,7 +127,32 @@ public class UIDataController {
         table.getColumns().clear();
         table.getItems().clear();
 
-        //Create first column for row numbers
+        // Create first column for row numbers
+        TableColumn<List<String>, String> numberColumn = getTableColumn();
+        table.getColumns().add(numberColumn);
+
+        //Create columns and add them to the table
+        for (int i = 0; i < rawData.get(0).size(); i++) {
+            TableColumn<List<String>, String> column = new TableColumn<>(rawData.get(0).get(i));
+            int finalI = i + 1;
+            //Create cell value factory to show data in table cells
+            column.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().get(finalI)));
+            column.setMinWidth(50);
+            column.setPrefWidth(100);
+            column.setMaxWidth(200);
+            table.getColumns().add(column);
+        }
+
+        //Add data to table
+        for (int i = 1; i < rawData.size(); i++) {
+            ArrayList<String> list = new ArrayList<>(rawData.get(i));
+            list.add(0, Integer.toString(i));
+            //list.set(0, Integer.toString(i));
+            table.getItems().add(list);
+        }
+    }
+
+    private static TableColumn<List<String>, String> getTableColumn() {
         TableColumn<List<String>, String> numberColumn = new TableColumn<>("#");
         numberColumn.setStyle("-fx-font-weight: bold;" +
                             "-fx-font-style: italic");
@@ -126,38 +177,6 @@ public class UIDataController {
 
             return i1-i2;
         });
-        table.getColumns().add(numberColumn);
-
-        //Create columns and add them to the table
-        for (int i = 0; i < rawData.get(0).size(); i++) {
-            TableColumn<List<String>, String> column = new TableColumn<>(rawData.get(0).get(i));
-            int finalI = i + 1;
-            //Create cell value factory to show data in table cells
-            column.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().get(finalI)));
-            column.setMinWidth(50);
-            column.setPrefWidth(100);
-            column.setMaxWidth(200);
-            table.getColumns().add(column);
-        }
-
-        //Add data to table
-        for (int i = 1; i < rawData.size(); i++) {
-            ArrayList<String> list = new ArrayList<>(rawData.get(i));
-            list.add(0, Integer.toString(i));
-            //list.set(0, Integer.toString(i));
-            table.getItems().add(list);
-        }
-    }
-
-    //Get file from path
-    private File getFileFromPath(String path){
-        File result;
-        result = new File(path);
-        int index = result.getName().lastIndexOf(".");
-        if(index <= 0 || !result.getName().substring(index + 1).equals("csv")) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING ,"Selected file is not valid");
-            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.fileNotValid"));
-        }
-        return result;
+        return numberColumn;
     }
 }

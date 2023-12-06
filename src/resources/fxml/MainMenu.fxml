@@ -1,0 +1,726 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<TabPane fx:id="menuTabPane" tabMaxHeight="0.0" tabMaxWidth="0.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="anna.ui.DefaultUIMenuController">
+   <tabs>
+      <Tab closable="false" text="Menu">
+         <content>
+            <GridPane style="-fx-background-color: white;">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+                      <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints percentHeight="30.0" vgrow="ALWAYS" />
+                      <RowConstraints minHeight="150.0" percentHeight="55.0" vgrow="ALWAYS" />
+                      <RowConstraints percentHeight="15.0" vgrow="ALWAYS" />
+                    </rowConstraints>
+                     <children>
+                        <VBox GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+                           <children>
+                              <Label text="ELENNA">
+                                 <font>
+                                    <Font name="Inter Black" size="85.0" />
+                                 </font>
+                              </Label>
+                              <Label text="%menu.welcome">
+                                 <font>
+                                    <Font name="Inter SemiBold" size="28.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <GridPane.margin>
+                              <Insets left="25.0" top="25.0" />
+                           </GridPane.margin>
+                        </VBox>
+                        <FlowPane alignment="CENTER_LEFT" hgap="25.0" orientation="VERTICAL" prefWrapLength="200.0" vgap="15.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                           <GridPane.margin>
+                              <Insets left="25.0" right="25.0" />
+                           </GridPane.margin>
+                           <children>
+                              <HBox>
+                                 <children>
+                                    <Pane layoutX="10.0" layoutY="10.0" prefWidth="5.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-color: #4769ff;" />
+                                    <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#createNewNetwork" prefHeight="45.0" prefWidth="250.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.createNewNetwork">
+                                       <graphic>
+                                          <FontIcon iconColor="#4769ff" iconLiteral="zondi-browser-window-new" iconSize="24" wrappingWidth="32.0" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Pane layoutX="10.0" layoutY="10.0" prefWidth="5.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-color: #4769ff;" />
+                                    <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#loadNetwork" prefHeight="45.0" prefWidth="250.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.loadNetwork">
+                                       <graphic>
+                                          <FontIcon iconColor="#4769ff" iconLiteral="zondi-browser-window-open" iconSize="24" wrappingWidth="32.0" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Pane layoutX="10.0" layoutY="10.0" prefWidth="5.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-color: #4769ff;" />
+                                    <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#openTutorialTab" prefHeight="45.0" prefWidth="250.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.tutorial">
+                                       <graphic>
+                                          <FontIcon iconColor="#4769ff" iconLiteral="zondi-education" iconSize="24" wrappingWidth="32.0" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Pane layoutX="10.0" layoutY="10.0" prefWidth="5.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-color: #4769ff;" />
+                                    <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#openSettingsTab" prefHeight="45.0" prefWidth="250.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.settings">
+                                       <graphic>
+                                          <FontIcon iconColor="#4769ff" iconLiteral="zondi-cog" iconSize="24" wrappingWidth="32.0" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Pane layoutX="10.0" layoutY="10.0" prefWidth="5.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-color: #4769ff;" />
+                                    <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#openAboutTab" prefHeight="45.0" prefWidth="250.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.about">
+                                       <graphic>
+                                          <FontIcon iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="24" wrappingWidth="32.0" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Pane layoutX="10.0" layoutY="10.0" prefWidth="5.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-color: #4769ff;" />
+                                    <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#exit" prefHeight="45.0" prefWidth="250.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.exit">
+                                       <graphic>
+                                          <FontIcon iconColor="#4769ff" iconLiteral="zondi-close-outline" iconSize="24" wrappingWidth="32.0" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </FlowPane>
+                        <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowSpan="3" GridPane.vgrow="ALWAYS">
+                           <GridPane.margin>
+                              <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+                           </GridPane.margin>
+                           <children>
+                              <Label text="%menu.lastChangelog" VBox.vgrow="NEVER">
+                                 <font>
+                                    <Font name="Inter SemiBold" size="28.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="zondi-station" wrappingWidth="36.0" />
+                                 </graphic>
+                              </Label>
+                              <FlowPane style="-fx-border-width: 1; -fx-border-color: #4769ff; -fx-border-radius: 2.5; -fx-background-color: whitesmoke;" VBox.vgrow="ALWAYS" />
+                           </children>
+                        </VBox>
+                        <FlowPane alignment="BOTTOM_LEFT" hgap="15.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+                           <GridPane.margin>
+                              <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+                           </GridPane.margin>
+                           <children>
+                              <Label text="%menu.language">
+                                 <font>
+                                    <Font name="Inter Light" size="24.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="zondi-translate" wrappingWidth="30.0" />
+                                 </graphic>
+                              </Label>
+                              <ChoiceBox fx:id="languageChoiceBox" prefWidth="150.0" />
+                           </children>
+                        </FlowPane>
+                     </children>
+                  </GridPane>
+         </content>
+      </Tab>
+      <Tab closable="false" text="Tutorial">
+        <content>
+            <GridPane style="-fx-background-color: white;">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="NEVER" />
+                  <ColumnConstraints hgrow="ALWAYS" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints fillHeight="false" minHeight="158.0" valignment="TOP" vgrow="NEVER" />
+                  <RowConstraints minHeight="150.0" vgrow="ALWAYS" />
+               </rowConstraints>
+               <children>
+                  <HBox fillHeight="false" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
+                     <GridPane.margin>
+                        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+                     </GridPane.margin>
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#returnToMenu" style="-fx-border-width: 2;">
+                           <graphic>
+                              <FontIcon iconColor="#4769ff" iconLiteral="zondi-arrow-thin-left" iconSize="54" />
+                           </graphic>
+                           <HBox.margin>
+                              <Insets bottom="18.0" right="18.0" top="18.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Label text="%menu.tutorial">
+                           <font>
+                              <Font name="Inter Black" size="85.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <VBox alignment="TOP_CENTER" spacing="10.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                     <children>
+                        <Label text="%menu.tutorial.video">
+                           <font>
+                              <Font name="Inter SemiBold" size="28.0" />
+                           </font>
+                        </Label>
+                        <FlowPane VBox.vgrow="ALWAYS" />
+                     </children>
+                     <GridPane.margin>
+                        <Insets bottom="25.0" left="25.0" right="25.0" />
+                     </GridPane.margin>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" spacing="15.0" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" GridPane.hgrow="NEVER" GridPane.rowIndex="1">
+                     <children>
+                        <ImageView fitHeight="200.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
+                        <Label text="%menu.tutorial.interactiveTutorial">
+                           <font>
+                              <Font name="Inter SemiBold" size="28.0" />
+                           </font>
+                        </Label>
+                        <FlowPane alignment="CENTER_LEFT" hgap="15.0" prefWrapLength="150.0" vgap="25.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Label text="%menu.tutorial.interactiveTutorial.forBeginners" wrapText="true">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="zondi-book-reference" iconSize="28" wrappingWidth="36.0" />
+                                 </graphic>
+                              </Label>
+                              <Label text="%menu.tutorial.interactiveTutorial.time" wrapText="true">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="zondi-fast-forward" iconSize="28" wrappingWidth="36.0" />
+                                 </graphic>
+                              </Label>
+                              <Label text="%menu.tutorial.interactiveTutorial.uiExploration" wrapText="true">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="zondi-explore" iconSize="28" wrappingWidth="36.0" />
+                                 </graphic>
+                              </Label>
+                              <Label text="%menu.tutorial.interactiveTutorial.actionExplanation" wrapText="true">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="zondi-light-bulb" iconSize="28" wrappingWidth="36.0" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </FlowPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+                     </padding>
+                     <GridPane.margin>
+                        <Insets bottom="25.0" left="25.0" right="25.0" />
+                     </GridPane.margin>
+                  </VBox>
+               </children>
+            </GridPane>
+        </content>
+      </Tab>
+      <Tab closable="false" text="Settings">
+         <content>
+            <GridPane style="-fx-background-color: white;">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+                  <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints fillHeight="false" minHeight="158.0" valignment="TOP" vgrow="NEVER" />
+                  <RowConstraints minHeight="150.0" vgrow="ALWAYS" />
+               </rowConstraints>
+               <children>
+                  <HBox style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
+                     <GridPane.margin>
+                        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+                     </GridPane.margin>
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#returnToMenu" style="-fx-border-width: 2;">
+                           <graphic>
+                              <FontIcon iconColor="#4769ff" iconLiteral="zondi-arrow-thin-left" iconSize="54" />
+                           </graphic>
+                           <HBox.margin>
+                              <Insets bottom="18.0" right="18.0" top="18.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Label text="%menu.settings">
+                           <font>
+                              <Font name="Inter Black" size="85.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <VBox alignment="TOP_CENTER" spacing="10.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                     <GridPane.margin>
+                        <Insets bottom="25.0" left="25.0" right="25.0" />
+                     </GridPane.margin>
+                     <children>
+                        <Label text="%menu.settings.network">
+                           <font>
+                              <Font name="Inter SemiBold" size="28.0" />
+                           </font>
+                        </Label>
+                        <FlowPane VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" spacing="10.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                     <children>
+                        <Label text="%menu.settings.other">
+                           <font>
+                              <Font name="Inter SemiBold" size="28.0" />
+                           </font>
+                        </Label>
+                        <FlowPane VBox.vgrow="ALWAYS" />
+                     </children>
+                     <GridPane.margin>
+                        <Insets bottom="25.0" left="25.0" right="25.0" />
+                     </GridPane.margin>
+                  </VBox>
+               </children>
+            </GridPane>
+         </content>
+      </Tab>
+      <Tab closable="false" text="About">
+         <content>
+            <GridPane style="-fx-background-color: white;">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="NEVER" percentWidth="50.0" />
+                  <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints fillHeight="false" minHeight="158.0" valignment="TOP" vgrow="NEVER" />
+                  <RowConstraints minHeight="-Infinity" vgrow="ALWAYS" />
+                  <RowConstraints minHeight="-Infinity" vgrow="ALWAYS" />
+               </rowConstraints>
+               <children>
+                  <HBox style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                     <GridPane.margin>
+                        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+                     </GridPane.margin>
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#returnToMenu" style="-fx-border-width: 2;">
+                           <graphic>
+                              <FontIcon iconColor="#4769ff" iconLiteral="zondi-arrow-thin-left" iconSize="54" />
+                           </graphic>
+                           <HBox.margin>
+                              <Insets bottom="18.0" right="18.0" top="18.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Label text="%menu.about">
+                           <font>
+                              <Font name="Inter Black" size="85.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <VBox alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" style="-fx-border-color: #4769ff; -fx-border-width: 1 1 0 0;" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+                     <children>
+                        <Label text="%menu.about.feedback">
+                           <font>
+                              <Font name="Inter SemiBold" size="20.0" />
+                           </font>
+                        </Label>
+                        <VBox minHeight="-Infinity" minWidth="-Infinity" spacing="15.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" fillHeight="false" spacing="15.0">
+                                 <children>
+                                    <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../images/forms.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Hyperlink alignment="CENTER" onAction="#openFeedbackForm" text="%menu.about.feedback.form">
+                                       <font>
+                                          <Font name="Inter SemiBold" size="16.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </Hyperlink>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" fillHeight="false" spacing="15.0">
+                                 <children>
+                                    <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../images/vk.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Hyperlink alignment="CENTER" onAction="#openVK" text="%menu.about.feedback.vk">
+                                       <font>
+                                          <Font name="Inter SemiBold" size="16.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </Hyperlink>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" fillHeight="false" spacing="15.0">
+                                 <children>
+                                    <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../images/email.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Label text="%menu.about.feedback.email">
+                                       <font>
+                                          <Font name="Inter SemiBold" size="16.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets left="3.0" />
+                                       </padding>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                     <GridPane.margin>
+                        <Insets bottom="25.0" left="25.0" />
+                     </GridPane.margin>
+                     <padding>
+                        <Insets top="25.0" />
+                     </padding>
+                  </VBox>
+                  <VBox fx:id="appDescriptionVBox" alignment="TOP_CENTER" minHeight="-Infinity" spacing="10.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 1 0;" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                     <GridPane.margin>
+                        <Insets left="25.0" />
+                     </GridPane.margin>
+                     <padding>
+                        <Insets bottom="25.0" right="25.0" />
+                     </padding>
+                     <children>
+                        <Label text="%menu.about.application">
+                           <font>
+                              <Font name="Inter SemiBold" size="20.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="appDescriptionLabel" alignment="TOP_CENTER" maxWidth="550.0" text="%menu.about.application.info" wrapText="true" VBox.vgrow="ALWAYS">
+                           <font>
+                              <Font name="Inter Light" size="16.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" fillHeight="false" spacing="15.0">
+                           <children>
+                              <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/github.png" />
+                                 </image>
+                              </ImageView>
+                              <Hyperlink alignment="CENTER" onAction="#openGitHub" text="%menu.about.github">
+                                 <font>
+                                    <Font name="Inter SemiBold" size="16.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Hyperlink>
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="15.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 1 1;" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                     <padding>
+                        <Insets bottom="15.0" left="25.0" />
+                     </padding>
+                     <children>
+                        <Label text="%menu.about.developer">
+                           <font>
+                              <Font name="Inter SemiBold" size="20.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" spacing="10.0">
+                           <children>
+                              <Label text="%menu.about.developer.name">
+                                 <font>
+                                    <Font name="Inter SemiBold" size="18.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                              <Label text="&quot;ravik&quot;">
+                                 <font>
+                                    <Font name="Inter SemiBold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <ImageView fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
+                                 <HBox.margin>
+                                    <Insets left="15.0" />
+                                 </HBox.margin>
+                                 <image>
+                                    <Image url="@../images/ravik_logo.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                        <VBox alignment="CENTER_LEFT" spacing="3.0">
+                           <children>
+                              <Label text="%menu.about.developer.mentor">
+                                 <font>
+                                    <Font name="Segoe UI" size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </Label>
+                              <Label text="%menu.about.developer.mentor.name">
+                                 <font>
+                                    <Font name="Segoe UI SemiBold" size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </children>
+                     <GridPane.margin>
+                        <Insets right="25.0" />
+                     </GridPane.margin>
+                  </VBox>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 1;" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+                     <GridPane.margin>
+                        <Insets bottom="25.0" right="25.0" />
+                     </GridPane.margin>
+                     <children>
+                        <VBox>
+                           <children>
+                              <Label text="%menu.about.developer.support">
+                                 <font>
+                                    <Font name="Segoe UI" size="16.0" />
+                                 </font>
+                              </Label>
+                              <Hyperlink alignment="CENTER" onAction="#openMAN" text="%menu.about.developer.support.name">
+                                 <font>
+                                    <Font name="Segoe UI SemiBold" size="18.0" />
+                                 </font>
+                              </Hyperlink>
+                           </children>
+                        </VBox>
+                        <HBox alignment="CENTER">
+                           <children>
+                              <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/man.jpg" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                 <HBox.margin>
+                                    <Insets left="100.0" />
+                                 </HBox.margin>
+                                 <image>
+                                    <Image url="@../images/altair.jpg" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets left="25.0" top="25.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </GridPane>
+         </content>
+      </Tab>
+      <Tab closable="false" text="NetworkMode">
+         <content>
+            <GridPane>
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" percentWidth="35.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" percentWidth="10.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" percentWidth="35.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints fillHeight="false" minHeight="10.0" valignment="TOP" vgrow="NEVER" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <VBox alignment="TOP_CENTER" onMouseClicked="#openAdvancedMode" spacing="15.0" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" GridPane.columnIndex="3" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
+                     <children>
+                        <ImageView fitHeight="200.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
+                        <Label text="%menu.newNetwork.advancedMode">
+                           <font>
+                              <Font name="Inter SemiBold" size="28.0" />
+                           </font>
+                        </Label>
+                        <FlowPane alignment="CENTER_LEFT" hgap="15.0" prefWrapLength="150.0" vgap="25.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Label text="%menu.newNetwork.advancedMode.users" wrapText="true">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="zondi-education" iconSize="28" wrappingWidth="36.0" />
+                                 </graphic>
+                              </Label>
+                              <Label text="%menu.newNetwork.advancedMode.interface" wrapText="true">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="zondi-show-sidebar" iconSize="28" wrappingWidth="36.0" />
+                                 </graphic>
+                              </Label>
+                              <Label text="%menu.newNetwork.advancedMode.configuration" wrapText="true">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="zondi-tuning" iconSize="28" wrappingWidth="36.0" />
+                                 </graphic>
+                              </Label>
+                              <Label text="%menu.newNetwork.advancedMode.limits" wrapText="true">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="zondi-lock-open" iconSize="28" wrappingWidth="36.0" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </FlowPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+                     </padding>
+                     <GridPane.margin>
+                        <Insets bottom="25.0" />
+                     </GridPane.margin>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" onMouseClicked="#openSimpleMode" spacing="15.0" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
+                     <children>
+                        <ImageView fitHeight="200.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
+                        <Label text="%menu.newNetwork.simpleMode">
+                           <font>
+                              <Font name="Inter SemiBold" size="28.0" />
+                           </font>
+                        </Label>
+                        <FlowPane alignment="CENTER_LEFT" hgap="15.0" prefWrapLength="150.0" vgap="25.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Label text="%menu.newNetwork.simpleMode.users" wrapText="true">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="zondi-book-reference" iconSize="28" wrappingWidth="36.0" />
+                                 </graphic>
+                              </Label>
+                              <Label text="%menu.newNetwork.simpleMode.interface" wrapText="true">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="zondi-window" iconSize="28" wrappingWidth="36.0" />
+                                 </graphic>
+                              </Label>
+                              <Label text="%menu.newNetwork.simpleMode.network" wrapText="true">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="zondi-light-bulb" iconSize="28" wrappingWidth="36.0" />
+                                 </graphic>
+                              </Label>
+                              <Label text="%menu.newNetwork.simpleMode.limits" wrapText="true">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconLiteral="zondi-lock-closed" iconSize="28" wrappingWidth="36.0" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </FlowPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+                     </padding>
+                     <GridPane.margin>
+                        <Insets bottom="25.0" />
+                     </GridPane.margin>
+                  </VBox>
+                  <HBox fillHeight="false" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;" GridPane.columnSpan="5" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#returnToMenu" style="-fx-border-width: 2;">
+                           <graphic>
+                              <FontIcon iconColor="#4769ff" iconLiteral="zondi-arrow-thin-left" iconSize="54" />
+                           </graphic>
+                           <HBox.margin>
+                              <Insets bottom="18.0" right="18.0" top="18.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Label text="%menu.newNetwork">
+                           <font>
+                              <Font name="Inter Black" size="85.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                     <GridPane.margin>
+                        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+                     </GridPane.margin>
+                  </HBox>
+               </children>
+            </GridPane>
+         </content>
+      </Tab>
+   </tabs>
+   <stylesheets>
+      <URL value="@../styling/TabPane.css" />
+      <URL value="@../styling/LightStyle.css" />
+   </stylesheets>
+</TabPane>
