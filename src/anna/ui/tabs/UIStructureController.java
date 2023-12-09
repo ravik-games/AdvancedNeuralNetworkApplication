@@ -11,19 +11,21 @@ import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import javafx.util.converter.IntegerStringConverter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.*;
+import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
@@ -34,7 +36,7 @@ public class UIStructureController {
     public ChoiceBox<String> classParameterChoiceBox, networkTaskChoiceBox;
     public ChoiceBox<ActivationFunctions.types> lastLayerActivationFunction;
     public CheckBox autoConfigureCheckBox;
-    public Label lastLayerNumber;
+    public Label lastLayerNumber, inputLayerNeuronCount, outputLayerNeuronCount;
     public Canvas architectureCanvas;
     public Pane inputLayerPane, inputPaneAnimationPane, canvasPane;
 
@@ -44,8 +46,6 @@ public class UIStructureController {
 
     protected List<InputLayerColumn> inputLayerColumns;
     private List<ArchitectureLayer> architectureLayers;
-
-    public ObservableList<Node> trainInputSettings, testInputSettings, architectureSettings;
 
     private static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
 
@@ -57,10 +57,19 @@ public class UIStructureController {
         architectureLayers = new ArrayList<>();
 
         lastLayerActivationFunction.getSelectionModel().select(ActivationFunctions.types.SIGMOID);
+        classParameterChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            List<String> classes = dataMaster.getDatasetUniqueClasses(classParameterChoiceBox.getItems().get(newValue.intValue()));
+            if (classes != null && !classes.isEmpty()) {
+                outputLayerNeuronCount.setText(String.valueOf(classes.size()));
+                updateVisualisation();
+            }
+        });
 
-        // Set canvas dynamic resize
-        canvasPane.heightProperty().addListener((observable, oldValue, newValue) -> architectureCanvas.setHeight(newValue.doubleValue() - 1));
-        //canvasPane.widthProperty().addListener((observable, oldValue, newValue) -> architectureCanvas.setWidth(newValue.doubleValue() - 1));
+        // Set canvas to fit table
+        canvasPane.heightProperty().addListener((observable, oldValue, newValue) -> {
+            architectureCanvas.setHeight(newValue.doubleValue() - 1);
+            updateVisualisation();
+        });
 
         // Set initial height for correct animation
         Platform.runLater(() -> {
@@ -116,7 +125,7 @@ public class UIStructureController {
     }
 
     public void updateInputList() {
-        if (!dataMaster.areDatasetsValid()) {
+        if (dataMaster.areDatasetsNotValid()) {
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "There is no database found.");
             PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.noDatabase"));
             return;
@@ -133,37 +142,40 @@ public class UIStructureController {
         }
         classParameterChoiceBox.getItems().addAll(labels);
         classParameterChoiceBox.getSelectionModel().select(labels.size() - 1);
-
     }
 
     // Methods for input list control
     public void addNewInputParameter(int i) {
-        InputLayerColumn column = new InputLayerColumn(i, dataMaster.getTrainingSet().labels(), dataMaster.getTrainingSet().labels().get(0), Parser.inputTypes.NUMBER);
+        String currentParameter = i >= dataMaster.getTrainingSet().labels().size() ? dataMaster.getTrainingSet().labels().get(0) : dataMaster.getTrainingSet().labels().get(i);
+        InputLayerColumn column = new InputLayerColumn(i, dataMaster.getTrainingSet().labels(), currentParameter, Parser.inputTypes.NUMBER);
 
         inputLayerColumns.add(i, column);
         inputLayerBox.getChildren().add(i, column.getColumn());
         IntStream.range(i + 1, inputLayerColumns.size()).forEach(j -> inputLayerColumns.get(j).setNumber(j));
 
+        masterController.fadeNode(column.getColumn(), 200, false);
 
-        masterController.fadeNode(column.getColumn(), 400, false);
-
-        column.getAddNewColumnButton().setOnAction(event -> addNewInputParameter(column.getNumber()));
+        column.getAddNewColumnButton().setOnAction(event -> addNewInputParameter(column.getNumber() + 1));
         column.getRemoveColumnButton().setOnAction(event -> removeInputParameter(column.getNumber()));
+
+        updateArchitectureTable();
     }
     public void removeInputParameter(int i) {
         if(inputLayerColumns.size() <= 1)
             return;
 
         // Fade out and delete
-        masterController.fadeNode(inputLayerColumns.get(i).getColumn(), 400, true).setOnFinished(event -> {
+        masterController.fadeNode(inputLayerColumns.get(i).getColumn(), 200, true).setOnFinished(event -> {
             inputLayerColumns.remove(i);
             inputLayerBox.getChildren().remove(i);
             IntStream.range(i, inputLayerColumns.size()).forEach(j -> inputLayerColumns.get(j).setNumber(j));
+
+            updateArchitectureTable();
         });
     }
 
     public void updateArchitectureTable() {
-        if (!dataMaster.areDatasetsValid()) {
+        if (dataMaster.areDatasetsNotValid()) {
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "There is no database found.");
             PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.noDatabase"));
             return;
@@ -174,6 +186,9 @@ public class UIStructureController {
             architectureLayers.get(j).setNumber(j + 1);
         }
         lastLayerNumber.setText(String.valueOf(architectureLayers.size() + 1));
+        inputLayerNeuronCount.setText(String.valueOf(inputLayerColumns.size()));
+
+        updateVisualisation();
     }
 
     // Add layer to architecture table
@@ -181,7 +196,7 @@ public class UIStructureController {
         addNewLayer(0);
     }
     public void addNewLayer(int i) {
-        if (!dataMaster.areDatasetsValid()) {
+        if (dataMaster.areDatasetsNotValid()) {
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "There is no database found.");
             PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.noDatabase"));
             return;
@@ -194,204 +209,109 @@ public class UIStructureController {
         architectureLayers.add(i - 1, layer);
         architectureLayerInfoPane.getChildren().add(i, layer.getColumn());
         architectureLayerManagementPane.getChildren().add(i, layer.getManagement());
-        masterController.fadeNode(layer.getColumn(), 400, false);
-        masterController.fadeNode(layer.getManagement(), 400, false);
+        masterController.fadeNode(layer.getColumn(), 200, false);
+        masterController.fadeNode(layer.getManagement(), 200, false);
 
         layer.getRemoveLayerButton().setOnAction(event -> removeLayer(layer));
-        layer.getAddNewLayerButton().setOnAction(event -> addNewLayer(layer.getNumber() - 1));
+        layer.getAddNewLayerButton().setOnAction(event -> addNewLayer(layer.getNumber()));
+        layer.getNeuronNumberField().textProperty().addListener(event -> updateVisualisation());
 
         updateArchitectureTable();
     }
 
     // Remove layer from architecture table
     public void removeLayer(ArchitectureLayer layer) {
-        masterController.fadeNode(layer.getColumn(), 400, true).setOnFinished(event -> {
+        masterController.fadeNode(layer.getColumn(), 200, true).setOnFinished(event -> {
             architectureLayers.remove(layer);
             architectureLayerInfoPane.getChildren().remove(layer.getColumn());
             architectureLayerManagementPane.getChildren().remove(layer.getManagement());
 
             updateArchitectureTable();
         });
-        masterController.fadeNode(layer.getManagement(), 400, true);
+        masterController.fadeNode(layer.getManagement(), 200, true);
     }
 
-    /*
-    //Add new layer to neural network architecture
-    public void addLayer(){
-        if(architectureSettings == null){
-            architectureSettings = FXCollections.observableArrayList(addLayerValue(1));
-        }
-        else{
-            architectureSettings.addAll(addLayerValue(architectureSettings.size() / 2 + 1));
-        }
-        updateArchitectureTable();
-    }
-
-    //Remove last layer field
-    public void removeLayer() {
-        if(architectureSettings != null && architectureSettings.size() > 1){
-            architectureSettings.remove(architectureSettings.size() - 2, architectureSettings.size());
-        }
-        updateArchitectureTable();
-    }
-
-    //Refresh architecture table
-    private void updateArchitectureTable(){
-        architectureHBox.getChildren().remove(4, architectureHBox.getChildren().size() - 4);
-        if(architectureSettings == null){
-            architectureSettings = FXCollections.observableArrayList(addLayerValue(1));
-        }
-        architectureHBox.getChildren().addAll(4, architectureSettings);
-        lastLayerNumber.setText(String.valueOf(architectureSettings.size() / 2 + 1));
-
-        updateGraphicOutput();
-    }
-
-    //Create layer value
-    private List<Node> addLayerValue(int number){
-        List<Node> result = new ArrayList<>();
-        result.add(createLayerColumn(number));
-        result.add(new Separator((Orientation.VERTICAL)));
-        return result;
-    }
-
-    //Create column for table with architecture
-    private VBox createLayerColumn(int number){
-        VBox result = new VBox();
-        result.setPrefHeight(185);
-        result.setPrefWidth(90);
-        result.setPadding(new Insets(2, 5, 2, 2));
-
-        List<Node> children = new ArrayList<>(5);
-
-        Label num = new Label(Integer.toString(number));
-        num.setFont(new Font("Segoe UI SemiBold", 14));
-        num.setAlignment(Pos.CENTER);
-        num.setPrefHeight(30);
-        num.setPrefWidth(100);
-        num.setMinWidth(100);
-        num.setMinHeight(30);
-
-        TextField neuronNumber = new TextField();
-        if(inputNeuronCounter.getText() != null && !inputNeuronCounter.getText().equals("..."))
-            neuronNumber.setText(String.valueOf(Integer.parseInt(inputNeuronCounter.getText()) * 2));
-        else
-            neuronNumber.setText(String.valueOf(3));
-        neuronNumber.setAlignment(Pos.CENTER);
-        neuronNumber.setPrefWidth(100);
-        neuronNumber.setPrefHeight(70);
-        neuronNumber.setMinWidth(100);
-        neuronNumber.setMinHeight(70);
-        neuronNumber.textProperty().addListener(
-                (observable -> updateGraphicOutput())
-        );
-
-        ChoiceBox<NetworkStructure.neuronTypes> typeSelector = new ChoiceBox<>(FXCollections.observableArrayList(NetworkStructure.neuronTypes.values()));
-        typeSelector.setDisable(true);
-        typeSelector.setValue(NetworkStructure.neuronTypes.HIDDEN);
-        typeSelector.setPrefHeight(70);
-        typeSelector.setPrefWidth(100);
-        typeSelector.setMinWidth(100);
-        typeSelector.setMinHeight(70);
-
-        //Add them to array
-        children.add(num);
-        children.add(new Separator(Orientation.HORIZONTAL));
-        children.add(neuronNumber);
-        children.add(new Separator(Orientation.HORIZONTAL));
-        children.add(typeSelector);
-
-        result.getChildren().addAll(children);
-        return result;
-    }*/
-
-    /*
     private void updateVisualisation(){
+        // Set width of canvas
+        architectureCanvas.setWidth(architectureLayerInfoPane.getChildren().size() * 150);
+
         GraphicsContext graphicsContext = architectureCanvas.getGraphicsContext2D();
         graphicsContext.clearRect(0, 0, architectureCanvas.getWidth(), architectureCanvas.getHeight());
 
-        double radius = 20;
-        int maxNeurons = 10;
-        int maxLayers = 10;
-
         //Parse data
-        int[] data = new int[Math.min(maxLayers, architectureSettings.size() / 2 + 2)];
-        NetworkStructure.neuronTypes[] types = new NetworkStructure.neuronTypes[Math.min(maxLayers, architectureSettings.size() / 2 + 2)];
-        for (int i = 0; i < architectureSettings.size(); i+=2) {
-            if(i / 2 >= data.length - 1){
-                break;
-            }
-            VBox vBox = (VBox) architectureSettings.get(i);
-            TextField textField = (TextField) vBox.getChildren().get(2);
-            ChoiceBox<NetworkStructure.neuronTypes> choiceBox = (ChoiceBox<NetworkStructure.neuronTypes>) vBox.getChildren().get(4);
-            if(textField.getText().isEmpty()) {
-                return;
-            }
-            data[i / 2 + 1] = Integer.parseInt(textField.getText());
-            types[i / 2 + 1] = NetworkStructure.neuronTypes.valueOf(String.valueOf(choiceBox.getValue()));
+        List<Integer> data = new ArrayList<>(architectureLayers.size() + 2);
+        List<NetworkStructure.neuronTypes> types = new ArrayList<>(architectureLayers.size() + 2);
+        data.add(inputLayerColumns.size());
+        types.add(NetworkStructure.neuronTypes.INPUT);
+        for (ArchitectureLayer architectureLayer : architectureLayers) {
+            data.add(architectureLayer.getNeuronNumber());
+            types.add(architectureLayer.getType());
         }
-        if(inputNeuronCounter.getText().equals("..."))
+
+        try {
+            data.add(Integer.valueOf(outputLayerNeuronCount.getText()));
+        }
+        catch (NumberFormatException e){
             return;
-        data[0] = Integer.parseInt(inputNeuronCounter.getText());
-        data[data.length - 1] = 1;
+        }
+
+        types.add(NetworkStructure.neuronTypes.OUTPUT);
+
+        // Define neuron variables
+        int neuronsLimit = (int) ((architectureCanvas.getHeight() - 2) / 8);
+        int maxNeurons = Math.min(data.stream().max(Integer::compareTo).get(), neuronsLimit);
+        double radius = Math.max(5, architectureCanvas.getHeight() / (maxNeurons * 1.5 + 1));
 
         //Calculate position
-        double xSpacing = ((graphicOutput.getWidth() - radius) - radius * data.length) / (data.length + 1);
+        double xSpacing = 150;
         double lastX = 0;
-        double lastYSpacing = 0;
+        double lastYOffset = 0;
 
         //Draw network graph
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 0; i < data.size(); i++) {
             //Calculate position x
-            double x = xSpacing * (i + 1) + radius * i;
-            double ySpacing = ((graphicOutput.getHeight() - radius) - radius * Math.min(maxNeurons, data[i])) / (Math.min(maxNeurons, data[i]) + 1);
+            double x = (xSpacing - radius) / 2 + xSpacing * i;
+            double ySpacing = radius / 2;
+            double yOffset = (architectureCanvas.getHeight() - radius * Math.min(neuronsLimit, data.get(i)) - ySpacing * (Math.min(neuronsLimit, data.get(i)) - 1)) / 2;
 
-            if(maxLayers == data.length && i == maxLayers - 2){
-                graphicsContext.fillText("...", x, graphicOutput.getHeight() / 2);
-                continue;
-            }
-
-            for (int j = 0; j < data[i]; j++) {
+            for (int j = 0; j < data.get(i); j++) {
                 //Calculate position y
-                double y = ySpacing * (j + 1) + radius * j;
-                if(j >= maxNeurons){
+                double y = yOffset + ySpacing * (j) + radius * j;
+                if(j >= neuronsLimit){
                     graphicsContext.fillText("...", x, y);
                     break;
                 }
 
                 //Switch colors
-                if(i == 0){
-                    graphicsContext.setFill(Color.web("#0be881"));
-                }
-                else if(i < data.length - 1){
-                    switch(types[i]){
-                        case HIDDEN -> graphicsContext.setFill(Color.web("#4769ff"));
-                    }
-                }
-                else{
-                    graphicsContext.setFill(Color.web("#e15f41"));
+                switch (types.get(i)) {
+                    case INPUT -> graphicsContext.setFill(Color.web("#0be881"));
+                    case HIDDEN -> graphicsContext.setFill(Color.web("#4769ff"));
+                    case OUTPUT -> graphicsContext.setFill(Color.web("#e15f41"));
                 }
 
                 //Draw neurons
+                graphicsContext.setLineWidth(2);
                 graphicsContext.strokeOval(x, y, radius, radius);
                 graphicsContext.fillOval(x, y, radius, radius);
 
-                if(i == 0 || i == maxLayers - 1)
+                // Skip first layer for synapses
+                if(i == 0)
                     continue;
 
+                graphicsContext.setLineWidth(1 - ((double) maxNeurons / neuronsLimit) * 0.7);
                 //Draw synapses
-                for (int k = 0; k < data[i - 1]; k++) {
-                    if(k >= maxNeurons){
+                for (int k = 0; k < data.get(i - 1); k++) {
+                    if(k >= neuronsLimit){
                         break;
                     }
-                    double y2 = lastYSpacing * (k + 1) + radius * k;
+                    double y2 = lastYOffset + ySpacing * (k) + radius * k;
                     graphicsContext.strokeLine(lastX + radius, y2 + radius / 2, x, y + radius / 2);
                 }
             }
             lastX = x;
-            lastYSpacing = ySpacing;
+            lastYOffset = yOffset;
         }
-    }*/
+    }
 
     // Inner classes for convenient management of input lists
     public static class InputLayerColumn {
@@ -527,7 +447,15 @@ public class UIStructureController {
             typePane.setMinHeight(62);
             typePane.setPadding(new Insets(15));
 
-            neuronNumberField = new TextField(String.valueOf(currentNeuronsCount));
+            // Strict field to digits only
+            UnaryOperator<TextFormatter.Change> integerFilter = change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("([1-9][0-9]*)?"))
+                    return change;
+                return null;
+            };
+            neuronNumberField = new TextField();
+            neuronNumberField.setTextFormatter(new TextFormatter<>(new IntegerStringConverter(), currentNeuronsCount, integerFilter));
             neuronNumberField.setMaxWidth(Double.MAX_VALUE);
             BorderPane neuronNumberPane = new BorderPane(neuronNumberField);
             neuronNumberPane.setStyle(style);
@@ -601,6 +529,20 @@ public class UIStructureController {
         public void setNumber(int number) {
             this.number = number;
             layerNumber.setText(String.valueOf(number));
+        }
+        public TextField getNeuronNumberField() {
+            return neuronNumberField;
+        }
+        public int getNeuronNumber() {
+            if (neuronNumberField.getText().isEmpty())
+                return 1;
+            return Integer.parseInt(neuronNumberField.getText());
+        }
+        public ActivationFunctions.types getActivationFunction() {
+            return activationFunction.getValue();
+        }
+        public NetworkStructure.neuronTypes getType() {
+            return type.getValue();
         }
 
         public Button getAddNewLayerButton() {

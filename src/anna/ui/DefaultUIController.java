@@ -4,7 +4,7 @@ import anna.Application;
 import anna.network.DataTypes;
 import anna.network.NeuralNetwork;
 import anna.ui.tabs.UIDataController;
-import anna.ui.tabs.UINetworkController;
+import anna.ui.tabs.UIManagementController;
 import anna.ui.tabs.UIOutputController;
 import anna.ui.tabs.UIStructureController;
 import javafx.animation.FadeTransition;
@@ -13,7 +13,6 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.*;
@@ -42,14 +41,13 @@ public class DefaultUIController implements UIController {
     public VBox inputVBox, hyperparametersVBox, statVBox;
     public HBox architectureHBox, simulatorHBox, rootPane, sideMenuPane;
     public TabPane tabPane;
-    public Canvas graphicOutput;
     public TextField updateResultsEpoch;
     public TableView<List<String>> trainDataTable, testDataTable, generalDataTable;
-    public Label inputNeuronCounter, lastLayerNumber, chartLabel, matrixLabel;
+    public Label chartLabel, matrixLabel;
     public LineChart<Integer, Double> chart;
     public NumberAxis chartXAxis;
     public NumberAxis chartYAxis;
-    public ChoiceBox<String> inputsChoiceBox, lastColumnChoiceBox, statClassChoiceBox, matrixDataChoiceBox;
+    public ChoiceBox<String> statClassChoiceBox, matrixDataChoiceBox;
     public TextArea simulatorOutput;
     public Pane chartParent, matrixParent;
     public FontIcon datasetInfo, autoPartitionInfo;
@@ -63,7 +61,7 @@ public class DefaultUIController implements UIController {
 
     public UIDataController dataController;
     public UIStructureController structureController;
-    public UINetworkController networkController;
+    public UIManagementController networkController;
     public UIOutputController outputController;
 
     protected boolean sideMenuOpen;
@@ -140,9 +138,6 @@ public class DefaultUIController implements UIController {
     public void saveNeuralNetwork() {
     }
 
-    public void startTraining() {
-        networkController.startTraining();
-    }
     public void prepareSimulation() {
         outputController.prepareSimulation();
     }

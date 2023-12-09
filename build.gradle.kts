@@ -43,6 +43,10 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.9.2")
+
+    // Add icon packs
+    implementation("org.kordamp.ikonli:ikonli-zondicons-pack:12.3.1")
+    implementation("org.kordamp.ikonli:ikonli-javafx:12.3.1")
 }
 
 javafx {

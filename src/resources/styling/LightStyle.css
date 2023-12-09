@@ -1,8 +1,6 @@
-{
-    -fx-my-hover: #4769ff;
-    -fx-my-label-hover: #ffffff;
-    -fx-my-label-def: black;
-    -fx-my-back: #ffffff;
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter-VariableFont_slnt,wght.ttf');
 }
 
 * {
@@ -303,21 +301,20 @@
 }
 
 .button {
-    -fx-padding: 5 5 5 5;
+    -fx-padding: 5;
+    -fx-background-radius: 2.5;
     -fx-border-color: #4769ff;
-    -fx-border-width: 0.8;
-    -fx-background-radius: 7.5;
-    -fx-border-radius: 7.5;
+    -fx-border-width: 1;
+    -fx-border-radius: 2.5;
     -fx-background-color: #ffffff;
-    -fx-font-size: 14;
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 15;
+    -fx-font-family: "Inter";
     /*-fx-text-fill: #4769ff;*/
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
 }
 
 .button:hover {
-    -fx-background-color: #4769ff;
-    -fx-text-fill: #ffffff;
+    -fx-background-color: derive(#4769ff, 120%);
 }
 
 .button:disabled, .button:default:disabled {

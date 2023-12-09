@@ -174,14 +174,22 @@ public class DataMaster {
         return new ProgramData(Locale.getDefault());
     }
 
-    public boolean areDatasetsValid() {
-        return trainingSet != null && trainingSet.data() != null && !trainingSet.data().isEmpty() && trainingSet.labels() != null && !trainingSet.labels().isEmpty() &&
-                testingSet != null && testingSet.data() != null && !testingSet.data().isEmpty() && testingSet.labels() != null && !testingSet.labels().isEmpty();
+    public boolean areDatasetsNotValid() {
+        return trainingSet == null || trainingSet.data() == null || trainingSet.data().isEmpty() || trainingSet.labels() == null || trainingSet.labels().isEmpty() ||
+                testingSet == null || testingSet.data() == null || testingSet.data().isEmpty() || testingSet.labels() == null || testingSet.labels().isEmpty();
     }
 
     // Getters for private fields
     public static ProgramData getLastProgramData() {
         return lastData;
+    }
+
+    // Get all unique values in selected column
+    public List<String> getDatasetUniqueClasses(String parameter) {
+        if(areDatasetsNotValid() || !trainingSet.labels().contains(parameter))
+            return null;
+
+        return trainingSet.data().stream().map(row -> row.get(trainingSet.labels().indexOf(parameter))).distinct().toList();
     }
 
     public RawDataset getTrainingSet() {

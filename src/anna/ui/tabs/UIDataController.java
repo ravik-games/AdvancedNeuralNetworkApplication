@@ -75,6 +75,7 @@ public class UIDataController {
         splitDataset();
 
         masterController.structureController.updateInputList();
+        masterController.structureController.updateArchitectureTable();
 
         return true;
     }
@@ -137,6 +138,7 @@ public class UIDataController {
         loadTable(trainDataTable, dataMaster.getTrainingSet().data(), dataMaster.getTrainingSet().labels());
 
         masterController.structureController.updateInputList();
+        masterController.structureController.updateArchitectureTable();
 
         return true;
     }
@@ -150,6 +152,7 @@ public class UIDataController {
         loadTable(testDataTable, dataMaster.getTestingSet().data(), dataMaster.getTestingSet().labels());
 
         masterController.structureController.updateInputList();
+        masterController.structureController.updateArchitectureTable();
 
         return true;
     }

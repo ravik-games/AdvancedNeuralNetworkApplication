@@ -1,54 +1,44 @@
 package anna.ui.tabs;
 
 import anna.Application;
-import anna.network.DataTypes;
-import anna.network.Hyperparameters;
-import anna.network.NeuralNetwork;
-import anna.ui.Parser;
-import anna.ui.PopupController;
+import anna.DataMaster;
 import anna.ui.DefaultUIController;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class UINetworkController {
+public class UIManagementController {
     //Class for working with third tab (Network control)
 
-    private final VBox hyperparametersVBox;
-    private final TextField updateResultsEpoch;
+    public VBox hyperparametersVBox;
+    public TextField updateResultsEpoch;
+    public CheckBox autoOpenResultsCheckBox;
 
-    private final DefaultUIController mainController;
+    protected Application application;
+    protected DefaultUIController masterController;
+    protected DataMaster dataMaster;
+
     private UIDataController dataController;
     private UIStructureController structureController;
     private UIOutputController outputController;
-    private Application application;
+
     private static final Logger LOGGER = Logger.getLogger(Application.class.getName());
     private static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
 
-    public UINetworkController(DefaultUIController controller, VBox hyperparametersVBox, TextField updateResultsEpoch){
-        this.mainController = controller;
-        this.hyperparametersVBox = hyperparametersVBox;
-        this.updateResultsEpoch = updateResultsEpoch;
+    public void initialize() {
+
     }
 
-    public void setMain(Application application){
+    public void setReferences(Application application, DataMaster dataMaster, DefaultUIController masterController){
         this.application = application;
+        this.dataMaster = dataMaster;
+        this.masterController = masterController;
     }
-
+    /*
     public void setControllerReferences(UIDataController dataController, UIStructureController structureController, UIOutputController outputController){
         this.dataController = dataController;
         this.structureController = structureController;
@@ -111,7 +101,7 @@ public class UINetworkController {
     }
 
     //Collect data from UI and create arguments for NN
-    public NeuralNetwork.NetworkArguments collectDataToArguments(){
+    /*public NeuralNetwork.NetworkArguments collectDataToArguments(){
         //Handling errors
         boolean trainToTest = false;
         if (structureController.trainInputSettings == null || structureController.trainInputSettings.isEmpty()){
@@ -222,5 +212,5 @@ public class UINetworkController {
         }
 
         return new DataTypes.Dataset(inputs, expectedOutput, allOutputTypes.toArray(new String[0]));
-    }
+    }*/
 }
