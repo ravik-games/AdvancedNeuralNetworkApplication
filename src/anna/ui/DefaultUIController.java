@@ -11,6 +11,7 @@ import javafx.animation.FadeTransition;
 import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.chart.LineChart;
@@ -24,6 +25,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -34,26 +36,26 @@ public class DefaultUIController implements UIController {
     protected static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
     protected Application application;
 
-    public CheckBox autoOpenResults, autoDatasetCheckBox, previewAutoDatasetCheckBox;
+    public CheckBox autoOpenResults;
     public Button inputNeuronButton, layerAddButton, inputNeuronRemoveButton, inputNeuronAutoButton, layerRemoveButton, startSimulatorButton, newWindowChartButton,
-            newWindowMatrixButton, loadTrainDataButton, loadTestDataButton;
+            newWindowMatrixButton;
     public VBox inputVBox, hyperparametersVBox, statVBox;
     public HBox architectureHBox, simulatorHBox, rootPane, sideMenuPane;
-    public TabPane tabPane, dataLoaderPane;
+    public TabPane tabPane;
     public Canvas graphicOutput;
-    public TextField trainingPartField, testingPartField, updateResultsEpoch, trainDataPath, testDataPath, loadArchitecturePath, loadWeightsPath, loadHyperparametersPath,
-            loadNeuralNetworkPath, saveArchitecturePath, saveWeightsPath, saveHyperparametersPath, saveNeuralNetworkPath;
+    public TextField updateResultsEpoch;
     public TableView<List<String>> trainDataTable, testDataTable, generalDataTable;
-    public Label trainDataLabel, testDataLabel, generalDataLabel, inputNeuronCounter, lastLayerNumber, chartLabel, matrixLabel;
+    public Label inputNeuronCounter, lastLayerNumber, chartLabel, matrixLabel;
     public LineChart<Integer, Double> chart;
     public NumberAxis chartXAxis;
     public NumberAxis chartYAxis;
     public ChoiceBox<String> inputsChoiceBox, lastColumnChoiceBox, statClassChoiceBox, matrixDataChoiceBox;
     public TextArea simulatorOutput;
-    public Pane chartParent, matrixParent, dataPartitionPane;
+    public Pane chartParent, matrixParent;
     public FontIcon datasetInfo, autoPartitionInfo;
     public StackPane menuStackPane;
     public Separator menuSeparator;
+    public Tab dataTab, architectureTab;
 
 
     public NeuralNetwork.NetworkArguments lastArguments;
@@ -71,8 +73,19 @@ public class DefaultUIController implements UIController {
         // Set invisible for fade in animation
         rootPane.setOpacity(0);
 
-        dataController = new UIDataController(trainDataPath, testDataPath, trainDataLabel, testDataLabel, generalDataLabel, trainDataTable, testDataTable, generalDataTable,
-                trainingPartField, testingPartField);
+        // Load tabs
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/editor/DataTab.fxml"), bundle);
+            dataTab.setContent(loader.load());
+            dataController = loader.getController();
+
+            loader = new FXMLLoader(getClass().getResource("/fxml/editor/ArchitectureTab.fxml"), bundle);
+            architectureTab.setContent(loader.load());
+
+            structureController = loader.getController();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         /*structureController = new UIStructureController(this, inputVBox, architectureHBox, inputsChoiceBox, lastColumnChoiceBox, inputNeuronCounter, lastLayerNumber, inputNeuronRemoveButton, inputNeuronButton, inputNeuronAutoButton, graphicOutput);
         networkController = new UINetworkController(this, hyperparametersVBox, updateResultsEpoch);
         outputController = new UIOutputController(this, simulatorOutput, startSimulatorButton, simulatorHBox, statVBox, chart, chartLabel, matrixLabel, statClassChoiceBox, matrixDataChoiceBox);
@@ -103,32 +116,6 @@ public class DefaultUIController implements UIController {
         Platform.runLater(() -> fadeNode(rootPane, 200, false));
     }
 
-    public void applyTestData() {
-        lastColumnChoiceBox.setDisable(true);
-        lastColumnChoiceBox.getItems().clear();
-
-        //Reset inputs choice box
-        inputsChoiceBox.setValue(bundle.getString("tab.architecture.selectDatabase"));
-        lastColumnChoiceBox.setDisable(false);
-        lastColumnChoiceBox.setValue("...");
-        lastColumnChoiceBox.getItems().addAll(dataController.rawTestSet.get(0));
-        structureController.testInputSettings = null;
-        updateInputTable();
-    }
-
-    public void applyTrainData() {
-        lastColumnChoiceBox.setDisable(true);
-        lastColumnChoiceBox.getItems().clear();
-
-        //Reset inputs choice box
-        inputsChoiceBox.setValue(bundle.getString("tab.architecture.selectDatabase"));
-        lastColumnChoiceBox.setDisable(false);
-        lastColumnChoiceBox.setValue("...");
-        lastColumnChoiceBox.getItems().addAll(dataController.rawTrainSet.get(0));
-        structureController.trainInputSettings = null;
-        updateInputTable();
-    }
-
     public void loadArchitecture() {
     }
 
@@ -153,24 +140,6 @@ public class DefaultUIController implements UIController {
     public void saveNeuralNetwork() {
     }
 
-    public void updateInputTable() {
-        structureController.updateInputTable();
-    }
-    public void addInputNeuron() {
-        structureController.addInputNeuron();
-    }
-    public void removeInputNeuron() {
-        structureController.removeInputNeuron();
-    }
-    public void autoInputNeuron() {
-        structureController.autoInputNeurons();
-    }
-    public void addLayer() {
-        structureController.addLayer();
-    }
-    public void removeLayer() {
-        structureController.removeLayer();
-    }
     public void startTraining() {
         networkController.startTraining();
     }
@@ -253,7 +222,8 @@ public class DefaultUIController implements UIController {
     @Override
     public void setMain(Application application) {
         this.application = application;
-        dataController.setMain(application);
+        dataController.setReferences(application, application.getDataMaster(), this);
+        structureController.setReferences(application, application.getDataMaster(), this);
         //networkController.setMain(application);
         //outputController.setMain(application);
     }
@@ -269,52 +239,6 @@ public class DefaultUIController implements UIController {
         Tooltip autoPartition = new Tooltip(bundle.getString("tab.data"));
         autoPartition.setStyle(style);
         Tooltip.install(autoPartitionInfo, autoPartition);
-    }
-
-    // Change data loading mode on checkbox state change
-    public void autoDatasetCheck() {
-        if (autoDatasetCheckBox.isSelected()) {
-            dataPartitionPane.setVisible(true);
-            dataPartitionPane.setManaged(true);
-            previewAutoDatasetCheckBox.setSelected(false);
-        }
-
-        fadeNode(dataPartitionPane, 300, !autoDatasetCheckBox.isSelected()).setOnFinished(event ->  {
-            if(!autoDatasetCheckBox.isSelected()) {
-                dataPartitionPane.setManaged(false);
-                dataPartitionPane.setVisible(false);
-            }
-        });
-        cycleFadeNode(dataLoaderPane, 300, () -> {
-            loadTrainDataButton.setDisable(false);
-            loadTestDataButton.setDisable(false);
-            dataLoaderPane.getSelectionModel().select(autoDatasetCheckBox.isSelected() ? 0 : 1);
-
-            // Clear tables
-            dataController.clearTables();
-        });
-    }
-
-    public void previewAutoDataset() {
-        // Re-split dataset and show it. Probably can cause some performance issues.
-        if (previewAutoDatasetCheckBox.isSelected())
-            dataController.splitDataset();
-
-        cycleFadeNode(dataLoaderPane, 300, () -> {
-            loadTrainDataButton.setDisable(previewAutoDatasetCheckBox.isSelected());
-            loadTestDataButton.setDisable(previewAutoDatasetCheckBox.isSelected());
-            dataLoaderPane.getSelectionModel().select(previewAutoDatasetCheckBox.isSelected() ? 1 : 0);
-        });
-    }
-
-    public void loadGeneralDataset() {
-        dataController.loadGeneralDataset();
-    }
-    public void loadTrainData() {
-        dataController.loadTrainingDataset();
-    }
-    public void loadTestData() {
-        dataController.loadTestingDataset();
     }
 
     protected void animateSideMenu(boolean hide) {

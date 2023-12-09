@@ -185,7 +185,7 @@ public class UINetworkController {
         //Create inputs from existing data
         int[] reassign = new int[currentInputNeuronSet.size() / 2]; //Each value corresponds to column number in raw data
         Parser.inputTypes[] types = new Parser.inputTypes[currentInputNeuronSet.size() / 2]; //Each value will be parsed according to set type
-        int expectedColumn = currentRawDataSet.get(0).indexOf(structureController.lastColumnChoiceBox.getValue());
+        int expectedColumn = currentRawDataSet.get(0).indexOf(structureController.classParameterChoiceBox.getValue());
         if(expectedColumn < 0){
             LOGGER.log(Level.WARNING, "An error occurred when reading the dataset. The selected data of the training and test samples do not match.");
             PopupController.errorMessage("ERROR", "", bundle.getString("logger.error.dataMismatch"));

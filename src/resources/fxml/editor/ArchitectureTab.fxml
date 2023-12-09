@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<VBox spacing="25.0" style="-fx-background-color: #ffffff;" stylesheets="@../../styling/LightStyle.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="anna.ui.tabs.UIStructureController">
+   <children>
+      <HBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;">
+         <children>
+            <Label text="АРХИТЕКТУРА">
+               <font>
+                  <Font name="Inter Black" size="85.0" />
+               </font>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Label>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-border-width: 0; -fx-background-color: transparent; -fx-padding: 0; -fx-background-insets: 0;" VBox.vgrow="ALWAYS">
+         <content>
+            <VBox spacing="25.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="25.0">
+                     <children>
+                        <Label text="Задача нейронной сети" wrapText="true" HBox.hgrow="NEVER">
+                           <font>
+                              <Font name="Inter SemiBold" size="18.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconLiteral="zondi-flag" iconSize="28" wrappingWidth="32.0" />
+                           </graphic>
+                        </Label>
+                        <ChoiceBox fx:id="networkTaskChoiceBox" minWidth="150.0" />
+                        <FontIcon iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
+                     </children>
+                  </HBox>
+                  <Separator prefWidth="200.0" style="-fx-border-width: 1;" />
+                  <HBox alignment="CENTER_LEFT" spacing="25.0" VBox.vgrow="NEVER">
+                     <children>
+                        <CheckBox fx:id="autoConfigureCheckBox" mnemonicParsing="false" onAction="#autoConfigureInputLayer" selected="true" text="Автоматически настроить входной слой" wrapText="true" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font name="Inter Regular" size="18.0" />
+                           </font>
+                        </CheckBox>
+                        <FontIcon iconColor="#2ed573" iconLiteral="zondi-checkmark-outline" iconSize="28" />
+                     </children>
+                  </HBox>
+                  <HBox VBox.vgrow="NEVER">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <children>
+                        <Group HBox.hgrow="NEVER">
+                           <children>
+                              <Pane fx:id="inputPaneAnimationPane" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="0.0" />
+                           </children>
+                        </Group>
+                        <HBox fx:id="inputLayerPane" alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-radius: 2.5; -fx-border-radius: 2.5;" HBox.hgrow="ALWAYS">
+                           <children>
+                              <VBox alignment="CENTER_LEFT" minWidth="-Infinity" style="-fx-border-color: #4769ff; -fx-border-width: 0 2 0 0;" HBox.hgrow="NEVER">
+                                 <children>
+                                    <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="№" textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                       <padding>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="Inter SemiBold" size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" text="Параметр" wrapText="true" VBox.vgrow="ALWAYS">
+                                       <padding>
+                                          <Insets bottom="25.0" left="15.0" right="15.0" top="25.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="Inter SemiBold" size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" text="Тип" wrapText="true" VBox.vgrow="ALWAYS">
+                                       <padding>
+                                          <Insets bottom="25.0" left="15.0" right="15.0" top="25.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="Inter SemiBold" size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-width: 1 0 0 0; -fx-border-color: #4769ff;" text="Управление" wrapText="true" VBox.vgrow="ALWAYS">
+                                       <padding>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="Inter SemiBold" size="16.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" pannable="true" style="-fx-border-width: 0;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+                                 <content>
+                                    <HBox fx:id="inputLayerBox" />
+                                 </content>
+                              </ScrollPane>
+                              <VBox alignment="CENTER_LEFT" minWidth="-Infinity" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 0 1;" HBox.hgrow="NEVER">
+                                 <children>
+                                    <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Класс" textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                       <padding>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="Inter SemiBold" size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="71.0" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" VBox.vgrow="ALWAYS">
+                                       <center>
+                                          <ChoiceBox fx:id="classParameterChoiceBox" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+                                             <BorderPane.margin>
+                                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                             </BorderPane.margin>
+                                          </ChoiceBox>
+                                       </center>
+                                    </BorderPane>
+                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" style="-fx-border-width: 1 0 0 0; -fx-border-color: #4769ff;" text="Категориальный" VBox.vgrow="ALWAYS">
+                                       <padding>
+                                          <Insets bottom="25.0" left="15.0" right="15.0" top="25.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="Inter Regular" size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-width: 1 0 0 0; -fx-border-color: #4769ff;" text="-" wrapText="true" VBox.vgrow="ALWAYS">
+                                       <padding>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="Inter SemiBold" size="16.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                                 <HBox.margin>
+                                    <Insets left="5.0" />
+                                 </HBox.margin>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+                  <Separator prefWidth="200.0" style="-fx-border-width: 1;" />
+                  <HBox alignment="CENTER_LEFT" spacing="25.0" VBox.vgrow="NEVER">
+                     <children>
+                        <Label text="Архитектура нейронной сети" wrapText="true" HBox.hgrow="NEVER">
+                           <font>
+                              <Font name="Inter SemiBold" size="18.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconLiteral="zondi-load-balancer" iconSize="28" wrappingWidth="32.0" />
+                           </graphic>
+                        </Label>
+                        <FontIcon iconColor="#4769ff" iconLiteral="zondi-light-bulb" iconSize="28" />
+                        <HBox alignment="CENTER_RIGHT" spacing="25.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Button alignment="CENTER" mnemonicParsing="false" text="Сохранить" textAlignment="CENTER">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="#4769ff" iconLiteral="zondi-folder-outline-add" iconSize="20" wrappingWidth="26.0" />
+                                 </graphic>
+                              </Button>
+                              <Button alignment="CENTER" mnemonicParsing="false" text="Загрузить" textAlignment="CENTER">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="#4769ff" iconLiteral="zondi-folder-outline" iconSize="20" wrappingWidth="26.0" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+                  <HBox style="-fx-border-width: 1; -fx-border-color: #4769ff; -fx-background-radius: 2.5; -fx-border-radius: 2.5;" VBox.vgrow="ALWAYS">
+                     <children>
+                        <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;">
+                           <children>
+                              <VBox alignment="CENTER_LEFT" minHeight="-Infinity" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;">
+                                 <children>
+                                    <Label maxWidth="1.7976931348623157E308" text="№ слоя" textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                       <padding>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="Inter SemiBold" size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="62.0" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <Label maxWidth="1.7976931348623157E308" text="Тип" wrapText="true" HBox.hgrow="ALWAYS">
+                                             <font>
+                                                <Font name="Inter SemiBold" size="16.0" />
+                                             </font>
+                                             <padding>
+                                                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                             </padding>
+                                          </Label>
+                                          <FontIcon iconColor="#4769ff" iconLiteral="zondi-light-bulb" iconSize="24" />
+                                       </children>
+                                       <padding>
+                                          <Insets right="15.0" />
+                                       </padding>
+                                    </HBox>
+                                    <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="62.0" prefWidth="130.0" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" text="Количество нейронов" textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS">
+                                       <padding>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="Inter SemiBold" size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox alignment="CENTER_LEFT" minHeight="-Infinity" prefHeight="62.0" spacing="15.0" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <Label maxWidth="1.7976931348623157E308" minWidth="-Infinity" text="Функция активации" wrapText="true">
+                                             <font>
+                                                <Font name="Inter SemiBold" size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <FontIcon iconColor="#4769ff" iconLiteral="zondi-light-bulb" iconSize="24" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                       </padding>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="175.0" style="-fx-border-color: #4769ff; -fx-border-width: 1 1 0 0;" text="Визуализация" textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS">
+                                 <padding>
+                                    <Insets bottom="25.0" left="15.0" right="15.0" top="25.0" />
+                                 </padding>
+                                 <font>
+                                    <Font name="Inter SemiBold" size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="51.0" style="-fx-border-color: #4769ff; -fx-border-width: 1 1 0 0;" text="Управление" textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER">
+                                 <padding>
+                                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                 </padding>
+                                 <font>
+                                    <Font name="Inter SemiBold" size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <ScrollPane fitToHeight="true" hbarPolicy="NEVER" pannable="true" style="-fx-border-width: 0;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+                           <content>
+                              <VBox>
+                                 <children>
+                                    <HBox fx:id="architectureLayerInfoPane" maxWidth="1.7976931348623157E308" minHeight="-Infinity">
+                                       <children>
+                                          <VBox alignment="CENTER_LEFT" minWidth="-Infinity" prefWidth="150.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;">
+                                             <children>
+                                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="0" textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER">
+                                                   <VBox.margin>
+                                                      <Insets />
+                                                   </VBox.margin>
+                                                   <padding>
+                                                      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                                   </padding>
+                                                   <font>
+                                                      <Font name="Inter Regular" size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="62.0" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" text="Входной" wrapText="true" VBox.vgrow="ALWAYS">
+                                                   <padding>
+                                                      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                                   </padding>
+                                                   <font>
+                                                      <Font name="Inter Regular" size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="62.0" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" text="..." textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS">
+                                                   <padding>
+                                                      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                                   </padding>
+                                                   <font>
+                                                      <Font name="Inter Regular" size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="62.0" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" text="-" wrapText="true" VBox.vgrow="ALWAYS">
+                                                   <padding>
+                                                      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                                   </padding>
+                                                   <font>
+                                                      <Font name="Inter Regular" size="16.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </VBox>
+                                          <VBox alignment="CENTER_LEFT" minWidth="-Infinity" prefWidth="150.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;">
+                                             <children>
+                                                <Label fx:id="lastLayerNumber" alignment="CENTER" maxWidth="1.7976931348623157E308" text="1" textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER">
+                                                   <VBox.margin>
+                                                      <Insets />
+                                                   </VBox.margin>
+                                                   <padding>
+                                                      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                                   </padding>
+                                                   <font>
+                                                      <Font name="Inter Regular" size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="62.0" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" text="Выходной" wrapText="true" VBox.vgrow="ALWAYS">
+                                                   <padding>
+                                                      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                                   </padding>
+                                                   <font>
+                                                      <Font name="Inter Regular" size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="62.0" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" text="..." textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS">
+                                                   <padding>
+                                                      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                                   </padding>
+                                                   <font>
+                                                      <Font name="Inter Regular" size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <BorderPane maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="62.0" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" VBox.vgrow="ALWAYS">
+                                                   <VBox.margin>
+                                                      <Insets />
+                                                   </VBox.margin>
+                                                   <center>
+                                                      <ChoiceBox fx:id="lastLayerActivationFunction" disable="true" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER" />
+                                                   </center>
+                                                   <padding>
+                                                      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                                   </padding>
+                                                </BorderPane>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                    <Pane fx:id="canvasPane" style="-fx-border-color: #4769ff; -fx-border-width: 1 1 0 0;" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <Canvas fx:id="architectureCanvas" />
+                                       </children>
+                                    </Pane>
+                                    <HBox fx:id="architectureLayerManagementPane" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="51.0" VBox.vgrow="NEVER">
+                                       <children>
+                                          <BorderPane minWidth="-Infinity" prefHeight="51.0" prefWidth="150.0" style="-fx-border-width: 1 1 0 0; -fx-border-color: #4769ff;">
+                                             <center>
+                                                <Button mnemonicParsing="false" onAction="#addNewLayer" style="-fx-border-width: 0; -fx-background-radius: 15;" BorderPane.alignment="CENTER">
+                                                   <graphic>
+                                                      <FontIcon iconColor="#4769ff" iconLiteral="zondi-add-outline" iconSize="24" />
+                                                   </graphic>
+                                                </Button>
+                                             </center>
+                                          </BorderPane>
+                                          <Pane minWidth="-Infinity" prefHeight="51.0" prefWidth="150.0" style="-fx-border-color: #4769ff; -fx-border-width: 1 1 0 0;" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets right="5.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </children>
+   <padding>
+      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+   </padding>
+</VBox>

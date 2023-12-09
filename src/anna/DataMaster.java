@@ -14,8 +14,7 @@ import java.util.logging.Logger;
 public class DataMaster {
     // Class for working with data and serialization
 
-    protected File trainSetFile, testSetFile, generalSetFile;
-    protected List<List<String>> rawTrainSet, rawTestSet, rawGeneralSet;
+    protected RawDataset trainingSet, testingSet, generalSet;
 
     protected static ProgramData lastData;
     protected static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault());
@@ -26,7 +25,7 @@ public class DataMaster {
         String path =  PopupController.openExplorer();
         if(path == null)
             return false;
-        generalSetFile = Parser.getFileFromPath(path, "csv");
+        File generalSetFile = Parser.getFileFromPath(path, "csv");
 
         if (!generalSetFile.exists()) {
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the database. The file was not found.");
@@ -34,13 +33,19 @@ public class DataMaster {
             return false;
         }
 
-        //Parse data and add it to the table
-        rawGeneralSet = Parser.parseData(generalSetFile);
+        //Parse data and labels
+        List<List<String>> rawGeneralSet = Parser.parseData(generalSetFile);
         if(rawGeneralSet == null){
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the database. Failed to read file.");
             PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.failedToReadDataFile"));
             return false;
         }
+
+        List<String> labels = rawGeneralSet.get(0);
+        rawGeneralSet.remove(0); // Remove row with labels from dataset
+
+        generalSet = new RawDataset(generalSetFile, rawGeneralSet, labels);
+
         return true;
     }
 
@@ -49,7 +54,7 @@ public class DataMaster {
         String path =  PopupController.openExplorer();
         if(path == null)
             return false;
-        trainSetFile = Parser.getFileFromPath(path, "csv");
+        File trainSetFile = Parser.getFileFromPath(path, "csv");
 
         if (!trainSetFile.exists()) {
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the training database. The file was not found.");
@@ -57,12 +62,18 @@ public class DataMaster {
             return false;
         }
         //Parse data and add it to the table
-        rawTrainSet = Parser.parseData(trainSetFile);
+        List<List<String>> rawTrainSet = Parser.parseData(trainSetFile);
         if(rawTrainSet == null){
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the training database. Failed to read file.");
             PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.failedToReadTrainingDataFile"));
             return false;
         }
+
+        List<String> labels = rawTrainSet.get(0);
+        rawTrainSet.remove(0); // Remove row with labels from dataset
+
+        trainingSet = new RawDataset(trainSetFile, rawTrainSet, labels);
+
         return true;
     }
 
@@ -71,7 +82,7 @@ public class DataMaster {
         String path =  PopupController.openExplorer();
         if(path == null)
             return false;
-        testSetFile = Parser.getFileFromPath(path, "csv");
+        File testSetFile = Parser.getFileFromPath(path, "csv");
 
         if (!testSetFile.exists()) {
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the testing database. The file was not found.");
@@ -80,33 +91,41 @@ public class DataMaster {
         }
 
         //Parse data and add it to the table
-        rawTestSet = Parser.parseData(testSetFile);
+        List<List<String>> rawTestSet = Parser.parseData(testSetFile);
         if(rawTestSet == null){
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the testing database. Failed to read file.");
             PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.failedToReadTestingDataFile"));
             return false;
         }
+
+        List<String> labels = rawTestSet.get(0);
+        rawTestSet.remove(0); // Remove row with labels from dataset
+
+        testingSet = new RawDataset(testSetFile, rawTestSet, labels);
+
         return true;
     }
 
-    public void splitGeneralDataset(double trainingPart) {
-        // Remove row with labels
-        rawGeneralSet.remove(0);
-        // Randomise dataset
-        Collections.shuffle(rawGeneralSet);
+    public boolean splitGeneralDataset(double trainingPart) {
+        if (generalSet == null)
+            return false;
 
-        int splitIndex = (int) Math.round(rawGeneralSet.size() * trainingPart);
-        rawTrainSet = rawGeneralSet.subList(0, splitIndex);
-        rawTestSet = rawGeneralSet.subList(splitIndex, rawGeneralSet.size());
+        // Randomise dataset
+        Collections.shuffle(generalSet.data());
+
+        int splitIndex = (int) Math.round(generalSet.data().size() * trainingPart);
+        List<List<String>> rawTrainSet = generalSet.data().subList(0, splitIndex);
+        List<List<String>> rawTestSet = generalSet.data().subList(splitIndex, generalSet.data().size());
+
+        trainingSet = new RawDataset(null, rawTrainSet, generalSet.labels());
+        testingSet = new RawDataset(null, rawTestSet, generalSet.labels());
+        return true;
     }
 
     public void clearData() {
-        trainSetFile = null;
-        testSetFile = null;
-        generalSetFile = null;
-        rawTrainSet = null;
-        rawTestSet = null;
-        rawGeneralSet = null;
+        trainingSet = null;
+        testingSet = null;
+        generalSet = null;
     }
 
     public static void saveProgramData(ProgramData data) {
@@ -155,29 +174,27 @@ public class DataMaster {
         return new ProgramData(Locale.getDefault());
     }
 
+    public boolean areDatasetsValid() {
+        return trainingSet != null && trainingSet.data() != null && !trainingSet.data().isEmpty() && trainingSet.labels() != null && !trainingSet.labels().isEmpty() &&
+                testingSet != null && testingSet.data() != null && !testingSet.data().isEmpty() && testingSet.labels() != null && !testingSet.labels().isEmpty();
+    }
+
     // Getters for private fields
     public static ProgramData getLastProgramData() {
         return lastData;
     }
-    public File getTrainSetFile() {
-        return trainSetFile;
+
+    public RawDataset getTrainingSet() {
+        return trainingSet;
     }
-    public File getTestSetFile() {
-        return testSetFile;
+    public RawDataset getTestingSet() {
+        return testingSet;
     }
-    public File getGeneralSetFile() {
-        return generalSetFile;
-    }
-    public List<List<String>> getRawTrainSet() {
-        return rawTrainSet;
-    }
-    public List<List<String>> getRawTestSet() {
-        return rawTestSet;
-    }
-    public List<List<String>> getRawGeneralSet() {
-        return rawGeneralSet;
+    public RawDataset getGeneralSet() {
+        return generalSet;
     }
 
+    public record RawDataset(File file, List<List<String>> data, List<String> labels) {}
     public record ProgramData(Locale locale) implements Serializable {}
 }
 

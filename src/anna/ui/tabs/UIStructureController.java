@@ -1,239 +1,221 @@
 package anna.ui.tabs;
 
+import anna.Application;
+import anna.DataMaster;
+import anna.math.ActivationFunctions;
+import anna.network.NetworkStructure;
 import anna.ui.DefaultUIController;
 import anna.ui.Parser;
 import anna.ui.PopupController;
-import anna.network.NetworkStructure;
-import javafx.collections.FXCollections;
+import javafx.animation.FadeTransition;
+import javafx.animation.ScaleTransition;
+import javafx.animation.SequentialTransition;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
+import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
 public class UIStructureController {
     //Class for working with second tab of UI (Structure creation)
-    private final VBox inputVBox;
-    private final HBox architectureHBox;
-    public final ChoiceBox<String> lastColumnChoiceBox, inputsChoiceBox;
-    private final Label inputNeuronCounter, lastLayerNumber;
-    private final Button inputNeuronButton, inputNeuronRemoveButton, inputNeuronAutoButton;
-    private final Canvas graphicOutput;
+    public HBox inputLayerBox, architectureLayerInfoPane, architectureLayerManagementPane;
+    public ChoiceBox<String> classParameterChoiceBox, networkTaskChoiceBox;
+    public ChoiceBox<ActivationFunctions.types> lastLayerActivationFunction;
+    public CheckBox autoConfigureCheckBox;
+    public Label lastLayerNumber;
+    public Canvas architectureCanvas;
+    public Pane inputLayerPane, inputPaneAnimationPane, canvasPane;
 
-    private final DefaultUIController mainController;
-    private List<List<String>> rawTestSet, rawTrainSet;
+    protected DefaultUIController masterController;
+    protected Application application;
+    protected DataMaster dataMaster;
+
+    protected List<InputLayerColumn> inputLayerColumns;
+    private List<ArchitectureLayer> architectureLayers;
 
     public ObservableList<Node> trainInputSettings, testInputSettings, architectureSettings;
-    public int trainCheckColumn = 0, testCheckColumn = 0;
 
     private static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
 
-    public UIStructureController(DefaultUIController mainController, VBox inputVBox, HBox architectureHBox, ChoiceBox<String> inputsChoiceBox,
-                                 ChoiceBox<String> lastColumnChoiceBox, Label inputNeuronCounter, Label lastLayerNumber, Button inputNeuronRemoveButton,
-                                 Button inputNeuronButton, Button inputNeuronAutoButton, Canvas graphicOutput){
-        this.mainController = mainController;
-        this.inputVBox = inputVBox;
-        this.architectureHBox = architectureHBox;
-        this.lastColumnChoiceBox = lastColumnChoiceBox;
-        this.inputsChoiceBox = inputsChoiceBox;
-        this.inputNeuronCounter = inputNeuronCounter;
-        this.lastLayerNumber = lastLayerNumber;
-        this.inputNeuronButton = inputNeuronButton;
-        this.inputNeuronRemoveButton = inputNeuronRemoveButton;
-        this.graphicOutput = graphicOutput;
-        this.inputNeuronAutoButton = inputNeuronAutoButton;
+    public void initialize() {
+        networkTaskChoiceBox.getSelectionModel().select(bundle.getString("tab.architecture.networkTask.classification"));
+        networkTaskChoiceBox.setDisable(true);
 
-        //Update check column selections
-        lastColumnChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-            if (inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(0))){
-                trainCheckColumn = t1.intValue() < 0 ? trainCheckColumn : t1.intValue();
-            }
-            else if (inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
-                testCheckColumn = t1.intValue() < 0 ? testCheckColumn : t1.intValue();
-            }
-            else {
-                trainCheckColumn = 0;
-                testCheckColumn = 0;
+        inputLayerColumns = new ArrayList<>();
+        architectureLayers = new ArrayList<>();
+
+        lastLayerActivationFunction.getSelectionModel().select(ActivationFunctions.types.SIGMOID);
+
+        // Set canvas dynamic resize
+        canvasPane.heightProperty().addListener((observable, oldValue, newValue) -> architectureCanvas.setHeight(newValue.doubleValue() - 1));
+        //canvasPane.widthProperty().addListener((observable, oldValue, newValue) -> architectureCanvas.setWidth(newValue.doubleValue() - 1));
+
+        // Set initial height for correct animation
+        Platform.runLater(() -> {
+            inputPaneAnimationPane.setPrefHeight(inputLayerPane.getHeight());
+            inputPaneAnimationPane.setScaleY(0);
+
+            // Set default values for animation
+            inputLayerPane.setManaged(false);
+            inputLayerPane.setVisible(false);
+        });
+    }
+
+    public void setReferences(Application application, DataMaster dataMaster, DefaultUIController masterController) {
+        this.application = application;
+        this.dataMaster = dataMaster;
+        this.masterController = masterController;
+    }
+
+    // Hide and show configuration for input layer
+    public void autoConfigureInputLayer() {
+        if (!autoConfigureCheckBox.isSelected()){
+            inputLayerPane.setOpacity(0);
+            inputLayerPane.setVisible(true);
+        }
+        else {
+            inputLayerPane.setManaged(false);
+            inputPaneAnimationPane.setPrefHeight(inputLayerPane.getHeight());
+        }
+
+        SequentialTransition transition = createInputLayerAnimation();
+
+        transition.setOnFinished(event -> {
+            inputLayerPane.setManaged(!autoConfigureCheckBox.isSelected());
+            if (autoConfigureCheckBox.isSelected()){
+                inputLayerPane.setVisible(false);
             }
         });
     }
 
-    public void updateInputTable(){
-        inputVBox.getChildren().remove(2, inputVBox.getChildren().size() - 1);
-        lastColumnChoiceBox.getItems().clear();
-        lastColumnChoiceBox.setValue("...");
-        inputNeuronCounter.setText("...");
-        
-        rawTrainSet = mainController.dataController.rawTrainSet;
-        rawTestSet = mainController.dataController.rawTestSet;
+    private SequentialTransition createInputLayerAnimation() {
+        ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(150), inputPaneAnimationPane);
+        scaleTransition.setFromY(autoConfigureCheckBox.isSelected() ? 1 : 0);
+        scaleTransition.setToY(autoConfigureCheckBox.isSelected() ? 0 : 1);
 
-        //Switch on selected data set
-        if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(0))){
-            if(mainController.dataController.trainSetFile == null || !mainController.dataController.trainSetFile.exists()){
-                inputsChoiceBox.setValue(bundle.getString("tab.architecture.selectDatabase"));
-                inputNeuronButton.setDisable(true);
-                inputNeuronRemoveButton.setDisable(true);
-                inputNeuronAutoButton.setDisable(true);
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, "There is no training database.");
-                PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.noTrainingDatabase"));
-                return;
-            }
-            //If settings is not valid, create new.
-            if(trainInputSettings == null){
-                trainInputSettings = FXCollections.observableArrayList(addInputValue(rawTrainSet, 0));
-                trainCheckColumn = 0;
-            }
-            inputVBox.getChildren().addAll(2, trainInputSettings);
-            inputNeuronCounter.setText(String.valueOf(trainInputSettings.size() / 2));
-            lastColumnChoiceBox.getItems().addAll(rawTrainSet.get(0));
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(150), inputLayerPane);
+        fadeTransition.setFromValue(autoConfigureCheckBox.isSelected() ? 1 : 0);
+        fadeTransition.setToValue(autoConfigureCheckBox.isSelected() ? 0 : 1);
 
-            lastColumnChoiceBox.setValue(lastColumnChoiceBox.getItems().get(trainCheckColumn));
-            inputNeuronButton.setDisable(false);
-            inputNeuronRemoveButton.setDisable(false);
-            inputNeuronAutoButton.setDisable(false);
-            lastColumnChoiceBox.setDisable(false);
-        }
-        else if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
-            if(mainController.dataController.testSetFile == null || !mainController.dataController.testSetFile.exists()){
-                inputsChoiceBox.setValue(bundle.getString("tab.architecture.selectDatabase"));
-                inputNeuronButton.setDisable(true);
-                inputNeuronRemoveButton.setDisable(true);
-                inputNeuronAutoButton.setDisable(true);
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, "There is no test database.");
-                PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.noTestDatabase"));
-                return;
-            }
-            //If settings is not valid, create new.
-            if(testInputSettings == null){
-                testInputSettings = FXCollections.observableArrayList(addInputValue(rawTestSet, 0));
-                testCheckColumn = 0;
-            }
-            inputVBox.getChildren().addAll(2, testInputSettings);
-            inputNeuronCounter.setText(String.valueOf(testInputSettings.size() / 2));
-            lastColumnChoiceBox.getItems().addAll(rawTestSet.get(0));
-            lastColumnChoiceBox.setValue(lastColumnChoiceBox.getItems().get(testCheckColumn));
-            inputNeuronButton.setDisable(false);
-            inputNeuronRemoveButton.setDisable(false);
-            inputNeuronAutoButton.setDisable(false);
-            lastColumnChoiceBox.setDisable(false);
-        }else{
-            inputNeuronRemoveButton.setDisable(true);
-            inputNeuronButton.setDisable(true);
-            inputNeuronAutoButton.setDisable(true);
-            lastColumnChoiceBox.setDisable(true);
-        }
+        SequentialTransition transition = autoConfigureCheckBox.isSelected() ?
+                new SequentialTransition(fadeTransition, scaleTransition) : new SequentialTransition(scaleTransition, fadeTransition);
+        transition.play();
+        return transition;
     }
 
-    //Add new input neuron value
-    public void addInputNeuron() {
-        if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(0))){
-            trainInputSettings.addAll(addInputValue(rawTrainSet, trainInputSettings.size() / 2));
-            updateInputTable();
+    public void updateInputList() {
+        if (!dataMaster.areDatasetsValid()) {
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "There is no database found.");
+            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.noDatabase"));
+            return;
         }
-        else if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
-            testInputSettings.addAll(addInputValue(rawTestSet, testInputSettings.size() / 2));
-            updateInputTable();
+
+        // Update list
+        inputLayerBox.getChildren().clear();
+        inputLayerColumns.clear();
+        classParameterChoiceBox.getItems().clear();
+        // Add default parameters
+        List<String> labels = dataMaster.getTrainingSet().labels();
+        for (int i = 0; i < labels.size() - 1; i++) {
+            addNewInputParameter(i);
         }
+        classParameterChoiceBox.getItems().addAll(labels);
+        classParameterChoiceBox.getSelectionModel().select(labels.size() - 1);
+
     }
 
-    //Auto add input and set output neurons. Adds input neurons from 2nd to size - 1.
-    public void autoInputNeurons(){
-        //Cleat input neurons
-        inputVBox.getChildren().remove(2, inputVBox.getChildren().size() - 1);
+    // Methods for input list control
+    public void addNewInputParameter(int i) {
+        InputLayerColumn column = new InputLayerColumn(i, dataMaster.getTrainingSet().labels(), dataMaster.getTrainingSet().labels().get(0), Parser.inputTypes.NUMBER);
 
-        if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(0))){
-            trainInputSettings.clear();
-            for (int i = 0; i < rawTrainSet.get(0).size() - 1; i++) {
-                trainInputSettings.addAll(addInputValue(rawTrainSet, i));
-            }
-            trainCheckColumn = lastColumnChoiceBox.getItems().size() - 1;
-        }
-        else if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
-            testInputSettings.clear();
-            for (int i = 0; i < rawTestSet.get(0).size() - 1; i++) {
-                testInputSettings.addAll(addInputValue(rawTestSet, i));
-            }
-            testCheckColumn = lastColumnChoiceBox.getItems().size() - 1;
-        }
-        updateInputTable();
+        inputLayerColumns.add(i, column);
+        inputLayerBox.getChildren().add(i, column.getColumn());
+        IntStream.range(i + 1, inputLayerColumns.size()).forEach(j -> inputLayerColumns.get(j).setNumber(j));
+
+
+        masterController.fadeNode(column.getColumn(), 400, false);
+
+        column.getAddNewColumnButton().setOnAction(event -> addNewInputParameter(column.getNumber()));
+        column.getRemoveColumnButton().setOnAction(event -> removeInputParameter(column.getNumber()));
+    }
+    public void removeInputParameter(int i) {
+        if(inputLayerColumns.size() <= 1)
+            return;
+
+        // Fade out and delete
+        masterController.fadeNode(inputLayerColumns.get(i).getColumn(), 400, true).setOnFinished(event -> {
+            inputLayerColumns.remove(i);
+            inputLayerBox.getChildren().remove(i);
+            IntStream.range(i, inputLayerColumns.size()).forEach(j -> inputLayerColumns.get(j).setNumber(j));
+        });
     }
 
-    //Create input neuron value
-    private List<Node> addInputValue(List<List<String>> data, int number){
-        List<Node> result = new ArrayList<>();
-        result.add(createInputRow(number, FXCollections.observableArrayList(data.get(0))));
-        result.add(new Separator(Orientation.HORIZONTAL));
-        return result;
-    }
-
-    //Remove last neuron input field
-    public void removeInputNeuron() {
-        if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(0))){
-            if(trainInputSettings.size() < 3)
-                return;
-            trainInputSettings.remove(trainInputSettings.size() - 3 , trainInputSettings.size() - 1);
-            updateInputTable();
+    public void updateArchitectureTable() {
+        if (!dataMaster.areDatasetsValid()) {
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "There is no database found.");
+            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.noDatabase"));
+            return;
         }
-        else if(inputsChoiceBox.getValue().equals(inputsChoiceBox.getItems().get(1))){
-            if(testInputSettings.size() < 3)
-                return;
-            testInputSettings.remove(testInputSettings.size() - 3 , testInputSettings.size() - 1);
-            updateInputTable();
+
+        // Update numbers in all layers
+        for (int j = 0; j < architectureLayers.size(); j++) {
+            architectureLayers.get(j).setNumber(j + 1);
         }
+        lastLayerNumber.setText(String.valueOf(architectureLayers.size() + 1));
     }
 
-    //Create row for table with input neurons
-    private HBox createInputRow(int number, ObservableList<String> columnNames){
-        HBox result = new HBox();
-        result.setPrefHeight(24);
-        result.setPrefWidth(100);
-        result.setPadding(new Insets(2));
+    // Add layer to architecture table
+    public void addNewLayer() {
+        addNewLayer(0);
+    }
+    public void addNewLayer(int i) {
+        if (!dataMaster.areDatasetsValid()) {
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "There is no database found.");
+            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.noDatabase"));
+            return;
+        }
 
-        List<Node> children = new ArrayList<>(5);
+        i++;
+        ArchitectureLayer layer = new ArchitectureLayer(i, NetworkStructure.neuronTypes.values(), NetworkStructure.neuronTypes.HIDDEN,
+                (dataMaster.getTestingSet().labels().size() - 1) * 2, ActivationFunctions.types.SIGMOID);
 
-        Label num = new Label(Integer.toString(number));
-        num.setFont(new Font("Segoe UI SemiBold", 14));
-        num.setPrefHeight(20);
-        num.setPrefWidth(25);
+        architectureLayers.add(i - 1, layer);
+        architectureLayerInfoPane.getChildren().add(i, layer.getColumn());
+        architectureLayerManagementPane.getChildren().add(i, layer.getManagement());
+        masterController.fadeNode(layer.getColumn(), 400, false);
+        masterController.fadeNode(layer.getManagement(), 400, false);
 
-        ChoiceBox<String> columnSelector = new ChoiceBox<>(columnNames);
-        if(number >= columnNames.size())
-            columnSelector.setValue(columnNames.get(0));
-        else
-            columnSelector.setValue(columnNames.get(number));
-        columnSelector.setPrefHeight(20);
-        columnSelector.setPrefWidth(130);
+        layer.getRemoveLayerButton().setOnAction(event -> removeLayer(layer));
+        layer.getAddNewLayerButton().setOnAction(event -> addNewLayer(layer.getNumber() - 1));
 
-        ChoiceBox<Parser.inputTypes> typeSelector = new ChoiceBox<>(FXCollections.observableArrayList(Parser.inputTypes.values()));
-        typeSelector.setValue(Parser.inputTypes.NUMBER);
-        typeSelector.setPrefHeight(20);
-        typeSelector.setPrefWidth(130);
-
-        //Add them to array
-        children.add(num);
-        children.add(new Separator(Orientation.VERTICAL));
-        children.add(columnSelector);
-        children.add(new Separator(Orientation.VERTICAL));
-        children.add(typeSelector);
-
-        result.getChildren().addAll(children);
-        return result;
+        updateArchitectureTable();
     }
 
+    // Remove layer from architecture table
+    public void removeLayer(ArchitectureLayer layer) {
+        masterController.fadeNode(layer.getColumn(), 400, true).setOnFinished(event -> {
+            architectureLayers.remove(layer);
+            architectureLayerInfoPane.getChildren().remove(layer.getColumn());
+            architectureLayerManagementPane.getChildren().remove(layer.getManagement());
+
+            updateArchitectureTable();
+        });
+        masterController.fadeNode(layer.getManagement(), 400, true);
+    }
+
+    /*
     //Add new layer to neural network architecture
     public void addLayer(){
         if(architectureSettings == null){
@@ -321,11 +303,12 @@ public class UIStructureController {
 
         result.getChildren().addAll(children);
         return result;
-    }
+    }*/
 
-    private void updateGraphicOutput(){
-        GraphicsContext graphicsContext = graphicOutput.getGraphicsContext2D();
-        graphicsContext.clearRect(0, 0, graphicOutput.getWidth(), graphicOutput.getHeight());
+    /*
+    private void updateVisualisation(){
+        GraphicsContext graphicsContext = architectureCanvas.getGraphicsContext2D();
+        graphicsContext.clearRect(0, 0, architectureCanvas.getWidth(), architectureCanvas.getHeight());
 
         double radius = 20;
         int maxNeurons = 10;
@@ -407,6 +390,224 @@ public class UIStructureController {
             }
             lastX = x;
             lastYSpacing = ySpacing;
+        }
+    }*/
+
+    // Inner classes for convenient management of input lists
+    public static class InputLayerColumn {
+        protected VBox column;
+        protected ChoiceBox<String> parameter;
+        protected ChoiceBox<Parser.inputTypes> type;
+        protected Button removeColumn, addNewColumn;
+        protected Label numberLabel;
+        protected int number;
+
+        public InputLayerColumn(int number, List<String> parameters, String currentParameter, Parser.inputTypes currentType) {
+            this.number = number;
+            String style = "-fx-border-color: #4769ff;" +
+                    "-fx-border-width: 1 0 0 0;";
+
+            // Initialize components
+            numberLabel = new Label(String.valueOf(number));
+            numberLabel.setPadding(new Insets(15));
+            numberLabel.setFont(Font.font("Inter", 16));
+            numberLabel.setPrefHeight(50);
+            numberLabel.setMaxWidth(Double.MAX_VALUE);
+            numberLabel.setAlignment(Pos.CENTER);
+
+            parameter = new ChoiceBox<>();
+            parameter.getItems().addAll(parameters);
+            parameter.getSelectionModel().select(currentParameter);
+            parameter.setMaxWidth(Double.MAX_VALUE);
+            BorderPane parameterPane = new BorderPane(parameter);
+            parameterPane.setStyle(style);
+            parameterPane.setMaxWidth(Double.MAX_VALUE);
+            parameterPane.setMaxHeight(Double.MAX_VALUE);
+            parameterPane.setMinHeight(71);
+            BorderPane.setMargin(parameter, new Insets(14, 15, 14, 15));
+
+            type = new ChoiceBox<>();
+            type.getItems().addAll(Parser.inputTypes.values());
+            type.getSelectionModel().select(currentType);
+            type.setMaxWidth(Double.MAX_VALUE);
+            BorderPane typePane = new BorderPane(type);
+            typePane.setStyle(style);
+            typePane.setMaxWidth(Double.MAX_VALUE);
+            typePane.setMaxHeight(Double.MAX_VALUE);
+            typePane.setMinHeight(71);
+            BorderPane.setMargin(type, new Insets(14, 15, 14,15));
+
+            removeColumn = new Button();
+            addNewColumn = new Button();
+
+            FontIcon addIcon = new FontIcon("zondi-add-outline");
+            addIcon.setIconSize(24);
+            addIcon.setIconColor(Paint.valueOf("#4769ff"));
+            FontIcon removeIcon = new FontIcon("zondi-minus-outline");
+            removeIcon.setIconSize(24);
+            removeIcon.setIconColor(Paint.valueOf("#4769ff"));
+
+            HBox hBox = new HBox(15, removeColumn, addNewColumn);
+            hBox.setAlignment(Pos.CENTER);
+            hBox.setPrefHeight(51);
+            hBox.setStyle(style);
+
+            removeColumn.setGraphic(removeIcon);
+            removeColumn.setStyle("-fx-background-radius: 15;" +
+                    "-fx-border-width: 0");
+            addNewColumn.setGraphic(addIcon);
+            addNewColumn.setStyle("-fx-background-radius: 15;" +
+                    "-fx-border-width: 0");
+
+            column = new VBox(numberLabel, parameterPane, typePane, hBox);
+            column.setMinWidth(140);
+            column.setStyle("-fx-border-color: #4769ff;" +
+                    "-fx-border-width: 0 1 0 0;");
+
+            // Set VBox constrains for children
+            column.setFillWidth(true);
+            VBox.setVgrow(numberLabel, Priority.NEVER);
+            VBox.setVgrow(parameterPane, Priority.ALWAYS);
+            VBox.setVgrow(typePane, Priority.ALWAYS);
+            VBox.setVgrow(hBox, Priority.ALWAYS);
+        }
+
+        public VBox getColumn() {
+            return column;
+        }
+        public int getNumber() {
+            return number;
+        }
+
+        public Button getRemoveColumnButton() {
+            return removeColumn;
+        }
+        public Button getAddNewColumnButton() {
+            return addNewColumn;
+        }
+
+        public void setNumber(int number) {
+            this.number = number;
+            numberLabel.setText(String.valueOf(number));
+        }
+    }
+
+    public static class ArchitectureLayer {
+        protected VBox column;
+        protected Label layerNumber;
+        protected int number;
+        protected ChoiceBox<NetworkStructure.neuronTypes> type;
+        protected TextField neuronNumberField;
+        protected ChoiceBox<ActivationFunctions.types> activationFunction;
+        protected Button addNewLayer, removeLayer;
+        protected HBox managementPane;
+
+        public ArchitectureLayer(int number, NetworkStructure.neuronTypes[] types, NetworkStructure.neuronTypes currentType, int currentNeuronsCount,
+                                 ActivationFunctions.types currentFunction) {
+            this.number = number;
+            String style = "-fx-border-color: #4769ff;" +
+                    "-fx-border-width: 1 0 0 0;";
+
+            // Initialize components
+            layerNumber = new Label(String.valueOf(number));
+            layerNumber.setPadding(new Insets(15));
+            layerNumber.setFont(Font.font("Inter", 16));
+            layerNumber.setMaxWidth(Double.MAX_VALUE);
+            layerNumber.setAlignment(Pos.CENTER);
+
+            type = new ChoiceBox<>();
+            type.getItems().addAll(types);
+            type.getSelectionModel().select(currentType);
+            type.setMaxWidth(Double.MAX_VALUE);
+            type.setDisable(true); // Temporary disabled
+            BorderPane typePane = new BorderPane(type);
+            typePane.setStyle(style);
+            typePane.setMaxWidth(Double.MAX_VALUE);
+            typePane.setPrefHeight(62);
+            typePane.setMinHeight(62);
+            typePane.setPadding(new Insets(15));
+
+            neuronNumberField = new TextField(String.valueOf(currentNeuronsCount));
+            neuronNumberField.setMaxWidth(Double.MAX_VALUE);
+            BorderPane neuronNumberPane = new BorderPane(neuronNumberField);
+            neuronNumberPane.setStyle(style);
+            neuronNumberPane.setMaxWidth(Double.MAX_VALUE);
+            neuronNumberPane.setPrefHeight(62);
+            neuronNumberPane.setMinHeight(62);
+            neuronNumberPane.setPadding(new Insets(15));
+
+            activationFunction = new ChoiceBox<>();
+            activationFunction.getItems().addAll(ActivationFunctions.types.values());
+            activationFunction.getSelectionModel().select(currentFunction);
+            activationFunction.setMaxWidth(Double.MAX_VALUE);
+            BorderPane activationFunctionPane = new BorderPane(activationFunction);
+            activationFunctionPane.setStyle(style);
+            activationFunctionPane.setMaxWidth(Double.MAX_VALUE);
+            activationFunctionPane.setPrefHeight(62);
+            activationFunctionPane.setMinHeight(62);
+            activationFunctionPane.setPadding(new Insets(15));
+
+            removeLayer = new Button();
+            addNewLayer = new Button();
+
+            FontIcon addIcon = new FontIcon("zondi-add-outline");
+            addIcon.setIconSize(24);
+            addIcon.setIconColor(Paint.valueOf("#4769ff"));
+            FontIcon removeIcon = new FontIcon("zondi-minus-outline");
+            removeIcon.setIconSize(24);
+            removeIcon.setIconColor(Paint.valueOf("#4769ff"));
+
+            managementPane = new HBox(15, removeLayer, addNewLayer);
+            managementPane.setAlignment(Pos.CENTER);
+            managementPane.setPrefHeight(51);
+            managementPane.setMinHeight(51);
+            managementPane.setPrefWidth(150);
+            managementPane.setMinWidth(150);
+            managementPane.setPadding(new Insets(15));
+            managementPane.setMaxWidth(Double.MAX_VALUE);
+            managementPane.setStyle("-fx-border-color: #4769ff;" +
+                    "-fx-border-width: 1 1 0 0;");
+
+            removeLayer.setGraphic(removeIcon);
+            removeLayer.setStyle("-fx-background-radius: 15;" +
+                    "-fx-border-width: 0");
+            addNewLayer.setGraphic(addIcon);
+            addNewLayer.setStyle("-fx-background-radius: 15;" +
+                    "-fx-border-width: 0");
+
+            column = new VBox(layerNumber, typePane, neuronNumberPane, activationFunctionPane);
+            column.setMinWidth(150);
+            column.setPrefWidth(150);
+            column.setStyle("-fx-border-color: #4769ff;" +
+                    "-fx-border-width: 0 1 0 0;");
+
+            // Set VBox constrains for children
+            column.setFillWidth(true);
+            VBox.setVgrow(layerNumber, Priority.NEVER);
+            VBox.setVgrow(typePane, Priority.ALWAYS);
+            VBox.setVgrow(neuronNumberPane, Priority.ALWAYS);
+            VBox.setVgrow(activationFunctionPane, Priority.ALWAYS);
+        }
+
+        public VBox getColumn() {
+            return column;
+        }
+        public HBox getManagement() {
+            return managementPane;
+        }
+        public int getNumber() {
+            return number;
+        }
+        public void setNumber(int number) {
+            this.number = number;
+            layerNumber.setText(String.valueOf(number));
+        }
+
+        public Button getAddNewLayerButton() {
+            return addNewLayer;
+        }
+        public Button getRemoveLayerButton() {
+            return removeLayer;
         }
     }
 }

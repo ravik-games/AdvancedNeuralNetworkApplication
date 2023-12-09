@@ -1,11 +1,13 @@
 package anna.ui.tabs;
 
 import anna.Application;
+import anna.DataMaster;
+import anna.ui.DefaultUIController;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 import javafx.util.converter.IntegerStringConverter;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -15,31 +17,24 @@ import java.util.function.UnaryOperator;
 public class UIDataController {
     //Class for working with first tab (Data loading)
 
-    public File trainSetFile, testSetFile, generalSetFile;
-    protected final TextField trainDataPath, testDataPath, trainingPartField, testingPartField;
-    protected final Label trainDataLabel, testDataLabel, generalDataLabel;
-    protected final TableView<List<String>> trainDataTable, testDataTable, generalDataTable;
+    public TextField trainingPartField, testingPartField;
+    public Label trainDataLabel, testDataLabel, generalDataLabel;
+    public TableView<List<String>> trainDataTable, testDataTable, generalDataTable;
+    public Pane dataPartitionPane;
+    public CheckBox autoDatasetCheckBox, previewAutoDatasetCheckBox;
+    public TabPane dataLoaderPane;
+    public Button loadTrainDataButton, loadTestDataButton;
 
-    public List<List<String>> rawTrainSet, rawTestSet, generalSet;
+    public List<List<String>> rawTrainSet;
+    public List<List<String>> rawTestSet;
 
     protected Application application;
+    protected DefaultUIController masterController;
+    protected DataMaster dataMaster;
     protected static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
 
     // Initialize fields on Data tab
-    public UIDataController(TextField trainDataPath, TextField testDataPath, Label trainDataLabel, Label testDataLabel, Label generalDataLabel,
-                            TableView<List<String>> trainDataTable, TableView<List<String>> testDataTable, TableView<List<String>> generalDataTable,
-                            TextField trainingPartField, TextField testingPartField){
-        this.trainDataPath = trainDataPath;
-        this.testDataPath = testDataPath;
-        this.trainDataLabel = trainDataLabel;
-        this.testDataLabel = testDataLabel;
-        this.generalDataLabel = generalDataLabel;
-        this.trainDataTable = trainDataTable;
-        this.testDataTable = testDataTable;
-        this.generalDataTable = generalDataTable;
-        this.trainingPartField = trainingPartField;
-        this.testingPartField = testingPartField;
-
+    public void initialize() {
         // Strict part fields to digits only
         UnaryOperator<TextFormatter.Change> integerFilter = change -> {
             String newText = change.getControlNewText();
@@ -63,51 +58,99 @@ public class UIDataController {
         trainingPartField.setText("75");
     }
 
-    public void setMain(Application application) {
+    public void setReferences(Application application, DataMaster dataMaster, DefaultUIController uiController) {
         this.application = application;
+        this.dataMaster = dataMaster;
+        masterController = uiController;
     }
 
     // Load general dataset and parse it
     public boolean loadGeneralDataset() {
-        if (!application.getDataMaster().loadGeneralDataset())
+        if (!dataMaster.loadGeneralDataset())
             return false;
 
-        generalDataLabel.setText(application.getDataMaster().getGeneralSetFile().getName());
-        loadTable(generalDataTable, application.getDataMaster().getRawGeneralSet());
+        generalDataLabel.setText(dataMaster.getGeneralSet().file().getName());
+        loadTable(generalDataTable, dataMaster.getGeneralSet().data(), dataMaster.getGeneralSet().labels());
 
         splitDataset();
+
+        masterController.structureController.updateInputList();
 
         return true;
     }
 
     public void splitDataset() {
+
         // Split dataset in parts
-        application.getDataMaster().splitGeneralDataset(Double.parseDouble(trainingPartField.getText()) / 100);
+        if  (!dataMaster.splitGeneralDataset(Double.parseDouble(trainingPartField.getText()) / 100))
+            return;
 
         // Load new datasets in tables
         trainDataLabel.setText("train");
         testDataLabel.setText("test");
-        loadTable(trainDataTable, application.getDataMaster().getRawTrainSet());
-        loadTable(testDataTable, application.getDataMaster().getRawTestSet());
+        loadTable(trainDataTable, dataMaster.getTrainingSet().data(), dataMaster.getTrainingSet().labels());
+        loadTable(testDataTable, dataMaster.getTestingSet().data(), dataMaster.getTestingSet().labels());
+    }
+
+    // Change data loading mode on checkbox state change
+    public void autoDatasetCheck() {
+        if (autoDatasetCheckBox.isSelected()) {
+            dataPartitionPane.setVisible(true);
+            dataPartitionPane.setManaged(true);
+            previewAutoDatasetCheckBox.setSelected(false);
+        }
+
+        masterController.fadeNode(dataPartitionPane, 300, !autoDatasetCheckBox.isSelected()).setOnFinished(event ->  {
+            if(!autoDatasetCheckBox.isSelected()) {
+                dataPartitionPane.setManaged(false);
+                dataPartitionPane.setVisible(false);
+            }
+        });
+        masterController.cycleFadeNode(dataLoaderPane, 300, () -> {
+            loadTrainDataButton.setDisable(false);
+            loadTestDataButton.setDisable(false);
+            dataLoaderPane.getSelectionModel().select(autoDatasetCheckBox.isSelected() ? 0 : 1);
+
+            // Clear tables
+            clearTables();
+        });
+    }
+
+    public void previewAutoDataset() {
+        // Re-split dataset and show it. Probably can cause some performance issues.
+        if (previewAutoDatasetCheckBox.isSelected())
+            splitDataset();
+
+        masterController.cycleFadeNode(dataLoaderPane, 300, () -> {
+            loadTrainDataButton.setDisable(previewAutoDatasetCheckBox.isSelected());
+            loadTestDataButton.setDisable(previewAutoDatasetCheckBox.isSelected());
+            dataLoaderPane.getSelectionModel().select(previewAutoDatasetCheckBox.isSelected() ? 1 : 0);
+        });
     }
 
     // Load training dataset and parse it
-    public boolean loadTrainingDataset() {
-        if (!application.getDataMaster().loadTrainingDataset())
+    public boolean loadTrainData() {
+        if (!dataMaster.loadTrainingDataset())
             return false;
 
-        trainDataLabel.setText(application.getDataMaster().getTrainSetFile().getName());
-        loadTable(trainDataTable, application.getDataMaster().getRawTrainSet());
+        trainDataLabel.setText(dataMaster.getTrainingSet().file().getName());
+        loadTable(trainDataTable, dataMaster.getTrainingSet().data(), dataMaster.getTrainingSet().labels());
+
+        masterController.structureController.updateInputList();
+
         return true;
     }
 
     // Load general dataset and parse it
-    public boolean loadTestingDataset() {
-        if (!application.getDataMaster().loadTestingDataset())
+    public boolean loadTestData() {
+        if (!dataMaster.loadTestingDataset())
             return false;
 
-        testDataLabel.setText(application.getDataMaster().getTestSetFile().getName());
-        loadTable(testDataTable, application.getDataMaster().getRawTestSet());
+        testDataLabel.setText(dataMaster.getTestingSet().file().getName());
+        loadTable(testDataTable, dataMaster.getTestingSet().data(), dataMaster.getTestingSet().labels());
+
+        masterController.structureController.updateInputList();
+
         return true;
     }
 
@@ -119,11 +162,11 @@ public class UIDataController {
         trainDataLabel.setText("---");
         testDataLabel.setText("---");
 
-        application.getDataMaster().clearData();
+        dataMaster.clearData();
     }
 
     //Load table to TableView
-    private void loadTable(TableView<java.util.List<String>> table, java.util.List<java.util.List<String>> rawData){
+    private void loadTable(TableView<List<String>> table, List<List<String>> rawData, List<String> labels){
         table.getColumns().clear();
         table.getItems().clear();
 
@@ -132,8 +175,8 @@ public class UIDataController {
         table.getColumns().add(numberColumn);
 
         //Create columns and add them to the table
-        for (int i = 0; i < rawData.get(0).size(); i++) {
-            TableColumn<List<String>, String> column = new TableColumn<>(rawData.get(0).get(i));
+        for (int i = 0; i < labels.size(); i++) {
+            TableColumn<List<String>, String> column = new TableColumn<>(labels.get(i));
             int finalI = i + 1;
             //Create cell value factory to show data in table cells
             column.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().get(finalI)));
@@ -144,7 +187,7 @@ public class UIDataController {
         }
 
         //Add data to table
-        for (int i = 1; i < rawData.size(); i++) {
+        for (int i = 0; i < rawData.size(); i++) {
             ArrayList<String> list = new ArrayList<>(rawData.get(i));
             list.add(0, Integer.toString(i));
             //list.set(0, Integer.toString(i));
