@@ -8,12 +8,12 @@ public class LearningFunctions {
     //  --- Backpropagation functions ---
 
     //Calculates delta of output neuron
-    public static double outputDelta(double rawOutput, double ideal, double actual, ActivationFunctions.types typeOfActivation){
+    public static double outputDelta(double rawOutput, double ideal, double actual, ActivationFunctions.Types typeOfActivation){
         return (ideal - actual) * derivative(typeOfActivation, rawOutput);
     }
 
     //Calculates delta of hidden neuron
-    public static double hiddenDelta(double[] weights, double[] deltas, double rawOutput, ActivationFunctions.types typeOfActivation){
+    public static double hiddenDelta(double[] weights, double[] deltas, double rawOutput, ActivationFunctions.Types typeOfActivation){
         double sum = 0;
 
         //Throw error when lengths mismatch
@@ -37,7 +37,7 @@ public class LearningFunctions {
     }
 
     //Calculates derivative using simplified functions
-    public static double derivative(ActivationFunctions.types typeOfActivation, double rawOutput){
+    public static double derivative(ActivationFunctions.Types typeOfActivation, double rawOutput){
         switch(typeOfActivation){
             case RELU -> {
                 return rawOutput > 0 ? 1 : 0;

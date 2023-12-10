@@ -1,5 +1,6 @@
 package anna.network;
 
+import anna.math.ActivationFunctions;
 import anna.network.neurons.Neuron;
 import anna.ui.Parser;
 
@@ -11,10 +12,10 @@ public class DataTypes {
 
     //Information about network in short form (for save/load)
     public static class NetworkData {
-        private final List<Integer> structure;
+        private final List<LayerData> structure;
         private final List<NeuronWeightData> weights;
 
-        public NetworkData(List<Integer> structure, List<NeuronData> neuronData){
+        public NetworkData(List<LayerData> structure, List<NeuronData> neuronData){
             this.structure = structure;
             weights = new ArrayList<>();
             for (NeuronData singleNeuronData : neuronData) {
@@ -30,11 +31,13 @@ public class DataTypes {
             return weights.get(id);
         }
 
-        public List<Integer> getStructure() {
+        public List<LayerData> getStructure() {
             return structure;
         }
 
-        public record NeuronWeightData(ArrayList<Synapse> inputConnections, ArrayList<Synapse> outputConnections){}
+        public record NeuronWeightData(ArrayList<Synapse> inputConnections, ArrayList<Synapse> outputConnections) {}
+
+        public record LayerData(int neuronNumber, NetworkStructure.LayerTypes type, ActivationFunctions.Types activationFunction) {}
     }
 
     //Information about one neuron

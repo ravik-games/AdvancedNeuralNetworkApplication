@@ -2,8 +2,11 @@ package anna.ui.tabs;
 
 import anna.Application;
 import anna.DataMaster;
+import anna.math.ActivationFunctions;
+import anna.math.ErrorFunctions;
 import anna.network.DataTypes;
 import anna.network.Hyperparameters;
+import anna.network.NetworkStructure;
 import anna.network.NeuralNetwork;
 import anna.ui.DefaultUIController;
 import javafx.geometry.Insets;
@@ -64,7 +67,7 @@ public class UIManagementController {
         application.runNeuralNetwork(arguments);
 
         //Enable simulator
-        //outputController.initializeSimulator(true);
+        masterController.outputController.initializeSimulator(true);
     }
 
     // Create or update hyperparameters list
@@ -100,11 +103,13 @@ public class UIManagementController {
                 inputParameters, structureController.getTargetParameter());
 
         //Collect architecture data
-        networkData.getStructure().add(0, structureController.getInputParameters().size()); // Input layer
+        networkData.getStructure().add(new DataTypes.NetworkData.LayerData(structureController.getInputParameters().size(), NetworkStructure.LayerTypes.INPUT,
+                ActivationFunctions.Types.LINEAR)); // Input layer
         networkData.getStructure().addAll(structureController.getArchitectureLayers().stream()
-                .map(UIStructureController.ArchitectureLayer::getNeuronNumber)
+                .map(layer -> new DataTypes.NetworkData.LayerData(layer.getNeuronNumber(), layer.getType(), layer.getActivationFunction()))
                 .toList());
-        networkData.getStructure().add(trainData.allOutputTypes().length); // Output layer //TODO For classification only
+        networkData.getStructure().add(new DataTypes.NetworkData.LayerData(trainData.allOutputTypes().length, NetworkStructure.LayerTypes.OUTPUT,
+                structureController.lastLayerActivationFunction.getValue())); // Output layer //TODO For classification only
 
         masterController.lastArguments = new NeuralNetwork.NetworkArguments(networkData, trainData, testData, isPrediction, masterController, logEpoch);
 
@@ -151,9 +156,7 @@ public class UIManagementController {
 
                     value = checkBox;
                 }
-                case POSITIVE_DOUBLE, POSITIVE_INT, DOUBLE -> {
-                    value = getTextField(hyperparameter);
-                }
+                case POSITIVE_DOUBLE, POSITIVE_INT, DOUBLE -> value = getTextField(hyperparameter);
                 case ENUM -> {
                     if (hyperparameter == Hyperparameters.Identificator.NETWORK_WEIGHT_INITIALIZATION){
                         ChoiceBox<Hyperparameters.WeightsInitializationType> choiceBox = new ChoiceBox<>();
@@ -161,6 +164,15 @@ public class UIManagementController {
                         choiceBox.getSelectionModel().select(Hyperparameters.NETWORK_WEIGHT_INITIALIZATION);
                         // Set hyperparameter value
                         choiceBox.setOnAction(event -> Hyperparameters.NETWORK_WEIGHT_INITIALIZATION = choiceBox.getValue());
+
+                        value = choiceBox;
+
+                    } else if (hyperparameter == Hyperparameters.Identificator.ERROR_FUNCTION) {
+                        ChoiceBox<ErrorFunctions.Types> choiceBox = new ChoiceBox<>();
+                        choiceBox.getItems().addAll(ErrorFunctions.Types.values());
+                        choiceBox.getSelectionModel().select(Hyperparameters.ERROR_FUNCTION);
+                        // Set hyperparameter value
+                        choiceBox.setOnAction(event -> Hyperparameters.ERROR_FUNCTION = choiceBox.getValue());
 
                         value = choiceBox;
                     }

@@ -16,10 +16,10 @@ public abstract class Neuron {
     protected double lastRawOutput; //Last output without activation function
     protected double lastOutput;
 
-    protected NetworkStructure.neuronTypes type;
-    protected ActivationFunctions.types activationFunction;
+    protected NetworkStructure.LayerTypes type;
+    protected ActivationFunctions.Types activationFunction;
 
-    public Neuron(int id, ActivationFunctions.types activationFunction, NetworkStructure.neuronTypes type) {
+    public Neuron(int id, ActivationFunctions.Types activationFunction, NetworkStructure.LayerTypes type) {
         this.id = id;
         this.activationFunction = activationFunction;
         this.type = type;
@@ -77,7 +77,7 @@ public abstract class Neuron {
         return lastRawOutput;
     }
 
-    public ActivationFunctions.types getActivationFunction() {
+    public ActivationFunctions.Types getActivationFunction() {
         return activationFunction;
     }
 }

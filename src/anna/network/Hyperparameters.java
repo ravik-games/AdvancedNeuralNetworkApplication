@@ -1,5 +1,7 @@
 package anna.network;
 
+import anna.math.ErrorFunctions;
+
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -15,6 +17,13 @@ public class Hyperparameters {
      * Affects: TODO Test what does number of epochs affect
      */
     public static int NUMBER_OF_EPOCHS = 1000;
+
+    /**
+     * Error calculation function
+     * <p>
+     * Affects: TODO Test what error function affect
+     */
+    public static ErrorFunctions.Types ERROR_FUNCTION = ErrorFunctions.Types.MSE;
 
     /**
      * The number of training samples used in one iteration. If equal or below 0, then will be used number of input arguments.
@@ -58,40 +67,16 @@ public class Hyperparameters {
      */
     public static double SLOPE_IN_ACTIVATION_FUNCTIONS = 0.01;
 
-    public static String getValueByID(Identificator id){
-        switch(id){
-            default -> {
-                return null;
-            }
-            case NUMBER_OF_EPOCHS -> {
-                return String.valueOf(NUMBER_OF_EPOCHS);
-            }
-            case BATCH_SIZE -> {
-                return String.valueOf(BATCH_SIZE);
-            }
-            case USE_BIAS_NEURONS -> {
-                return String.valueOf(USE_BIAS_NEURONS);
-            }
-            case NETWORK_WEIGHT_INITIALIZATION -> {
-                return String.valueOf(NETWORK_WEIGHT_INITIALIZATION);
-            }
-            case LEARNING_RATE -> {
-                return String.valueOf(LEARNING_RATE);
-            }
-            case MOMENTUM -> {
-                return String.valueOf(MOMENTUM);
-            }
-            case SLOPE_IN_ACTIVATION_FUNCTIONS -> {
-                return String.valueOf(SLOPE_IN_ACTIVATION_FUNCTIONS);
-            }
-        }
-    }
-
     public enum Identificator {
         NUMBER_OF_EPOCHS(
                 bundle.getString("tab.management.hyperparameters.name.numberOfEpochs"),
                 bundle.getString("tab.management.hyperparameters.description.numberOfEpochs"),
                 Type.POSITIVE_INT),
+
+        ERROR_FUNCTION(
+                bundle.getString("tab.management.hyperparameters.name.errorFunction"),
+                bundle.getString("tab.management.hyperparameters.description.errorFunction"),
+                Type.ENUM),
 
         BATCH_SIZE(
                 bundle.getString("tab.management.hyperparameters.name.batchSize"),

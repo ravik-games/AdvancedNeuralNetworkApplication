@@ -1,10 +1,10 @@
 package anna.network;
 
-import anna.ui.PopupController;
-import anna.ui.UIController;
 import anna.math.ErrorFunctions;
 import anna.math.LearningFunctions;
 import anna.network.neurons.Neuron;
+import anna.ui.PopupController;
+import anna.ui.UIController;
 import javafx.application.Platform;
 
 import java.util.ArrayList;
@@ -288,8 +288,12 @@ public class NeuralNetwork implements Runnable{
     }
 
     private double calculateError(double[] actual, double[] ideal){
-        //Calculate error. Change error function here
-        return ErrorFunctions.MeanSquaredError(ideal, actual);
+        //Calculate error
+        return switch (Hyperparameters.ERROR_FUNCTION) {
+            case MSE -> ErrorFunctions.MeanSquaredError(ideal, actual);
+            case RMSE -> ErrorFunctions.RootMeanSquaredError(ideal, actual);
+            case ARCTAN -> ErrorFunctions.Arctan(ideal, actual);
+        };
     }
 
     //Learning method

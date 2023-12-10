@@ -112,6 +112,7 @@ public class Application extends javafx.application.Application {
     public void stop(){
         // Save program data before closing
         DataMaster.saveProgramData(new DataMaster.ProgramData(Locale.getDefault()));
+        System.exit(0);
     }
 
     // Getters for inner fields

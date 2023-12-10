@@ -1,22 +1,26 @@
 package anna.ui.tabs;
 
 import anna.Application;
+import anna.DataMaster;
 import anna.network.DataTypes;
+import anna.network.Hyperparameters;
 import anna.ui.DefaultUIController;
+import anna.ui.Parser;
 import anna.ui.PopupController;
 import anna.ui.tabs.modules.UIClassMatrixController;
 import anna.ui.tabs.modules.UIFullMatrixController;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.*;
-import javafx.scene.Node;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -24,83 +28,85 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import javafx.util.converter.DoubleStringConverter;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
+import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UIOutputController {
     //Class for working with fourth tab (Results)
 
-    public Label chartLabel, matrixLabel;
+    public Label chartLabel;
+    public HBox simulatorHBox, statPane;
+    public Button startSimulatorButton, newWindowChartButton, newWindowBinaryMatrixButton, newWindowFullMatrixButton;
+    public Label simulatorOutput;
+    public LineChart<Integer, Double> chart;
+    public NumberAxis chartXAxis, chartYAxis;
+    public Parent confusionMatrixFull, confusionMatrixSingle;
+    public Pane chartPane, binaryMatrixPane, fullMatrixPane;
+    public ChoiceBox<String> matrixDataChoiceBox, statClassChoiceBox;
 
-    private final HBox simulatorHBox;
-    private final VBox statVBox;
-    private final Button startSimulatorButton;
-    private final TextArea simulatorOutput;
-    private final LineChart<Integer, Double> chart;
-    private Parent currentMatrix, confusionMatrixFull, confusionMatrixSingle;
+    protected DefaultUIController masterController;
+    protected UIClassMatrixController binaryMatrixController;
+    protected UIFullMatrixController fullMatrixController;
+    protected DataMaster dataMaster;
+    protected Application application;
 
-    private final DefaultUIController mainController;
-    private UIClassMatrixController classMatrixController;
-    private UIFullMatrixController fullMatrixController;
-    private Application application;
-
-    private int chartSelectionID = 0;
-    private int matrixSelectionID = 0;
-    private int fullMatrixClassCount = 0;
-    private boolean matrixInNewWindow;
-    private final List<StatisticsUI> statisticsUI = new ArrayList<>();
+    protected int chartSelectionID = 0;
+    protected int fullMatrixClassCount = 0;
+    protected boolean matrixInNewWindow;
+    protected final List<StatisticsUI> statisticsUI = new ArrayList<>();
+    protected List<SimulatorColumn> simulatorColumns = new ArrayList<>();
 
     public List<DataTypes.Evaluation> lastTrainEvaluation;
     public List<DataTypes.Evaluation> lastTestEvaluation;
 
+
     private static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
 
-
-    public UIOutputController(DefaultUIController controller, TextArea simulatorOutput, Button startSimulatorButton, HBox simulatorHBox, VBox statVBox,
-                              LineChart<Integer, Double> chart, Label chartLabel, Label matrixLabel, ChoiceBox<String> statClassChoiceBox, ChoiceBox<String> matrixDataChoiceBox){
-        this.simulatorHBox = simulatorHBox;
-        this.statVBox = statVBox;
-        this.startSimulatorButton = startSimulatorButton;
-        this.simulatorOutput = simulatorOutput;
-        this.mainController = controller;
-        this.chart = chart;
-        this.chartLabel = chartLabel;
-        this.matrixLabel = matrixLabel;
-
+    public void initialize() {
         chart.setCreateSymbols(false);
-
         //Load matrix
         try {
             //Single class matrix
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ConfusionMatrixSingle.fxml"), bundle);
             confusionMatrixSingle = loader.load();
-            classMatrixController = loader.getController();
+            binaryMatrixPane.getChildren().add(confusionMatrixSingle);
+            AnchorPane.setTopAnchor(confusionMatrixSingle, 0D);
+            AnchorPane.setBottomAnchor(confusionMatrixSingle, 0D);
+            AnchorPane.setLeftAnchor(confusionMatrixSingle, 0D);
+            AnchorPane.setRightAnchor(confusionMatrixSingle, 0D);
+            binaryMatrixController = loader.getController();
 
             //Full matrix
             loader = new FXMLLoader(getClass().getResource("/fxml/ConfusionMatrixFull.fxml"), bundle);
             confusionMatrixFull = loader.load();
+            fullMatrixPane.getChildren().add(confusionMatrixFull);
+            AnchorPane.setTopAnchor(confusionMatrixFull, 0D);
+            AnchorPane.setBottomAnchor(confusionMatrixFull, 0D);
+            AnchorPane.setLeftAnchor(confusionMatrixFull, 0D);
+            AnchorPane.setRightAnchor(confusionMatrixFull, 0D);
             fullMatrixController = loader.getController();
 
             //Set default to class matrix
-            changeMatrix(MatrixSelector.CLASS_MATRIX);
+            //changeMatrix(MatrixSelector.CLASS_MATRIX);
         } catch (IOException e) {
-            PopupController.errorMessage("ERROR", "", bundle.getString("logger.error.fileLoadingError"));
+            PopupController.errorMessage("ERROR", "", bundle.getString("logger.error.fileLoadingError"), true);
             Logger.getLogger(getClass().getName()).log(Level.SEVERE ,"Couldn't load .fxml files. See stack trace:\n" + e.getMessage());
-            System.exit(1);
         }
 
         //Add listener to choice boxes
         statClassChoiceBox.setValue(bundle.getString("tab.results.allClasses"));
         statClassChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> UIOutputController.this.updateStatistics(false, t1.intValue()));
 
-        classMatrixController.matrixClassSelector.setValue(bundle.getString("tab.results.allClasses"));
-        classMatrixController.matrixClassSelector.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> updateSingleClassMatrix(t1.intValue(),
-                mainController.matrixDataChoiceBox.getItems().indexOf(mainController.matrixDataChoiceBox.getValue()) == 0, false));
+        binaryMatrixController.matrixClassSelector.setValue(bundle.getString("tab.results.allClasses"));
+        binaryMatrixController.matrixClassSelector.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> updateSingleClassMatrix(t1.intValue(),
+                matrixDataChoiceBox.getItems().indexOf(matrixDataChoiceBox.getValue()) == 0));
 
         //Add items to data selector choice box
         matrixDataChoiceBox.getItems().add(bundle.getString("tab.results.training"));
@@ -108,79 +114,50 @@ public class UIOutputController {
         matrixDataChoiceBox.setValue(bundle.getString("tab.results.training"));
         matrixDataChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> updateMatrix(t1.intValue() == 0));
 
+        // Clear and prepare simulator
+        initializeSimulator(false);
     }
 
-    public void setMain(Application application){
+
+    public void setReferences(Application application, DataMaster dataMaster, DefaultUIController masterController){
         this.application = application;
+        this.dataMaster = dataMaster;
+        this.masterController = masterController;
     }
 
-    //Create/update simulator table
+    // Create/update simulator table
     public void initializeSimulator(boolean enable){
-        simulatorHBox.getChildren().remove(2, simulatorHBox.getChildren().size());
+        simulatorHBox.getChildren().clear();
+        simulatorColumns.clear();
         simulatorHBox.setDisable(!enable);
         startSimulatorButton.setDisable(!enable);
-        if(mainController.lastArguments == null || mainController.lastInputTypes == null) {
+        if(!enable || masterController.lastArguments == null) {
             simulatorHBox.setDisable(true);
             startSimulatorButton.setDisable(true);
             return;
         }
 
-        for (int i = 0; i < mainController.lastArguments.networkData().getStructure().get(0); i++) {
-            simulatorHBox.getChildren().addAll(createSimulatorColumn(i));
+        for (int i = 0; i < masterController.lastArguments.networkData().getStructure().get(0).neuronNumber(); i++) {
+            SimulatorColumn column = new SimulatorColumn(masterController.structureController.getInputParameters().get(i), dataMaster);
+            simulatorColumns.add(column);
+            simulatorHBox.getChildren().addAll(column.getColumn());
         }
-    }
-
-    //Create input column for simulator
-    private List<Node> createSimulatorColumn(int numberOfNeuron){
-        //Create column
-        VBox vBox = new VBox();
-        vBox.setAlignment(Pos.TOP_CENTER);
-        vBox.setPrefHeight(100);
-        vBox.setPrefWidth(90);
-        vBox.setMinWidth(90);
-
-        //Create label and field
-        Label name = new Label(String.valueOf(numberOfNeuron));
-        name.setFont(new Font("Segoe UI SemiBold", 14));
-        name.setAlignment(Pos.CENTER);
-        name.setPrefWidth(90);
-        name.setPrefHeight(50);
-
-        TextField field = new TextField();
-        field.setFont(new Font("Segoe UI SemiLight", 12));
-        field.setAlignment(Pos.CENTER);
-        field.prefWidth(90);
-        field.setPrefHeight(50);
-
-        //Add children to VBox
-        vBox.getChildren().add(name);
-        vBox.getChildren().add(new Separator(Orientation.HORIZONTAL));
-        vBox.getChildren().add(field);
-
-        //Create output list
-        List<Node> output = new ArrayList<>(2);
-        output.add(vBox);
-        output.add(new Separator(Orientation.VERTICAL));
-
-        return output;
     }
 
     //Prepare and run simulator
-    public void prepareSimulation(){
-        double[] inputs = new double[(simulatorHBox.getChildren().size() - 2) / 2];
-
-        for(int i = 2; i < simulatorHBox.getChildren().size(); i+=2) {
-            VBox vBox = (VBox) simulatorHBox.getChildren().get(i);
-            TextField field = (TextField) vBox.getChildren().get(2);
-            //inputs[i / 2 - 1] = Parser.parseCategoricalValue(field.getText(), mainController.lastInputTypes[i / 2 - 1]);
-        }
+    public void prepareSimulationValues(){
+        double[] inputs = simulatorColumns.stream().mapToDouble(simulatorColumn -> switch (simulatorColumn.getType()) {
+            case NUMBER -> simulatorColumn.getNumberValue();
+            case BOOLEAN -> simulatorColumn.getBooleanValue();
+            case CATEGORICAL -> simulatorColumn.getCategoricalValue();
+        }).toArray();
 
         application.runSimulation(inputs);
     }
 
     //Add simulation output to UI
     public void simulationClassificationResult(double[] outputValues, String outputCategory){
-        String text = bundle.getString("tab.results.simulator.classificationCategory") + outputCategory + bundle.getString("tab.results.simulator.networkOutput") + Arrays.toString(outputValues);
+        String text = bundle.getString("tab.results.simulator.classificationCategory") + outputCategory;
         simulatorOutput.setText(text);
     }
     public void simulationPredictionResult(double outputValue){
@@ -188,7 +165,7 @@ public class UIOutputController {
         simulatorOutput.setText(text);
     }
 
-    //Show data on train graph
+    //Show data on chart
     public void updateChart(boolean newSeries, int epoch){
         DataTypes.Evaluation trainData = lastTrainEvaluation.get(lastTrainEvaluation.size() - 1);
         DataTypes.Evaluation testData = lastTestEvaluation.get(lastTestEvaluation.size() - 1);
@@ -279,25 +256,23 @@ public class UIOutputController {
     }
 
     public void setChartXLength(double number){
-        mainController.chartXAxis.setAutoRanging(number < 0);
-        mainController.chartXAxis.setLowerBound(0);
-        mainController.chartXAxis.setUpperBound(number * 1.1);
-        mainController.chartXAxis.setTickUnit(number / 10);
+        chartXAxis.setAutoRanging(number < 0);
+        chartXAxis.setLowerBound(0);
+        chartXAxis.setUpperBound(number * 1.1);
+        chartXAxis.setTickUnit(number / 10);
     }
 
     //Update values in matrix
-    public void updateSingleClassMatrix(boolean clear){
-        updateSingleClassMatrix(classMatrixController.matrixClassSelector.getItems().indexOf(classMatrixController.matrixClassSelector.getValue()),
-                mainController.matrixDataChoiceBox.getItems().indexOf(mainController.matrixDataChoiceBox.getValue()) == 0, clear);
+    public void updateSingleClassMatrix(){
+        updateSingleClassMatrix(binaryMatrixController.matrixClassSelector.getItems().indexOf(binaryMatrixController.matrixClassSelector.getValue()),
+                matrixDataChoiceBox.getItems().indexOf(matrixDataChoiceBox.getValue()) == 0);
     }
-    public void updateSingleClassMatrix(boolean trainData, boolean clear){
-        updateSingleClassMatrix(classMatrixController.matrixClassSelector.getItems().indexOf(classMatrixController.matrixClassSelector.getValue()), trainData, clear);
+    public void updateSingleClassMatrix(boolean trainData){
+        updateSingleClassMatrix(binaryMatrixController.matrixClassSelector.getItems().indexOf(binaryMatrixController.matrixClassSelector.getValue()), trainData);
     }
-    public void updateSingleClassMatrix(int newClass, boolean trainData, boolean clear){
+    public void updateSingleClassMatrix(int newClass, boolean trainData){
         if(lastTrainEvaluation == null || lastTrainEvaluation.isEmpty() || lastTestEvaluation == null || lastTestEvaluation.isEmpty())
             return;
-        if(clear)
-            clearMatrix();
 
         int selectedClass = Math.max(0, newClass) - 1;
         DataTypes.Evaluation evaluation;
@@ -316,14 +291,14 @@ public class UIOutputController {
 
         String falseNegativeText = selectedClass == -1 ?  String.format("%.0f", evaluation.getFalseNegative()) : String.format("%.0f", evaluation.getClassFalseNegative(selectedClass));
 
-        classMatrixController.truePositiveLabel.setText(truePositiveText);
-        classMatrixController.trueNegativeLabel.setText(trueNegativeText);
-        classMatrixController.falsePositiveLabel.setText(falsePositiveText);
-        classMatrixController.falseNegativeLabel.setText(falseNegativeText);
+        binaryMatrixController.truePositiveLabel.setText(truePositiveText);
+        binaryMatrixController.trueNegativeLabel.setText(trueNegativeText);
+        binaryMatrixController.falsePositiveLabel.setText(falsePositiveText);
+        binaryMatrixController.falseNegativeLabel.setText(falseNegativeText);
     }
 
     public void updateFullMatrix(boolean clear){
-        updateFullMatrix(mainController.matrixDataChoiceBox.getItems().indexOf(mainController.matrixDataChoiceBox.getValue()) == 0, clear);
+        updateFullMatrix(matrixDataChoiceBox.getItems().indexOf(matrixDataChoiceBox.getValue()) == 0, clear);
     }
     public void updateFullMatrix(boolean trainData, boolean clear){
         if(lastTrainEvaluation == null || lastTrainEvaluation.isEmpty() || lastTestEvaluation == null || lastTestEvaluation.isEmpty())
@@ -395,8 +370,8 @@ public class UIOutputController {
             }
 
             //Add column and row class labels
-            Pane rowLabelCell = createNewCellWithLabel(mainController.lastArguments.trainSet().allOutputTypes()[i], 14);
-            Pane columnLabelCell = createNewCellWithLabel(mainController.lastArguments.trainSet().allOutputTypes()[i], 14);
+            Pane rowLabelCell = createNewCellWithLabel(masterController.lastArguments.trainSet().allOutputTypes()[i], 14);
+            Pane columnLabelCell = createNewCellWithLabel(masterController.lastArguments.trainSet().allOutputTypes()[i], 14);
             fullMatrixController.matrixGrid.add(rowLabelCell, 0, i + 1);
             fullMatrixController.matrixGrid.add(columnLabelCell, i + 1, 0);
         }
@@ -423,15 +398,14 @@ public class UIOutputController {
     }
 
     public void clearMatrix(){
-        switch (MatrixSelector.values()[matrixSelectionID]){
-            case CLASS_MATRIX -> {
-                classMatrixController.clear();
-                classMatrixController.matrixClassSelector.getItems().add(bundle.getString("tab.results.allClasses"));
-                classMatrixController.matrixClassSelector.getItems().addAll(mainController.lastArguments.trainSet().allOutputTypes());
-                classMatrixController.matrixClassSelector.setValue(bundle.getString("tab.results.allClasses"));
-            }
-            case FULL_MATRIX -> fullMatrixController.clear();
-        }
+        fullMatrixController.clear();
+    }
+
+    public void initializeMatrixClasses() {
+        binaryMatrixController.matrixClassSelector.getItems().clear();
+        binaryMatrixController.matrixClassSelector.getItems().add(bundle.getString("tab.results.allClasses"));
+        binaryMatrixController.matrixClassSelector.getItems().addAll(masterController.lastArguments.trainSet().allOutputTypes());
+        binaryMatrixController.matrixClassSelector.getSelectionModel().select(0);
     }
 
     private String colorFormat(double value){
@@ -442,7 +416,7 @@ public class UIOutputController {
     private Pane createNewCellWithLabel(String text, int textSize){
         AnchorPane pane = new AnchorPane();
         Label label = new Label(text);
-        label.setFont(Font.font("Segoe UI SemiBold", textSize));
+        label.setFont(Font.font("Inter Light", textSize));
         label.setAlignment(Pos.CENTER);
         label.setTextAlignment(TextAlignment.CENTER);
         label.setWrapText(true);
@@ -458,80 +432,43 @@ public class UIOutputController {
         return pane;
     }
 
-    //Switch between different output panes
-    public void switchSelector(int selectorID, boolean left){
-        switch (selectorID){
-            case 0 -> {
-                chartSelectionID = (chartSelectionID + (left ? -1 : 1)) % ChartSelector.values().length;
-                chartSelectionID = chartSelectionID < 0 ? ChartSelector.values().length - 1 : chartSelectionID;
+    //Switch between different charts
+    private void changeChart(boolean left){
+        chartSelectionID = (chartSelectionID + (left ? -1 : 1)) % ChartSelector.values().length;
+        chartSelectionID = chartSelectionID < 0 ? ChartSelector.values().length - 1 : chartSelectionID;
 
-                changeChart(ChartSelector.values()[chartSelectionID]);
-                updateFullChart();
-            }
-            case 1 -> {
-                matrixSelectionID = (matrixSelectionID + (left ? -1 : 1)) % MatrixSelector.values().length;
-                matrixSelectionID = matrixSelectionID < 0 ? MatrixSelector.values().length - 1 : matrixSelectionID;
-
-                changeMatrix(MatrixSelector.values()[matrixSelectionID]);
-            }
-        }
-    }
-
-    private void changeChart(ChartSelector selection){
-        switch (selection){
+        switch (ChartSelector.values()[chartSelectionID]){
             case LOSS_CHART -> {
                 chart.getYAxis().setLabel(bundle.getString("tab.results.chart.meanError"));
                 chartLabel.setText(bundle.getString("tab.results.chart.meanErrorChart"));
-                mainController.setChartForceYZero(true);
+                chartYAxis.setForceZeroInRange(true);
             }
             case ACCURACY_CHART -> {
                 chart.getYAxis().setLabel(bundle.getString("tab.results.chart.accuracy"));
                 chartLabel.setText(bundle.getString("tab.results.chart.accuracyChart"));
-                mainController.setChartForceYZero(false);
+                chartYAxis.setForceZeroInRange(false);
             }
             case F_SCORE_CHART -> {
                 chart.getYAxis().setLabel(bundle.getString("tab.results.chart.meanFScore"));
                 chartLabel.setText(bundle.getString("tab.results.chart.meanFScoreChart"));
-                mainController.setChartForceYZero(false);
+                chartYAxis.setForceZeroInRange(false);
             }
         }
-    }
-
-    private void changeMatrix(MatrixSelector selection){
-        if(matrixInNewWindow)
-            return;
-        switch (selection){
-            case CLASS_MATRIX -> {
-                currentMatrix = confusionMatrixSingle;
-                matrixLabel.setText(bundle.getString("tab.results.matrix.small"));
-                updateSingleClassMatrix(false);
-            }
-            case FULL_MATRIX -> {
-                currentMatrix = confusionMatrixFull;
-                matrixLabel.setText(bundle.getString("tab.results.matrix.full"));
-                updateFullMatrix(true);
-            }
-        }
-        mainController.matrixParent.getChildren().clear();
-        mainController.matrixParent.getChildren().add(currentMatrix);
+        updateFullChart();
     }
 
     private void updateMatrix(boolean trainData){
-        switch (MatrixSelector.values()[matrixSelectionID]){
-            case CLASS_MATRIX -> updateSingleClassMatrix(trainData, false);
-            case FULL_MATRIX -> updateFullMatrix(trainData, true);
-        }
+        updateSingleClassMatrix(trainData);
+        updateFullMatrix(trainData, true);
     }
 
     private void updateMatrix(){
-        switch (MatrixSelector.values()[matrixSelectionID]){
-            case CLASS_MATRIX -> updateSingleClassMatrix(false);
-            case FULL_MATRIX -> updateFullMatrix(true);
-        }
+        updateSingleClassMatrix(false);
+        updateFullMatrix(true);
     }
 
     //Open chart in new window
-    public Stage openElementInNewWindow(String title, Pane parent, Parent element, Button openButton, double minWidth, double minHeight){
+    public void openElementInNewWindow(String title, Pane parent, Parent element, Button openButton, double minWidth, double minHeight){
         parent.getChildren().remove(element);
         Label label = new Label(bundle.getString("tab.results.inNewWindow"));
         label.setFont(new Font("Segoe UI SemiLight", 14));
@@ -554,55 +491,52 @@ public class UIOutputController {
 
         stage.setOnCloseRequest(windowEvent -> {
             scene.setRoot(new Pane());
-            parent.getChildren().remove(label);
+            parent.getChildren().clear();
             parent.getChildren().add(element);
             element.setStyle("-fx-background-color: white"); //Fix background color
             openButton.setDisable(false);
         });
 
-        return stage;
     }
-    
-    public void openChartInNewWindow(Button button, Pane parent){
-        openElementInNewWindow(bundle.getString("tab.results.chart"), parent, chart, button, 500, 500).setOnCloseRequest(windowEvent -> {
-            //Override default close event
-            chart.getScene().setRoot(new Pane());
-            parent.getChildren().clear();
-            parent.getChildren().add(chart);
-            chart.setStyle("-fx-background-color: white"); //Fix background color
-            button.setDisable(false);
-        });
+
+    public void newWindowChart() {
+        openElementInNewWindow(bundle.getString("tab.results.chart"), chartPane, chart, newWindowChartButton, 500, 500);
     }
-    public void openMatrixInNewWindow(Button button, Pane parent){
+
+    public void newWindowBinaryMatrix() {
+        openMatrixInNewWindow(newWindowBinaryMatrixButton, binaryMatrixPane, confusionMatrixSingle);
+    }
+    public void newWindowFullMatrix() {
+        openMatrixInNewWindow(newWindowFullMatrixButton, fullMatrixPane, confusionMatrixFull);
+    }
+
+    public void openMatrixInNewWindow(Button button, Pane parent, Parent matrix){
         matrixInNewWindow = true;
         double minHeight = Math.max(290, Math.min(fullMatrixClassCount * 30.6, Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 50));
 
-        openElementInNewWindow(bundle.getString("tab.results.matrix"), parent, currentMatrix, button, Math.floor(minHeight * 2), minHeight).setOnCloseRequest(windowEvent -> {
-            //Override default close event
-            currentMatrix.getScene().setRoot(new Pane());
-            parent.getChildren().clear();
-            parent.getChildren().add(currentMatrix);
-            currentMatrix.setStyle("-fx-background-color: white"); //Fix background color
-            button.setDisable(false);
-
-            matrixInNewWindow = false;
-            updateMatrix();
-        });
+        openElementInNewWindow(bundle.getString("tab.results.matrix"), parent, matrix, button, Math.floor(minHeight * 2), minHeight);
 
         updateMatrix();
     }
 
+    public void changeChartLeft() {
+        changeChart(true);
+    }
+    public void changeChartRight() {
+        changeChart(false);
+    }
+
     //Show and update statistics
     public void updateStatistics(boolean clear){
-        updateStatistics(clear, mainController.statClassChoiceBox.getItems().indexOf(mainController.statClassChoiceBox.getValue()));
+        updateStatistics(clear, statClassChoiceBox.getItems().indexOf(statClassChoiceBox.getValue()));
     }
     public void updateStatistics(boolean clear, int currentClass){
         //Clear
         if (clear) {
-            statVBox.getChildren().remove(1, statVBox.getChildren().size() - 1);
+            statPane.getChildren().clear();
             statisticsUI.clear();
-            mainController.statClassChoiceBox.getItems().clear();
-            mainController.statClassChoiceBox.setValue(bundle.getString("tab.results.allClasses"));
+            statClassChoiceBox.getItems().clear();
+            statClassChoiceBox.setValue(bundle.getString("tab.results.allClasses"));
         }
         if(lastTrainEvaluation == null || lastTrainEvaluation.isEmpty() || lastTestEvaluation == null || lastTestEvaluation.isEmpty())
             return;
@@ -654,42 +588,53 @@ public class UIOutputController {
     }
 
     private void createStatisticsUI(){
+        String style = "-fx-border-color: #4769ff;" +
+                "-fx-border-width: 1 0 0 0;";
+
         for (int i = 0; i < DataTypes.Evaluation.Metrics.values().length; i++) {
             //Set name
             Label nameLabel = getStatisticsLabel(i);
 
             Label trainLabel = new Label("...");
-            trainLabel.setFont(new Font("Segoe UI SemiLight", 14));
-            trainLabel.setPadding(new Insets(5));
-            trainLabel.setPrefWidth(188);
-            trainLabel.setPrefHeight(35);
+            trainLabel.setFont(new Font("Inter", 14));
+            trainLabel.setPadding(new Insets(10));
+            trainLabel.setMaxWidth(Double.MAX_VALUE);
+            trainLabel.setMaxHeight(Double.MAX_VALUE);
+            trainLabel.setWrapText(true);
+            trainLabel.setStyle(style);
 
             Label testLabel = new Label("...");
-            testLabel.setFont(new Font("Segoe UI SemiLight", 14));
-            testLabel.setPadding(new Insets(5));
-            testLabel.setPrefWidth(188);
-            testLabel.setPrefHeight(35);
+            testLabel.setFont(new Font("Inter", 14));
+            testLabel.setPadding(new Insets(10));
+            testLabel.setMaxWidth(Double.MAX_VALUE);
+            testLabel.setMaxHeight(Double.MAX_VALUE);
+            testLabel.setWrapText(true);
+            testLabel.setStyle(style);
 
             //Add all to HBox and to VBox
-            HBox hBox = new HBox();
-            hBox.getChildren().add(nameLabel);
-            hBox.getChildren().add(new Separator(Orientation.VERTICAL));
-            hBox.getChildren().add(trainLabel);
-            hBox.getChildren().add(new Separator(Orientation.VERTICAL));
-            hBox.getChildren().add(testLabel);
+            VBox vBox = new VBox();
+            vBox.getChildren().add(nameLabel);
+            vBox.getChildren().add(trainLabel);
+            vBox.getChildren().add(testLabel);
+
+            vBox.setStyle("-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;");
+            vBox.setPrefWidth(190);
+
+            VBox.setVgrow(nameLabel, Priority.ALWAYS);
+            VBox.setVgrow(trainLabel, Priority.ALWAYS);
+            VBox.setVgrow(testLabel, Priority.ALWAYS);
 
             statisticsUI.add(new StatisticsUI(DataTypes.Evaluation.Metrics.values()[i], trainLabel, testLabel));
-            statVBox.getChildren().add(hBox);
-            statVBox.getChildren().add(new Separator(Orientation.HORIZONTAL));
+            statPane.getChildren().add(vBox);
         }
-        mainController.statClassChoiceBox.getItems().add(bundle.getString("tab.results.allClasses"));
-        mainController.statClassChoiceBox.getItems().addAll(mainController.lastArguments.trainSet().allOutputTypes());
+        statClassChoiceBox.getItems().add(bundle.getString("tab.results.allClasses"));
+        statClassChoiceBox.getItems().addAll(masterController.lastArguments.trainSet().allOutputTypes());
     }
 
     private static Label getStatisticsLabel(int currentMetric) {
         String name = switch (DataTypes.Evaluation.Metrics.values()[currentMetric]){
             case SIZE -> bundle.getString("tab.results.statistics.metric.dataSize");
-            case LOSS -> bundle.getString("tab.results.statistics.metric.error");
+            case LOSS -> bundle.getString("tab.results.statistics.metric.error") + String.format(" (%s)", Hyperparameters.ERROR_FUNCTION);
             case HITS -> bundle.getString("tab.results.statistics.metric.hits");
             case ACCURACY -> bundle.getString("tab.results.statistics.metric.accuracy");
             case PRECISION -> bundle.getString("tab.results.statistics.metric.precision");
@@ -699,20 +644,118 @@ public class UIOutputController {
 
         //Create and config labels
         Label nameLabel = new Label(name);
-        nameLabel.setFont(new Font("Segoe UI SemiLight", 14));
-        nameLabel.setPadding(new Insets(5));
-        nameLabel.setPrefWidth(225);
-        nameLabel.setPrefHeight(35);
+        nameLabel.setFont(new Font("Inter SemiBold", 14));
+        nameLabel.setPadding(new Insets(10));
+        nameLabel.setWrapText(true);
+        nameLabel.setPrefHeight(70);
+        nameLabel.setMinHeight(70);
+        nameLabel.setMaxWidth(Double.MAX_VALUE);
         return nameLabel;
     }
 
-    private record StatisticsUI(DataTypes.Evaluation.Metrics metric, Label trainLabel, Label testLabel) { }
+    protected record StatisticsUI(DataTypes.Evaluation.Metrics metric, Label trainLabel, Label testLabel) { }
 
-    //Lists of items for selector panels in UI
-    private enum ChartSelector{ //ID 0
+    //Lists of items for selector panel
+    private enum ChartSelector{
         LOSS_CHART, ACCURACY_CHART, F_SCORE_CHART
     }
-    private enum MatrixSelector{ //ID 1
-        CLASS_MATRIX, FULL_MATRIX
+
+    public static class SimulatorColumn {
+        protected VBox column;
+        protected Label parameterLabel;
+        protected Control value;
+        protected Parser.InputTypes type;
+        protected List<String> categories;
+
+        public SimulatorColumn(DataTypes.InputParameterData parameterData, DataMaster dataMaster) {
+            this.type = parameterData.type();
+
+            // Initialize components
+            parameterLabel = new Label(parameterData.parameter());
+            parameterLabel.setPadding(new Insets(25, 15, 25, 15));
+            parameterLabel.setFont(Font.font("Inter", 14));
+            parameterLabel.setPrefHeight(71);
+            parameterLabel.setMinHeight(71);
+            parameterLabel.setMaxWidth(Double.MAX_VALUE);
+            parameterLabel.setWrapText(true);
+            parameterLabel.setAlignment(Pos.CENTER_LEFT);
+            parameterLabel.setStyle("-fx-border-color: #4769ff; -fx-border-width: 0 0 1 0;");
+
+            // Define value field in this row
+            switch (type){
+                case BOOLEAN -> value = new CheckBox();
+                case NUMBER -> {
+                    // Create text field and limit it to only double values
+                    TextField textField = new TextField();
+                    UnaryOperator<TextFormatter.Change> filter = change -> {
+                        String newText = change.getControlNewText();
+                        if (newText.matches("([+-]?\\d*[.,]?\\d*)?"))
+                            return change;
+                        return null;
+                    };
+                    textField.setTextFormatter(new TextFormatter<>(new DoubleStringConverter(), 0D, filter));
+
+                    value = textField;
+                }
+                case CATEGORICAL -> {
+                    ChoiceBox<String> choiceBox = new ChoiceBox<>();
+                    categories = dataMaster.getDatasetUniqueClasses(parameterData.parameter());
+                    choiceBox.getItems().addAll(categories);
+                    choiceBox.getSelectionModel().select(0);
+
+                    value = choiceBox;
+                }
+            }
+
+            value.setMaxWidth(Double.MAX_VALUE);
+            BorderPane valuePane = new BorderPane(value);
+            valuePane.setMaxHeight(Double.MAX_VALUE);
+            valuePane.setMaxWidth(Double.MAX_VALUE);
+            valuePane.setPadding(new Insets(25, 15, 25, 15));
+            BorderPane.setAlignment(valuePane, Pos.CENTER);
+
+            column = new VBox(parameterLabel, valuePane);
+            column.setPrefWidth(150);
+            column.setMaxHeight(Double.MAX_VALUE);
+            column.setStyle("-fx-border-color: #4769ff;" +
+                    "-fx-border-width: 0 1 0 0;");
+
+            // Set VBox constrains for children
+            column.setFillWidth(true);
+            VBox.setVgrow(parameterLabel, Priority.NEVER);
+            VBox.setVgrow(valuePane, Priority.ALWAYS);
+        }
+
+        public VBox getColumn() {
+            return column;
+        }
+
+        public Parser.InputTypes getType() {
+            return type;
+        }
+
+        // Return specified value
+        public double getBooleanValue() {
+            if(type != Parser.InputTypes.BOOLEAN)
+                return 0;
+
+            CheckBox box = (CheckBox) value;
+            return box.isSelected() ? 1 : 0;
+        }
+        public double getNumberValue() {
+            if(type != Parser.InputTypes.NUMBER)
+                return 0;
+
+            TextField field = (TextField) value;
+            return Parser.parseNumberValue(field.getText()).doubleValue();
+        }
+        public double getCategoricalValue() {
+            if(type != Parser.InputTypes.CATEGORICAL)
+                return 0;
+
+            // Suppress warning because at this point value is guaranteed a ChoiceBox
+            @SuppressWarnings("unchecked") ChoiceBox<String> choiceBox = (ChoiceBox<String>) value;
+            return Parser.parseCategoricalValue(choiceBox.getValue(), categories);
+        }
     }
 }

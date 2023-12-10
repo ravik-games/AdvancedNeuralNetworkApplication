@@ -35,7 +35,7 @@ public class UIStructureController {
     //Class for working with second tab of UI (Structure creation)
     public HBox inputLayerBox, architectureLayerInfoPane, architectureLayerManagementPane;
     public ChoiceBox<String> classParameterChoiceBox, networkTaskChoiceBox;
-    public ChoiceBox<ActivationFunctions.types> lastLayerActivationFunction;
+    public ChoiceBox<ActivationFunctions.Types> lastLayerActivationFunction;
     public CheckBox autoConfigureCheckBox;
     public Label lastLayerNumber, inputLayerNeuronCount, outputLayerNeuronCount;
     public Canvas architectureCanvas;
@@ -57,8 +57,10 @@ public class UIStructureController {
         inputLayerColumns = new ArrayList<>();
         architectureLayers = new ArrayList<>();
 
-        lastLayerActivationFunction.getSelectionModel().select(ActivationFunctions.types.SIGMOID);
+        lastLayerActivationFunction.getSelectionModel().select(ActivationFunctions.Types.SIGMOID);
         classParameterChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.intValue() < 0)
+                return;
             List<String> classes = dataMaster.getDatasetUniqueClasses(classParameterChoiceBox.getItems().get(newValue.intValue()));
             if (classes != null && !classes.isEmpty()) {
                 outputLayerNeuronCount.setText(String.valueOf(classes.size()));
@@ -204,8 +206,8 @@ public class UIStructureController {
         }
 
         i++;
-        ArchitectureLayer layer = new ArchitectureLayer(i, NetworkStructure.neuronTypes.values(), NetworkStructure.neuronTypes.HIDDEN,
-                (dataMaster.getTestingSet().labels().size() - 1) * 2, ActivationFunctions.types.SIGMOID);
+        ArchitectureLayer layer = new ArchitectureLayer(i, NetworkStructure.LayerTypes.values(), NetworkStructure.LayerTypes.HIDDEN,
+                (dataMaster.getTestingSet().labels().size() - 1) * 2, ActivationFunctions.Types.SIGMOID);
 
         architectureLayers.add(i - 1, layer);
         architectureLayerInfoPane.getChildren().add(i, layer.getColumn());
@@ -241,9 +243,9 @@ public class UIStructureController {
 
         //Parse data
         List<Integer> data = new ArrayList<>(architectureLayers.size() + 2);
-        List<NetworkStructure.neuronTypes> types = new ArrayList<>(architectureLayers.size() + 2);
+        List<NetworkStructure.LayerTypes> types = new ArrayList<>(architectureLayers.size() + 2);
         data.add(inputLayerColumns.size());
-        types.add(NetworkStructure.neuronTypes.INPUT);
+        types.add(NetworkStructure.LayerTypes.INPUT);
         for (ArchitectureLayer architectureLayer : architectureLayers) {
             data.add(architectureLayer.getNeuronNumber());
             types.add(architectureLayer.getType());
@@ -256,7 +258,7 @@ public class UIStructureController {
             return;
         }
 
-        types.add(NetworkStructure.neuronTypes.OUTPUT);
+        types.add(NetworkStructure.LayerTypes.OUTPUT);
 
         // Define neuron variables
         int neuronsLimit = (int) ((architectureCanvas.getHeight() - 2) / 8);
@@ -436,14 +438,14 @@ public class UIStructureController {
         protected VBox column;
         protected Label layerNumber;
         protected int number;
-        protected ChoiceBox<NetworkStructure.neuronTypes> type;
+        protected ChoiceBox<NetworkStructure.LayerTypes> type;
         protected TextField neuronNumberField;
-        protected ChoiceBox<ActivationFunctions.types> activationFunction;
+        protected ChoiceBox<ActivationFunctions.Types> activationFunction;
         protected Button addNewLayer, removeLayer;
         protected HBox managementPane;
 
-        public ArchitectureLayer(int number, NetworkStructure.neuronTypes[] types, NetworkStructure.neuronTypes currentType, int currentNeuronsCount,
-                                 ActivationFunctions.types currentFunction) {
+        public ArchitectureLayer(int number, NetworkStructure.LayerTypes[] types, NetworkStructure.LayerTypes currentType, int currentNeuronsCount,
+                                 ActivationFunctions.Types currentFunction) {
             this.number = number;
             String style = "-fx-border-color: #4769ff;" +
                     "-fx-border-width: 1 0 0 0;";
@@ -485,7 +487,7 @@ public class UIStructureController {
             neuronNumberPane.setPadding(new Insets(15));
 
             activationFunction = new ChoiceBox<>();
-            activationFunction.getItems().addAll(ActivationFunctions.types.values());
+            activationFunction.getItems().addAll(ActivationFunctions.Types.values());
             activationFunction.getSelectionModel().select(currentFunction);
             activationFunction.setMaxWidth(Double.MAX_VALUE);
             BorderPane activationFunctionPane = new BorderPane(activationFunction);
@@ -558,10 +560,10 @@ public class UIStructureController {
                 return 1;
             return Integer.parseInt(neuronNumberField.getText());
         }
-        public ActivationFunctions.types getActivationFunction() {
+        public ActivationFunctions.Types getActivationFunction() {
             return activationFunction.getValue();
         }
-        public NetworkStructure.neuronTypes getType() {
+        public NetworkStructure.LayerTypes getType() {
             return type.getValue();
         }
 

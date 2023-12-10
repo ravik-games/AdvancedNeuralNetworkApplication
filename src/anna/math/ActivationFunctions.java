@@ -75,7 +75,7 @@ public class ActivationFunctions {
         return input;
     }
 
-    public enum types{
+    public enum Types {
         RELU, LRELU, SIGMOID, TANH, ELU, LINEAR
     }
 }

@@ -13,12 +13,12 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.control.*;
+import javafx.scene.control.Separator;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
@@ -37,21 +37,14 @@ public class DefaultUIController implements UIController {
     protected static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
     protected Application application;
 
-    public Button newWindowChartButton, newWindowMatrixButton;
     public HBox rootPane, sideMenuPane;
     public TabPane tabPane;
-    public LineChart<Integer, Double> chart;
-    public NumberAxis chartXAxis;
-    public NumberAxis chartYAxis;
-    public ChoiceBox<String> statClassChoiceBox, matrixDataChoiceBox;
-    public Pane chartParent, matrixParent;
     public StackPane menuStackPane;
     public Separator menuSeparator;
-    public Tab dataTab, architectureTab, managementTab;
+    public Tab dataTab, architectureTab, managementTab, resultsTab;
 
 
     public NeuralNetwork.NetworkArguments lastArguments;
-    public Parser.InputTypes[] lastInputTypes;
 
     public UIDataController dataController;
     public UIStructureController structureController;
@@ -78,23 +71,17 @@ public class DefaultUIController implements UIController {
             loader = new FXMLLoader(getClass().getResource("/fxml/editor/ManagementTab.fxml"), bundle);
             managementTab.setContent(loader.load());
             managementController = loader.getController();
+
+            loader = new FXMLLoader(getClass().getResource("/fxml/editor/ResultsTab.fxml"), bundle);
+            resultsTab.setContent(loader.load());
+            outputController = loader.getController();
+
         } catch (IOException e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             PopupController.errorMessage("ERROR", "", bundle.getString("logger.error.fileLoadingError"), true);
             Logger.getLogger(getClass().getName()).log(Level.SEVERE ,"Couldn't load .fxml files. See stack trace:\n" + sw);
         }
-        /*structureController = new UIStructureController(this, inputVBox, architectureHBox, inputsChoiceBox, lastColumnChoiceBox, inputNeuronCounter, lastLayerNumber, inputNeuronRemoveButton, inputNeuronButton, inputNeuronAutoButton, graphicOutput);
-        networkController = new UINetworkController(this, hyperparametersVBox, updateResultsEpoch);
-        outputController = new UIOutputController(this, simulatorOutput, startSimulatorButton, simulatorHBox, statVBox, chart, chartLabel, matrixLabel, statClassChoiceBox, matrixDataChoiceBox);
-
-        networkController.setControllerReferences(dataController, structureController, outputController);
-
-        //Create hyperparameters table
-        networkController.initializeHyperparameters();
-
-        //Clear simulator
-        outputController.initializeSimulator(false);*/
 
         // Set correct order for side menu animation
         menuStackPane.setViewOrder(1);
@@ -106,34 +93,12 @@ public class DefaultUIController implements UIController {
         Platform.runLater(() -> fadeNode(rootPane, 200, false));
     }
 
-    public void prepareSimulation() {
-        outputController.prepareSimulation();
-    }
-
-    //Open new window
-    public void newWindowMatrix() {
-        outputController.openMatrixInNewWindow(newWindowMatrixButton, matrixParent);
-    }
-    public void newWindowChart() {
-        outputController.openChartInNewWindow(newWindowChartButton, chartParent);
-    }
-
-    //Change output selectors
-    public void changeChartLeft() {
-        outputController.switchSelector(0, true);
-    }
-    public void changeChartRight() {
-        outputController.switchSelector(0, false);
-    }
-    public void setChartForceYZero(boolean value){
-        chartYAxis.setForceZeroInRange(value);
-    }
-
     //Interface methods implementations
     @Override
     public void clearResults(int chartXLength) {
         outputController.clearCharts();
         outputController.setChartXLength(chartXLength);
+        outputController.initializeMatrixClasses();
     }
 
     @Override
@@ -142,7 +107,7 @@ public class DefaultUIController implements UIController {
         outputController.lastTestEvaluation = testEvaluation;
         outputController.updateChart(clear, epoch + 1);
         outputController.updateStatistics(clear);
-        outputController.updateSingleClassMatrix(clear);
+        outputController.updateSingleClassMatrix();
         outputController.updateFullMatrix(true);
     }
 
@@ -188,7 +153,7 @@ public class DefaultUIController implements UIController {
         dataController.setReferences(application, application.getDataMaster(), this);
         structureController.setReferences(application, application.getDataMaster(), this);
         managementController.setReferences(application, application.getDataMaster(), this, structureController);
-        //outputController.setMain(application);
+        outputController.setReferences(application, application.getDataMaster(), this);
     }
 
     public void setupHints() {

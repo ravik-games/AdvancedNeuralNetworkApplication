@@ -11,9 +11,9 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="anna.ui.tabs.modules.UIClassMatrixController">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="anna.ui.tabs.modules.UIClassMatrixController">
    <center>
-      <GridPane alignment="CENTER" style="-fx-background-color: #ffffff; -fx-border-color: #4769ff;" stylesheets="@../styling/LightStyle.css" BorderPane.alignment="CENTER">
+      <GridPane alignment="CENTER" style="-fx-background-color: #ffffff; -fx-border-color: #4769ff; -fx-border-radius: 2.5; -fx-background-radius: 2.5;" stylesheets="@../styling/LightStyle.css" BorderPane.alignment="CENTER">
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
@@ -101,7 +101,7 @@
             <center>
                <Label fx:id="truePositiveLabel" alignment="CENTER" text="...">
                   <font>
-                     <Font name="Inter SemiBold" size="16.0" />
+                     <Font name="Inter Regular" size="16.0" />
                   </font>
                   <BorderPane.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -126,7 +126,7 @@
             <center>
                <Label fx:id="trueNegativeLabel" text="...">
                   <font>
-                     <Font name="Inter SemiBold" size="16.0" />
+                     <Font name="Inter Regular" size="16.0" />
                   </font>
                   <BorderPane.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -151,7 +151,7 @@
             <center>
                <Label fx:id="falseNegativeLabel" text="...">
                   <font>
-                     <Font name="Inter SemiBold" size="16.0" />
+                     <Font name="Inter Regular" size="16.0" />
                   </font>
                   <BorderPane.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -176,7 +176,7 @@
             <center>
                <Label fx:id="falsePositiveLabel" text="...">
                   <font>
-                     <Font name="Inter SemiBold" size="16.0" />
+                     <Font name="Inter Regular" size="16.0" />
                   </font>
                   <BorderPane.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

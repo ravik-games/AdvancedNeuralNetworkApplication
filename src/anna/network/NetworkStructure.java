@@ -53,22 +53,9 @@ public class NetworkStructure {
 
             ArrayList<Neuron> layer = new ArrayList<>(networkData.getStructure().size());
             //Create new neurons in layer
-            for (int j = 0; j < networkData.getStructure().get(i); j++) {
-                neuronTypes neuronType;
-                ActivationFunctions.types activationFunction;
-
-                if (i == 0) { //Input layer
-                    neuronType = neuronTypes.INPUT;
-                    activationFunction = ActivationFunctions.types.LINEAR;
-                }
-                else if (i == networkData.getStructure().size() - 1) {//Output layer
-                    neuronType = neuronTypes.OUTPUT;
-                    activationFunction = ActivationFunctions.types.SIGMOID;
-                }
-                else { //Hidden layers
-                    neuronType = neuronTypes.HIDDEN;
-                    activationFunction = ActivationFunctions.types.SIGMOID;
-                }
+            for (int j = 0; j < networkData.getStructure().get(i).neuronNumber(); j++) {
+                LayerTypes neuronType = networkData.getStructure().get(i).type();
+                ActivationFunctions.Types activationFunction = networkData.getStructure().get(i).activationFunction();
 
                 layer.add(initializeNeuron(neuronType, activationFunction));
             }
@@ -114,7 +101,7 @@ public class NetworkStructure {
     }
 
     //Initialize single neuron and add it to the arrays
-    private Neuron initializeNeuron(neuronTypes type, ActivationFunctions.types activationFunction){
+    private Neuron initializeNeuron(LayerTypes type, ActivationFunctions.Types activationFunction){
         //Create new neuron and set it ID
         Neuron neuron = new BasicNeuron(neuronsList.size(), activationFunction, type);
         //Add to the array
@@ -187,7 +174,7 @@ public class NetworkStructure {
         System.out.println(str);
     }
 
-    public enum neuronTypes{
+    public enum LayerTypes {
         INPUT, HIDDEN, OUTPUT
     }
 }
