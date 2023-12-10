@@ -62,7 +62,7 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="25.0">
                <children>
-                  <Button mnemonicParsing="false" style="-fx-border-width: 2; -fx-border-radius: 5; -fx-font-size: 18;" text="Запустить нейронную сеть" HBox.hgrow="NEVER">
+                  <Button mnemonicParsing="false" onAction="#startNeuralNetwork" style="-fx-border-width: 2; -fx-border-radius: 5; -fx-font-size: 18;" text="Запустить нейронную сеть" HBox.hgrow="NEVER">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -113,9 +113,9 @@
       </HBox>
       <VBox style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-radius: 2.5; -fx-border-radius: 2.5;" VBox.vgrow="ALWAYS">
          <children>
-            <HBox style="-fx-border-color: #4769ff; -fx-border-width: 0 0 1 0;" VBox.vgrow="NEVER">
+            <HBox style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;" VBox.vgrow="NEVER">
                <children>
-                  <Label alignment="CENTER" maxHeight="1.7976931348623157E308" minWidth="-Infinity" prefWidth="200.0" text="Название" textAlignment="CENTER" wrapText="true" HBox.hgrow="NEVER">
+                  <Label alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" minWidth="-Infinity" prefWidth="200.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;" text="Название" textAlignment="CENTER" wrapText="true" HBox.hgrow="NEVER">
                      <padding>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </padding>
@@ -123,7 +123,7 @@
                         <Font name="Inter SemiBold" size="16.0" />
                      </font>
                   </Label>
-                  <Label alignment="CENTER" maxHeight="1.7976931348623157E308" minWidth="-Infinity" prefWidth="250.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 1;" text="Значение" wrapText="true" HBox.hgrow="NEVER">
+                  <Label maxHeight="1.7976931348623157E308" minWidth="-Infinity" prefWidth="250.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;" text="Значение" wrapText="true" HBox.hgrow="NEVER">
                      <padding>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </padding>
@@ -131,7 +131,7 @@
                         <Font name="Inter SemiBold" size="16.0" />
                      </font>
                   </Label>
-                  <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="300.0" text="Описание" wrapText="true" HBox.hgrow="ALWAYS">
+                  <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="300.0" text="Описание" wrapText="true" HBox.hgrow="ALWAYS">
                      <padding>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </padding>
@@ -141,7 +141,7 @@
                   </Label>
                </children>
             </HBox>
-            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-border-width: 0;" VBox.vgrow="ALWAYS">
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" pannable="true" style="-fx-border-width: 0;" VBox.vgrow="ALWAYS">
                <content>
                   <VBox fx:id="hyperparametersVBox" />
                </content>

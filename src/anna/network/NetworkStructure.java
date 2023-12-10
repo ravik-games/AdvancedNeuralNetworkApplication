@@ -49,11 +49,11 @@ public class NetworkStructure {
         }
 
         //Initialize new neurons
-        for(int i = 0; i < networkData.getStructure().length; i++) {
+        for(int i = 0; i < networkData.getStructure().size(); i++) {
 
-            ArrayList<Neuron> layer = new ArrayList<>(networkData.getStructure().length);
+            ArrayList<Neuron> layer = new ArrayList<>(networkData.getStructure().size());
             //Create new neurons in layer
-            for (int j = 0; j < networkData.getStructure()[i]; j++) {
+            for (int j = 0; j < networkData.getStructure().get(i); j++) {
                 neuronTypes neuronType;
                 ActivationFunctions.types activationFunction;
 
@@ -61,7 +61,7 @@ public class NetworkStructure {
                     neuronType = neuronTypes.INPUT;
                     activationFunction = ActivationFunctions.types.LINEAR;
                 }
-                else if (i == networkData.getStructure().length - 1) {//Output layer
+                else if (i == networkData.getStructure().size() - 1) {//Output layer
                     neuronType = neuronTypes.OUTPUT;
                     activationFunction = ActivationFunctions.types.SIGMOID;
                 }

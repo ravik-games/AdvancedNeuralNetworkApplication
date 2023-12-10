@@ -35,7 +35,7 @@ public class Hyperparameters {
      * <p>
      * Affects: TODO Add options for initializing weights
      */
-    public static int NETWORK_WEIGHT_INITIALIZATION = 0; //TODO Not implemented
+    public static WeightsInitializationType NETWORK_WEIGHT_INITIALIZATION = WeightsInitializationType.RANDOM; //TODO Not implemented
 
     /**
      * How quickly a network updates its parameters.
@@ -87,25 +87,6 @@ public class Hyperparameters {
         }
     }
 
-    public static void setValueByID(Identificator id, String value){
-        //TODO Add check for value
-        switch(id){
-            case NUMBER_OF_EPOCHS -> NUMBER_OF_EPOCHS = Integer.parseInt(value);
-
-            case BATCH_SIZE -> BATCH_SIZE = Integer.parseInt(value);
-
-            case USE_BIAS_NEURONS -> USE_BIAS_NEURONS = Boolean.parseBoolean(value);
-
-            case NETWORK_WEIGHT_INITIALIZATION -> NETWORK_WEIGHT_INITIALIZATION = Integer.parseInt(value);
-
-            case LEARNING_RATE -> LEARNING_RATE = Double.parseDouble(value);
-
-            case MOMENTUM -> MOMENTUM = Double.parseDouble(value);
-
-            case SLOPE_IN_ACTIVATION_FUNCTIONS -> SLOPE_IN_ACTIVATION_FUNCTIONS = Double.parseDouble(value);
-        }
-    }
-
     public enum Identificator {
         NUMBER_OF_EPOCHS(
                 bundle.getString("tab.management.hyperparameters.name.numberOfEpochs"),
@@ -125,7 +106,7 @@ public class Hyperparameters {
         NETWORK_WEIGHT_INITIALIZATION(
                 bundle.getString("tab.management.hyperparameters.name.weightInit"),
                 bundle.getString("tab.management.hyperparameters.description.weightInit"),
-                Type.POSITIVE_INT),
+                Type.ENUM),
 
         LEARNING_RATE(
                 bundle.getString("tab.management.hyperparameters.name.learningRate"),
@@ -164,6 +145,10 @@ public class Hyperparameters {
         }
     }
     public enum Type {
-        BOOLEAN, POSITIVE_DOUBLE, POSITIVE_INT, DOUBLE
+        BOOLEAN, POSITIVE_DOUBLE, POSITIVE_INT, DOUBLE, ENUM
+    }
+
+    public enum WeightsInitializationType {
+        RANDOM, DEFAULT_ONE, DEFAULT_HALF
     }
 }

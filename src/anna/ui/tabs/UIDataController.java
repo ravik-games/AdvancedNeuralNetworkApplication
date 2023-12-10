@@ -25,9 +25,6 @@ public class UIDataController {
     public TabPane dataLoaderPane;
     public Button loadTrainDataButton, loadTestDataButton;
 
-    public List<List<String>> rawTrainSet;
-    public List<List<String>> rawTestSet;
-
     protected Application application;
     protected DefaultUIController masterController;
     protected DataMaster dataMaster;

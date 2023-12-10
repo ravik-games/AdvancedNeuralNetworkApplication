@@ -20,14 +20,16 @@ import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DefaultUIController implements UIController {
     //Master class for all UI stuff
@@ -35,33 +37,25 @@ public class DefaultUIController implements UIController {
     protected static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
     protected Application application;
 
-    public CheckBox autoOpenResults;
-    public Button inputNeuronButton, layerAddButton, inputNeuronRemoveButton, inputNeuronAutoButton, layerRemoveButton, startSimulatorButton, newWindowChartButton,
-            newWindowMatrixButton;
-    public VBox inputVBox, hyperparametersVBox, statVBox;
-    public HBox architectureHBox, simulatorHBox, rootPane, sideMenuPane;
+    public Button newWindowChartButton, newWindowMatrixButton;
+    public HBox rootPane, sideMenuPane;
     public TabPane tabPane;
-    public TextField updateResultsEpoch;
-    public TableView<List<String>> trainDataTable, testDataTable, generalDataTable;
-    public Label chartLabel, matrixLabel;
     public LineChart<Integer, Double> chart;
     public NumberAxis chartXAxis;
     public NumberAxis chartYAxis;
     public ChoiceBox<String> statClassChoiceBox, matrixDataChoiceBox;
-    public TextArea simulatorOutput;
     public Pane chartParent, matrixParent;
-    public FontIcon datasetInfo, autoPartitionInfo;
     public StackPane menuStackPane;
     public Separator menuSeparator;
-    public Tab dataTab, architectureTab;
+    public Tab dataTab, architectureTab, managementTab;
 
 
     public NeuralNetwork.NetworkArguments lastArguments;
-    public Parser.inputTypes[] lastInputTypes;
+    public Parser.InputTypes[] lastInputTypes;
 
     public UIDataController dataController;
     public UIStructureController structureController;
-    public UIManagementController networkController;
+    public UIManagementController managementController;
     public UIOutputController outputController;
 
     protected boolean sideMenuOpen;
@@ -79,24 +73,22 @@ public class DefaultUIController implements UIController {
 
             loader = new FXMLLoader(getClass().getResource("/fxml/editor/ArchitectureTab.fxml"), bundle);
             architectureTab.setContent(loader.load());
-
             structureController = loader.getController();
+
+            loader = new FXMLLoader(getClass().getResource("/fxml/editor/ManagementTab.fxml"), bundle);
+            managementTab.setContent(loader.load());
+            managementController = loader.getController();
         } catch (IOException e) {
-            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            PopupController.errorMessage("ERROR", "", bundle.getString("logger.error.fileLoadingError"), true);
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE ,"Couldn't load .fxml files. See stack trace:\n" + sw);
         }
         /*structureController = new UIStructureController(this, inputVBox, architectureHBox, inputsChoiceBox, lastColumnChoiceBox, inputNeuronCounter, lastLayerNumber, inputNeuronRemoveButton, inputNeuronButton, inputNeuronAutoButton, graphicOutput);
         networkController = new UINetworkController(this, hyperparametersVBox, updateResultsEpoch);
         outputController = new UIOutputController(this, simulatorOutput, startSimulatorButton, simulatorHBox, statVBox, chart, chartLabel, matrixLabel, statClassChoiceBox, matrixDataChoiceBox);
 
         networkController.setControllerReferences(dataController, structureController, outputController);
-
-        inputsChoiceBox.getItems().addAll(bundle.getString("tab.architecture.trainingDatabase"), bundle.getString("tab.architecture.testingDatabase"));
-        inputsChoiceBox.setValue(bundle.getString("tab.architecture.selectDatabase"));
-
-        lastColumnChoiceBox.setDisable(true);
-        lastColumnChoiceBox.setValue("...");
-
-        graphicOutput.getGraphicsContext2D().fillText("...", graphicOutput.getWidth() / 2, graphicOutput.getHeight() / 2);
 
         //Create hyperparameters table
         networkController.initializeHyperparameters();
@@ -108,34 +100,10 @@ public class DefaultUIController implements UIController {
         menuStackPane.setViewOrder(1);
 
         //Setup all hints
-        setupHints();
+        //setupHints();
 
         // Wait for initialization to fade in
         Platform.runLater(() -> fadeNode(rootPane, 200, false));
-    }
-
-    public void loadArchitecture() {
-    }
-
-    public void loadWeights() {
-    }
-
-    public void loadHyperparameters() {
-    }
-
-    public void loadNeuralNetwork() {
-    }
-
-    public void saveArchitecture() {
-    }
-
-    public void saveWeights() {
-    }
-
-    public void saveHyperparameters() {
-    }
-
-    public void saveNeuralNetwork() {
     }
 
     public void prepareSimulation() {
@@ -219,7 +187,7 @@ public class DefaultUIController implements UIController {
         this.application = application;
         dataController.setReferences(application, application.getDataMaster(), this);
         structureController.setReferences(application, application.getDataMaster(), this);
-        //networkController.setMain(application);
+        managementController.setReferences(application, application.getDataMaster(), this, structureController);
         //outputController.setMain(application);
     }
 
@@ -233,7 +201,7 @@ public class DefaultUIController implements UIController {
 
         Tooltip autoPartition = new Tooltip(bundle.getString("tab.data"));
         autoPartition.setStyle(style);
-        Tooltip.install(autoPartitionInfo, autoPartition);
+        //Tooltip.install(autoPartitionInfo, autoPartition);
     }
 
     protected void animateSideMenu(boolean hide) {

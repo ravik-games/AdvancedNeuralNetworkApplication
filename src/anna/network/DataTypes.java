@@ -1,6 +1,7 @@
 package anna.network;
 
 import anna.network.neurons.Neuron;
+import anna.ui.Parser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,10 +11,10 @@ public class DataTypes {
 
     //Information about network in short form (for save/load)
     public static class NetworkData {
-        private final int[] structure;
+        private final List<Integer> structure;
         private final List<NeuronWeightData> weights;
 
-        public NetworkData(int[] structure, List<NeuronData> neuronData){
+        public NetworkData(List<Integer> structure, List<NeuronData> neuronData){
             this.structure = structure;
             weights = new ArrayList<>();
             for (NeuronData singleNeuronData : neuronData) {
@@ -29,7 +30,7 @@ public class DataTypes {
             return weights.get(id);
         }
 
-        public int[] getStructure() {
+        public List<Integer> getStructure() {
             return structure;
         }
 
@@ -101,6 +102,8 @@ public class DataTypes {
 
     //Information about dataset for network run arguments
     public record Dataset(double[][] inputs, String[] expectedOutput, String[] allOutputTypes){ }
+
+    public record InputParameterData(String parameter, Parser.InputTypes type) { }
 
     public static class Evaluation {
         private final long classSize;

@@ -3,6 +3,7 @@ package anna.ui.tabs;
 import anna.Application;
 import anna.DataMaster;
 import anna.math.ActivationFunctions;
+import anna.network.DataTypes;
 import anna.network.NetworkStructure;
 import anna.ui.DefaultUIController;
 import anna.ui.Parser;
@@ -45,7 +46,7 @@ public class UIStructureController {
     protected DataMaster dataMaster;
 
     protected List<InputLayerColumn> inputLayerColumns;
-    private List<ArchitectureLayer> architectureLayers;
+    protected List<ArchitectureLayer> architectureLayers;
 
     private static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
 
@@ -147,7 +148,7 @@ public class UIStructureController {
     // Methods for input list control
     public void addNewInputParameter(int i) {
         String currentParameter = i >= dataMaster.getTrainingSet().labels().size() ? dataMaster.getTrainingSet().labels().get(0) : dataMaster.getTrainingSet().labels().get(i);
-        InputLayerColumn column = new InputLayerColumn(i, dataMaster.getTrainingSet().labels(), currentParameter, Parser.inputTypes.NUMBER);
+        InputLayerColumn column = new InputLayerColumn(i, dataMaster.getTrainingSet().labels(), currentParameter, Parser.InputTypes.NUMBER);
 
         inputLayerColumns.add(i, column);
         inputLayerBox.getChildren().add(i, column.getColumn());
@@ -313,16 +314,29 @@ public class UIStructureController {
         }
     }
 
+    public List<ArchitectureLayer> getArchitectureLayers(){
+        return architectureLayers;
+    }
+    public List<DataTypes.InputParameterData> getInputParameters() {
+        return inputLayerColumns.stream()
+                .map(parameter -> new DataTypes.InputParameterData(parameter.getParameterName(), parameter.getType()))
+                .toList();
+    }
+
+    public DataTypes.InputParameterData getTargetParameter() {
+        return new DataTypes.InputParameterData(classParameterChoiceBox.getValue(), Parser.InputTypes.CATEGORICAL);
+    }
+
     // Inner classes for convenient management of input lists
     public static class InputLayerColumn {
         protected VBox column;
         protected ChoiceBox<String> parameter;
-        protected ChoiceBox<Parser.inputTypes> type;
+        protected ChoiceBox<Parser.InputTypes> type;
         protected Button removeColumn, addNewColumn;
         protected Label numberLabel;
         protected int number;
 
-        public InputLayerColumn(int number, List<String> parameters, String currentParameter, Parser.inputTypes currentType) {
+        public InputLayerColumn(int number, List<String> parameters, String currentParameter, Parser.InputTypes currentType) {
             this.number = number;
             String style = "-fx-border-color: #4769ff;" +
                     "-fx-border-width: 1 0 0 0;";
@@ -347,7 +361,7 @@ public class UIStructureController {
             BorderPane.setMargin(parameter, new Insets(14, 15, 14, 15));
 
             type = new ChoiceBox<>();
-            type.getItems().addAll(Parser.inputTypes.values());
+            type.getItems().addAll(Parser.InputTypes.values());
             type.getSelectionModel().select(currentType);
             type.setMaxWidth(Double.MAX_VALUE);
             BorderPane typePane = new BorderPane(type);
@@ -409,6 +423,12 @@ public class UIStructureController {
         public void setNumber(int number) {
             this.number = number;
             numberLabel.setText(String.valueOf(number));
+        }
+        public String getParameterName() {
+            return parameter.getValue();
+        }
+        public Parser.InputTypes getType() {
+            return type.getValue();
         }
     }
 

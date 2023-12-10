@@ -114,7 +114,7 @@
                <tabs>
                   <Tab fx:id="dataTab" closable="false" text="Data" />
                   <Tab fx:id="architectureTab" closable="false" text="Architecture" />
-                  <Tab closable="false" text="Management" />
+                  <Tab fx:id="managementTab" closable="false" text="Management" />
                   <Tab closable="false" text="Results">
                      <content>
                         <VBox spacing="25.0">

@@ -1,13 +1,11 @@
 package anna;
 
+import anna.network.DataTypes;
 import anna.ui.Parser;
 import anna.ui.PopupController;
 
 import java.io.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -126,6 +124,47 @@ public class DataMaster {
         trainingSet = null;
         testingSet = null;
         generalSet = null;
+    }
+
+    public DataTypes.Dataset prepareDataset(boolean trainData, boolean isPrediction, List<DataTypes.InputParameterData> inputParameters,
+                                            DataTypes.InputParameterData targetParameter) {
+        RawDataset currentDataset = trainData ? trainingSet : testingSet;
+
+        List<List<String>> uniqueCategoricalValues = getCategories(inputParameters);
+
+        double[][] inputs = new double[currentDataset.data().size()][inputParameters.size()];
+        String[] expectedOutputs = new String[currentDataset.data().size()];
+
+        // Process through the dataset
+        for (int i = 0; i < currentDataset.data().size(); i++) {
+            for (int j = 0; j < inputParameters.size(); j++) {
+                String value = getRowValue(currentDataset, inputParameters.get(j).parameter(), i);
+
+                inputs[i][j] = switch (inputParameters.get(j).type()) {
+                    case NUMBER -> Parser.parseNumberValue(value).doubleValue();
+                    case BOOLEAN -> Parser.parseBooleanValue(value);
+                    case CATEGORICAL -> Parser.parseCategoricalValue(value, uniqueCategoricalValues.get(j));
+                };
+            }
+
+            expectedOutputs[i] = getRowValue(currentDataset, targetParameter.parameter(), i);
+        }
+
+        return new DataTypes.Dataset(inputs, expectedOutputs, getDatasetUniqueClasses(targetParameter.parameter()).toArray(new String[0]));
+    }
+
+    // Get all categories of values for this parameter, assuming datasets have identical categories //TODO add check for categories
+    protected List<List<String>> getCategories(List<DataTypes.InputParameterData> parametersData) {
+        return parametersData.stream().map(parameterData -> {
+            if (parameterData.type() == Parser.InputTypes.CATEGORICAL)
+                return getDatasetUniqueClasses(parameterData.parameter());
+            else
+                return null;
+        }).toList();
+    }
+
+    protected String getRowValue(RawDataset dataset, String parameter, int rowNumber) {
+        return dataset.data().get(rowNumber).get(dataset.labels().indexOf(parameter));
     }
 
     public static void saveProgramData(ProgramData data) {

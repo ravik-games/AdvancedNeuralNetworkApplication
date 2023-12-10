@@ -12,6 +12,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -71,8 +73,10 @@ public class Application extends javafx.application.Application {
             DefaultUIMenuController controller = loader.getController();
             controller.setMain(this);
         } catch (IOException e) {
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
             PopupController.errorMessage("ERROR", "", bundle.getString("logger.error.fileLoadingError"));
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE ,"Couldn't load .fxml files. See stack trace:\n" + e.getMessage());
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE ,"Couldn't load .fxml files. See stack trace:\n" + sw);
         }
     }
 
@@ -86,8 +90,10 @@ public class Application extends javafx.application.Application {
             DefaultUIController controller = loader.getController();
             controller.setMain(this);
         } catch (Exception e) {
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
             PopupController.errorMessage("ERROR", "", bundle.getString("logger.error.fileLoadingError"), true);
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE ,"Couldn't load .fxml files. See stack trace:\n" + e);
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE ,"Couldn't load .fxml files. See stack trace:\n" + sw);
         }
     }
 

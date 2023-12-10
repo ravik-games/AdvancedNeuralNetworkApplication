@@ -120,7 +120,7 @@
                               </ScrollPane>
                               <VBox alignment="CENTER_LEFT" minWidth="-Infinity" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 0 1;" HBox.hgrow="NEVER">
                                  <children>
-                                    <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Класс" textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER">
+                                    <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Целевой параметр" textAlignment="CENTER" wrapText="true" VBox.vgrow="NEVER">
                                        <VBox.margin>
                                           <Insets />
                                        </VBox.margin>

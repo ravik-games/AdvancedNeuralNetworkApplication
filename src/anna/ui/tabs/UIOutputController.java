@@ -2,11 +2,10 @@ package anna.ui.tabs;
 
 import anna.Application;
 import anna.network.DataTypes;
-import anna.ui.Parser;
+import anna.ui.DefaultUIController;
 import anna.ui.PopupController;
 import anna.ui.tabs.modules.UIClassMatrixController;
 import anna.ui.tabs.modules.UIFullMatrixController;
-import anna.ui.DefaultUIController;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.*;
@@ -28,8 +27,8 @@ import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -126,7 +125,7 @@ public class UIOutputController {
             return;
         }
 
-        for (int i = 0; i < mainController.lastArguments.networkData().getStructure()[0]; i++) {
+        for (int i = 0; i < mainController.lastArguments.networkData().getStructure().get(0); i++) {
             simulatorHBox.getChildren().addAll(createSimulatorColumn(i));
         }
     }
@@ -173,7 +172,7 @@ public class UIOutputController {
         for(int i = 2; i < simulatorHBox.getChildren().size(); i+=2) {
             VBox vBox = (VBox) simulatorHBox.getChildren().get(i);
             TextField field = (TextField) vBox.getChildren().get(2);
-            inputs[i / 2 - 1] = Parser.parseRawValue(field.getText(), mainController.lastInputTypes[i / 2 - 1]);
+            //inputs[i / 2 - 1] = Parser.parseCategoricalValue(field.getText(), mainController.lastInputTypes[i / 2 - 1]);
         }
 
         application.runSimulation(inputs);
