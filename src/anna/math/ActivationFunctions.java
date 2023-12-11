@@ -1,6 +1,6 @@
 package anna.math;
 
-import anna.network.Hyperparameters;
+import anna.network.data.Hyperparameters;
 
 public class ActivationFunctions {
 

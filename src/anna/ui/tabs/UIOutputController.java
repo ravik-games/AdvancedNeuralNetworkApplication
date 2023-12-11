@@ -1,9 +1,10 @@
 package anna.ui.tabs;
 
 import anna.Application;
-import anna.DataMaster;
-import anna.network.DataTypes;
-import anna.network.Hyperparameters;
+import anna.math.ErrorFunctions;
+import anna.network.data.DataMaster;
+import anna.network.data.DataTypes;
+import anna.network.data.Hyperparameters;
 import anna.ui.DefaultUIController;
 import anna.ui.Parser;
 import anna.ui.PopupController;
@@ -32,8 +33,10 @@ import javafx.util.converter.DoubleStringConverter;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.*;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,7 +47,7 @@ public class UIOutputController {
     public Label chartLabel;
     public HBox simulatorHBox, statPane;
     public Button startSimulatorButton, newWindowChartButton, newWindowBinaryMatrixButton, newWindowFullMatrixButton;
-    public Label simulatorOutput;
+    public Label simulatorOutput, overallRatingLabel;
     public LineChart<Integer, Double> chart;
     public NumberAxis chartXAxis, chartYAxis;
     public Parent confusionMatrixFull, confusionMatrixSingle;
@@ -59,7 +62,7 @@ public class UIOutputController {
 
     protected int chartSelectionID = 0;
     protected int fullMatrixClassCount = 0;
-    protected boolean matrixInNewWindow;
+    protected boolean fullMatrixInNewWindow;
     protected final List<StatisticsUI> statisticsUI = new ArrayList<>();
     protected List<SimulatorColumn> simulatorColumns = new ArrayList<>();
 
@@ -148,7 +151,6 @@ public class UIOutputController {
     public void prepareSimulationValues(){
         double[] inputs = simulatorColumns.stream().mapToDouble(simulatorColumn -> switch (simulatorColumn.getType()) {
             case NUMBER -> simulatorColumn.getNumberValue();
-            case BOOLEAN -> simulatorColumn.getBooleanValue();
             case CATEGORICAL -> simulatorColumn.getCategoricalValue();
         }).toArray();
 
@@ -312,7 +314,7 @@ public class UIOutputController {
 
         //Limiting class count
         double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-        if (fullMatrixClassCount > Math.floor(height / 30.8) && matrixInNewWindow){
+        if (fullMatrixClassCount > Math.floor(height / 30.8) && fullMatrixInNewWindow){
             fullMatrixController.matrixGrid.add(createNewCellWithLabel(bundle.getString("tab.results.matrix.errorMatrix.classLimitFull") + Math.floor(height / 30.8) + ")",
                     32), 0, 0);
             RowConstraints row = new RowConstraints();
@@ -327,7 +329,7 @@ public class UIOutputController {
             fullMatrixController.matrixGrid.getColumnConstraints().add(column);
             return;
         }
-        else if (fullMatrixClassCount > 6 && !matrixInNewWindow){
+        else if (fullMatrixClassCount > 6 && !fullMatrixInNewWindow){
             fullMatrixController.matrixGrid.add(createNewCellWithLabel(bundle.getString("tab.results.matrix.errorMatrix.classLimitSmall"),
                     14), 0, 0);
             RowConstraints row = new RowConstraints();
@@ -468,7 +470,7 @@ public class UIOutputController {
     }
 
     //Open chart in new window
-    public void openElementInNewWindow(String title, Pane parent, Parent element, Button openButton, double minWidth, double minHeight){
+    public void openElementInNewWindow(String title, Pane parent, Parent element, Button openButton, double minWidth, double minHeight, Runnable onClose){
         parent.getChildren().remove(element);
         Label label = new Label(bundle.getString("tab.results.inNewWindow"));
         label.setFont(new Font("Segoe UI SemiLight", 14));
@@ -495,26 +497,38 @@ public class UIOutputController {
             parent.getChildren().add(element);
             element.setStyle("-fx-background-color: white"); //Fix background color
             openButton.setDisable(false);
+            onClose.run();
         });
 
     }
 
     public void newWindowChart() {
-        openElementInNewWindow(bundle.getString("tab.results.chart"), chartPane, chart, newWindowChartButton, 500, 500);
+        openElementInNewWindow(bundle.getString("tab.results.chart"), chartPane, chart, newWindowChartButton, 500, 500, () -> {});
     }
 
     public void newWindowBinaryMatrix() {
-        openMatrixInNewWindow(newWindowBinaryMatrixButton, binaryMatrixPane, confusionMatrixSingle);
+        openMatrixInNewWindow(false);
     }
     public void newWindowFullMatrix() {
-        openMatrixInNewWindow(newWindowFullMatrixButton, fullMatrixPane, confusionMatrixFull);
+        openMatrixInNewWindow(true);
     }
 
-    public void openMatrixInNewWindow(Button button, Pane parent, Parent matrix){
-        matrixInNewWindow = true;
-        double minHeight = Math.max(290, Math.min(fullMatrixClassCount * 30.6, Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 50));
+    public void openMatrixInNewWindow(boolean fullMatrix){
+        if(fullMatrix)
+            fullMatrixInNewWindow = true;
 
-        openElementInNewWindow(bundle.getString("tab.results.matrix"), parent, matrix, button, Math.floor(minHeight * 2), minHeight);
+        Button button = fullMatrix ? newWindowFullMatrixButton : newWindowBinaryMatrixButton;
+        Pane parent = fullMatrix ? fullMatrixPane : binaryMatrixPane;
+        Parent matrix = fullMatrix ? confusionMatrixFull : confusionMatrixSingle;
+
+        double minHeight = fullMatrix ? Math.max(290, Math.min(fullMatrixClassCount * 30.6, Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 50)) : 300;
+
+        openElementInNewWindow(bundle.getString("tab.results.matrix"), parent, matrix, button, Math.floor(minHeight * 2), minHeight, () -> {
+            if(fullMatrix)
+                fullMatrixInNewWindow = false;
+
+            updateMatrix();
+        });
 
         updateMatrix();
     }
@@ -537,6 +551,8 @@ public class UIOutputController {
             statisticsUI.clear();
             statClassChoiceBox.getItems().clear();
             statClassChoiceBox.setValue(bundle.getString("tab.results.allClasses"));
+            overallRatingLabel.setText("...");
+            overallRatingLabel.setStyle("-fx-background-radius: 2.5; -fx-background-color: #ffffff;");
         }
         if(lastTrainEvaluation == null || lastTrainEvaluation.isEmpty() || lastTestEvaluation == null || lastTestEvaluation.isEmpty())
             return;
@@ -585,9 +601,16 @@ public class UIOutputController {
             ui.trainLabel.setText(String.valueOf(trainValue));
             ui.testLabel.setText(String.valueOf(testValue));
         }
+
+        long rating = calculateRating(lastTrainData, lastTestData);
+        overallRatingLabel.setText(String.valueOf(rating));
+
+        Color color = Color.hsb(rating, 0.8, 0.9);
+        overallRatingLabel.setStyle("-fx-background-radius: 2.5;" +
+                        "-fx-background-color: #" + colorFormat(color.getRed()) + colorFormat(color.getGreen()) + colorFormat(color.getBlue()) + colorFormat(color.getOpacity()));
     }
 
-    private void createStatisticsUI(){
+    protected void createStatisticsUI(){
         String style = "-fx-border-color: #4769ff;" +
                 "-fx-border-width: 1 0 0 0;";
 
@@ -631,7 +654,7 @@ public class UIOutputController {
         statClassChoiceBox.getItems().addAll(masterController.lastArguments.trainSet().allOutputTypes());
     }
 
-    private static Label getStatisticsLabel(int currentMetric) {
+    protected static Label getStatisticsLabel(int currentMetric) {
         String name = switch (DataTypes.Evaluation.Metrics.values()[currentMetric]){
             case SIZE -> bundle.getString("tab.results.statistics.metric.dataSize");
             case LOSS -> bundle.getString("tab.results.statistics.metric.error") + String.format(" (%s)", Hyperparameters.ERROR_FUNCTION);
@@ -653,10 +676,25 @@ public class UIOutputController {
         return nameLabel;
     }
 
+    protected long calculateRating(DataTypes.Evaluation lastTrainData, DataTypes.Evaluation lastTestData) {
+        double meanFScore = (lastTrainData.getMeanFScore() + lastTestData.getMeanFScore()) / 2;
+        double meanError = (lastTrainData.getMeanError() + lastTestData.getMeanError()) / 2;
+        double meanAccuracy = (lastTrainData.getMeanAccuracy() + lastTestData.getMeanAccuracy()) / 2;
+
+        meanError = 1 - switch (Hyperparameters.ERROR_FUNCTION) { // Calculate the worst error for every case
+            case MSE, RMSE ->  meanError;
+            case ARCTAN -> meanError / ErrorFunctions.Arctan(new double[]{0}, new double[]{1});
+        };
+
+        double rating = (meanFScore + meanError + meanAccuracy) / 3;
+
+        return Math.round(rating * 100);
+    }
+
     protected record StatisticsUI(DataTypes.Evaluation.Metrics metric, Label trainLabel, Label testLabel) { }
 
     //Lists of items for selector panel
-    private enum ChartSelector{
+    protected enum ChartSelector{
         LOSS_CHART, ACCURACY_CHART, F_SCORE_CHART
     }
 
@@ -683,7 +721,6 @@ public class UIOutputController {
 
             // Define value field in this row
             switch (type){
-                case BOOLEAN -> value = new CheckBox();
                 case NUMBER -> {
                     // Create text field and limit it to only double values
                     TextField textField = new TextField();
@@ -699,7 +736,7 @@ public class UIOutputController {
                 }
                 case CATEGORICAL -> {
                     ChoiceBox<String> choiceBox = new ChoiceBox<>();
-                    categories = dataMaster.getDatasetUniqueClasses(parameterData.parameter());
+                    categories = dataMaster.getDatasetUniqueValues(parameterData.parameter());
                     choiceBox.getItems().addAll(categories);
                     choiceBox.getSelectionModel().select(0);
 
@@ -735,13 +772,6 @@ public class UIOutputController {
         }
 
         // Return specified value
-        public double getBooleanValue() {
-            if(type != Parser.InputTypes.BOOLEAN)
-                return 0;
-
-            CheckBox box = (CheckBox) value;
-            return box.isSelected() ? 1 : 0;
-        }
         public double getNumberValue() {
             if(type != Parser.InputTypes.NUMBER)
                 return 0;

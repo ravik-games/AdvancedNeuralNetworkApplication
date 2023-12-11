@@ -27,17 +27,6 @@ public class Parser {
         }
     }
 
-    public static double parseBooleanValue(String value){
-        if (value.isEmpty()) {
-            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.wrongValue") + "\n" + value);
-            Logger.getLogger(Parser.class.getName()).log(Level.WARNING, "An error has occurred while reading the value. The wrong value will be replaced by zero. Value:\t" + value);
-            return 0;
-        }
-
-        value = value.toLowerCase();
-        return value.equals("true") || value.equals("1") || value.equals("yes") ? 1 : 0;
-    }
-
     public static double parseCategoricalValue(String value, List<String> categories) {
         if (categories == null || !categories.contains(value)) {
             PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.wrongValue") + "\n" + value);
@@ -108,6 +97,6 @@ public class Parser {
 
     //Field value types
     public enum InputTypes {
-        NUMBER, BOOLEAN, CATEGORICAL
+        NUMBER, CATEGORICAL
     }
 }

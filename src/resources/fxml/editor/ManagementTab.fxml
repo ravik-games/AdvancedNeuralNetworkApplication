@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -28,56 +29,84 @@
             <Insets />
          </VBox.margin>
       </HBox>
-      <VBox alignment="CENTER" spacing="25.0" style="-fx-border-width: 0 0 2 0; -fx-border-color: #4769ff;">
+      <HBox alignment="CENTER_LEFT" spacing="25.0" style="-fx-border-color: #4769ff; -fx-border-width: 0;">
          <children>
-            <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+            <Label text="Сохранить / Загрузить нейросеть" wrapText="true" HBox.hgrow="NEVER">
+               <font>
+                  <Font name="Inter SemiBold" size="18.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconLiteral="zondi-browser-window-open" iconSize="28" wrappingWidth="32.0" />
+               </graphic>
+            </Label>
+            <FontIcon iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" HBox.hgrow="NEVER" />
+            <HBox alignment="CENTER_RIGHT" spacing="25.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Label text="%tab.management.saveStatistics">
+                  <Button alignment="CENTER" disable="true" mnemonicParsing="false" text="Сохранить" textAlignment="CENTER">
                      <font>
-                        <Font name="Inter Regular" size="18.0" />
+                        <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconLiteral="zondi-edit-pencil" iconSize="28" wrappingWidth="32.0" />
-                     </graphic>
-                  </Label>
-                  <TextField fx:id="updateResultsEpoch" prefWidth="100.0" promptText="10" text="10" />
-                  <Label text="%tab.management.epoch">
-                     <font>
-                        <Font name="Inter Regular" size="18.0" />
-                     </font>
-                  </Label>
-                  <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
-                     <children>
-                        <CheckBox fx:id="autoOpenResultsCheckBox" mnemonicParsing="false" selected="true" text="%tab.management.openResults" wrapText="true">
-                           <font>
-                              <Font name="Inter Regular" size="18.0" />
-                           </font>
-                        </CheckBox>
-                     </children>
-                     <HBox.margin>
-                        <Insets left="15.0" />
-                     </HBox.margin>
-                  </HBox>
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_LEFT" spacing="25.0">
-               <children>
-                  <Button mnemonicParsing="false" onAction="#startNeuralNetwork" style="-fx-border-width: 2; -fx-border-radius: 5; -fx-font-size: 18;" text="Запустить нейронную сеть" HBox.hgrow="NEVER">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                     <graphic>
-                        <FontIcon iconColor="#4769ff" iconLiteral="zondi-play" iconSize="28" wrappingWidth="32.0" />
+                        <FontIcon iconColor="#4769ff" iconLiteral="zondi-folder-outline-add" iconSize="20" wrappingWidth="26.0" />
                      </graphic>
                   </Button>
-                  <FontIcon iconColor="#2ed573" iconLiteral="zondi-checkmark-outline" iconSize="32" text="" wrappingWidth="32.0" />
+                  <Button alignment="CENTER" mnemonicParsing="false" text="Загрузить" textAlignment="CENTER">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="#4769ff" iconLiteral="zondi-folder-outline" iconSize="20" wrappingWidth="26.0" />
+                     </graphic>
+                  </Button>
                </children>
             </HBox>
          </children>
-         <padding>
-            <Insets bottom="25.0" />
-         </padding>
-      </VBox>
+      </HBox>
+      <Separator prefWidth="200.0" />
+      <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+         <children>
+            <Label text="%tab.management.saveStatistics">
+               <font>
+                  <Font name="Inter Regular" size="18.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconLiteral="zondi-edit-pencil" iconSize="28" wrappingWidth="32.0" />
+               </graphic>
+            </Label>
+            <TextField fx:id="updateResultsEpoch" prefWidth="100.0" promptText="10" text="10" />
+            <Label text="%tab.management.epoch">
+               <font>
+                  <Font name="Inter Regular" size="18.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
+               <children>
+                  <CheckBox fx:id="autoOpenResultsCheckBox" mnemonicParsing="false" selected="true" text="%tab.management.openResults" wrapText="true">
+                     <font>
+                        <Font name="Inter Regular" size="18.0" />
+                     </font>
+                  </CheckBox>
+               </children>
+               <HBox.margin>
+                  <Insets left="15.0" />
+               </HBox.margin>
+            </HBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="25.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#startNeuralNetwork" style="-fx-border-width: 2; -fx-border-radius: 5; -fx-font-size: 18;" text="Запустить нейронную сеть" HBox.hgrow="NEVER">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <graphic>
+                  <FontIcon iconColor="#4769ff" iconLiteral="zondi-play" iconSize="28" wrappingWidth="32.0" />
+               </graphic>
+            </Button>
+            <FontIcon iconColor="#2ed573" iconLiteral="zondi-checkmark-outline" iconSize="32" text="" wrappingWidth="32.0" />
+         </children>
+      </HBox>
+      <Separator prefWidth="200.0" style="-fx-border-width: 1;" />
       <HBox alignment="CENTER_LEFT" spacing="25.0" style="-fx-border-color: #4769ff; -fx-border-width: 0;">
          <children>
             <Label text="Настройка гиперпараметров" wrapText="true" HBox.hgrow="NEVER">

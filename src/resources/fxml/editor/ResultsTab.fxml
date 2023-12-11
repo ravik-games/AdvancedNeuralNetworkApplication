@@ -227,14 +227,18 @@
                                     <FontIcon iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
                                  </children>
                               </HBox>
-                              <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-border-radius: 2.5; -fx-background-radius: 2.5;" text="..." wrapText="true" VBox.vgrow="ALWAYS">
-                                 <font>
-                                    <Font name="Inter Regular" size="18.0" />
-                                 </font>
+                              <BorderPane style="-fx-border-width: 1; -fx-border-color: #4769ff; -fx-border-radius: 2.5; -fx-background-radius: 2.5;" VBox.vgrow="ALWAYS">
                                  <VBox.margin>
                                     <Insets />
                                  </VBox.margin>
-                              </Label>
+                                 <center>
+                                    <Label fx:id="overallRatingLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="..." wrapText="true">
+                                       <font>
+                                          <Font name="Inter Regular" size="32.0" />
+                                       </font>
+                                    </Label>
+                                 </center>
+                              </BorderPane>
                            </children>
                            <padding>
                               <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
@@ -263,7 +267,7 @@
                   </HBox>
                   <HBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-border-radius: 2.5; -fx-background-radius: 2.5;">
                      <children>
-                        <VBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;" HBox.hgrow="NEVER">
+                        <VBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 0 2 0 0;" HBox.hgrow="NEVER">
                            <children>
                               <Label alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="71.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 1 0;" text="Параметр" wrapText="true" VBox.vgrow="NEVER">
                                  <padding>
@@ -300,7 +304,7 @@
                               </HBox>
                            </content>
                         </ScrollPane>
-                        <VBox alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" prefWidth="350.0" spacing="25.0" style="-fx-border-width: 0 0 0 1; -fx-border-color: #4769ff;">
+                        <VBox alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" prefWidth="350.0" spacing="25.0" style="-fx-border-width: 0 0 0 2; -fx-border-color: #4769ff;">
                            <children>
                               <HBox alignment="CENTER" spacing="25.0">
                                  <children>

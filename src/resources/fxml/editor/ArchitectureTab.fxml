@@ -59,7 +59,7 @@
                               <Font name="Inter Regular" size="18.0" />
                            </font>
                         </CheckBox>
-                        <FontIcon iconColor="#2ed573" iconLiteral="zondi-checkmark-outline" iconSize="28" />
+                        <FontIcon iconColor="#4769ff" iconLiteral="zondi-exclamation-outline" iconSize="28" />
                      </children>
                   </HBox>
                   <HBox VBox.vgrow="NEVER">

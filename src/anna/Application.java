@@ -1,5 +1,6 @@
 package anna;
 
+import anna.network.data.DataMaster;
 import anna.network.NeuralNetwork;
 import anna.ui.DefaultUIController;
 import anna.ui.DefaultUIMenuController;

@@ -1,6 +1,8 @@
 package anna.network;
 
 import anna.math.ActivationFunctions;
+import anna.network.data.DataTypes;
+import anna.network.data.Hyperparameters;
 import anna.network.neurons.BasicNeuron;
 import anna.network.neurons.BiasNeuron;
 import anna.network.neurons.Neuron;
@@ -85,8 +87,11 @@ public class NetworkStructure {
                     if (getNeuronByID(secondID) instanceof BiasNeuron)
                         continue; //Skip bias neurons
 
-                    //weight = 0.5;
-                    weight = Math.random() * 2 - 1;
+                    weight = switch (Hyperparameters.NETWORK_WEIGHT_INITIALIZATION) {
+                        case RANDOM -> Math.random() * 2 - 1;
+                        case ALL_ONES -> 1;
+                        case ALL_HALVES -> 0.5;
+                    };
                     createSynapse(firstID, secondID, weight);
                 }
             }

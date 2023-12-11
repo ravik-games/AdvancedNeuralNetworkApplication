@@ -1,6 +1,7 @@
-package anna.network;
+package anna.network.data;
 
 import anna.math.ActivationFunctions;
+import anna.network.NetworkStructure;
 import anna.network.neurons.Neuron;
 import anna.ui.Parser;
 

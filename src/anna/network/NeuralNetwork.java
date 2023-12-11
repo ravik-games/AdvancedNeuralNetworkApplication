@@ -2,6 +2,8 @@ package anna.network;
 
 import anna.math.ErrorFunctions;
 import anna.math.LearningFunctions;
+import anna.network.data.DataTypes;
+import anna.network.data.Hyperparameters;
 import anna.network.neurons.Neuron;
 import anna.ui.PopupController;
 import anna.ui.UIController;

@@ -1,7 +1,7 @@
 package anna.ui.tabs;
 
 import anna.Application;
-import anna.DataMaster;
+import anna.network.data.DataMaster;
 import anna.ui.DefaultUIController;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.control.*;
@@ -71,8 +71,7 @@ public class UIDataController {
 
         splitDataset();
 
-        masterController.structureController.updateInputList();
-        masterController.structureController.updateArchitectureTable();
+        masterController.structureController.resetTab();
 
         return true;
     }
@@ -134,8 +133,7 @@ public class UIDataController {
         trainDataLabel.setText(dataMaster.getTrainingSet().file().getName());
         loadTable(trainDataTable, dataMaster.getTrainingSet().data(), dataMaster.getTrainingSet().labels());
 
-        masterController.structureController.updateInputList();
-        masterController.structureController.updateArchitectureTable();
+        masterController.structureController.resetTab();
 
         return true;
     }
@@ -148,10 +146,14 @@ public class UIDataController {
         testDataLabel.setText(dataMaster.getTestingSet().file().getName());
         loadTable(testDataTable, dataMaster.getTestingSet().data(), dataMaster.getTestingSet().labels());
 
-        masterController.structureController.updateInputList();
-        masterController.structureController.updateArchitectureTable();
+        masterController.structureController.resetTab();
 
         return true;
+    }
+
+    // Method to limit user if data tab is not configured
+    public boolean checkDataStatus() {
+        return !dataMaster.areDatasetsNotValid();
     }
 
     public void clearTables() {
@@ -163,6 +165,7 @@ public class UIDataController {
         testDataLabel.setText("---");
 
         dataMaster.clearData();
+        masterController.structureController.resetTab();
     }
 
     //Load table to TableView
@@ -200,9 +203,9 @@ public class UIDataController {
         numberColumn.setStyle("-fx-font-weight: bold;" +
                             "-fx-font-style: italic");
         numberColumn.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().get(0)));
-        numberColumn.setMinWidth(20);
+        numberColumn.setMinWidth(50);
         numberColumn.setPrefWidth(50);
-        numberColumn.setMaxWidth(200);
+        numberColumn.setMaxWidth(75);
         //Set valid integer comparator
         numberColumn.setComparator((o1, o2) -> {
             if (o1 == null && o2 == null) return 0;

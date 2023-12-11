@@ -1,4 +1,4 @@
-package anna.network;
+package anna.network.data;
 
 import anna.math.ErrorFunctions;
 
@@ -134,6 +134,6 @@ public class Hyperparameters {
     }
 
     public enum WeightsInitializationType {
-        RANDOM, DEFAULT_ONE, DEFAULT_HALF
+        RANDOM, ALL_ONES, ALL_HALVES
     }
 }

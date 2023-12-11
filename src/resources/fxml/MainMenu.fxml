@@ -576,26 +576,33 @@
          <content>
             <GridPane>
                <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" percentWidth="35.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" percentWidth="10.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" percentWidth="35.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="10.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="-Infinity" percentWidth="35.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="10.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="-Infinity" percentWidth="35.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="10.0" />
                </columnConstraints>
                <rowConstraints>
-                  <RowConstraints fillHeight="false" minHeight="10.0" valignment="TOP" vgrow="NEVER" />
-                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints fillHeight="false" minHeight="-Infinity" valignment="TOP" vgrow="NEVER" />
+                  <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <VBox alignment="TOP_CENTER" onMouseClicked="#openAdvancedMode" spacing="15.0" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" GridPane.columnIndex="3" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
+                  <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#openAdvancedMode" prefWidth="435.0" spacing="15.0" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" GridPane.columnIndex="3" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
                      <children>
-                        <ImageView fitHeight="200.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fitWidth="350.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/advancedMode.png" />
+                           </image>
+                        </ImageView>
                         <Label text="%menu.newNetwork.advancedMode">
                            <font>
                               <Font name="Inter SemiBold" size="28.0" />
                            </font>
+                           <VBox.margin>
+                              <Insets left="25.0" right="25.0" />
+                           </VBox.margin>
                         </Label>
-                        <FlowPane alignment="CENTER_LEFT" hgap="15.0" prefWrapLength="150.0" vgap="25.0" VBox.vgrow="ALWAYS">
+                        <FlowPane alignment="CENTER_LEFT" hgap="15.0" orientation="VERTICAL" prefWrapLength="200.0" vgap="25.0" VBox.vgrow="ALWAYS">
                            <children>
                               <Label text="%menu.newNetwork.advancedMode.users" wrapText="true">
                                  <font>
@@ -630,24 +637,39 @@
                                  </graphic>
                               </Label>
                            </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
                         </FlowPane>
                      </children>
-                     <padding>
-                        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
-                     </padding>
                      <GridPane.margin>
                         <Insets bottom="25.0" />
                      </GridPane.margin>
+                     <padding>
+                        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+                     </padding>
                   </VBox>
-                  <VBox alignment="TOP_CENTER" onMouseClicked="#openSimpleMode" spacing="15.0" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
+                  <VBox alignment="TOP_CENTER" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#openSimpleMode" prefWidth="435.0" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER">
                      <children>
-                        <ImageView fitHeight="200.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fitWidth="350.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/simpleMode.png" />
+                           </image>
+                        </ImageView>
                         <Label text="%menu.newNetwork.simpleMode">
                            <font>
                               <Font name="Inter SemiBold" size="28.0" />
                            </font>
                         </Label>
-                        <FlowPane alignment="CENTER_LEFT" hgap="15.0" prefWrapLength="150.0" vgap="25.0" VBox.vgrow="ALWAYS">
+                        <Label text="В разработке...">
+                           <font>
+                              <Font name="Inter SemiBold" size="18.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="5.0" top="2.0" />
+                           </padding>
+                        </Label>
+                        <FlowPane alignment="CENTER_LEFT" hgap="15.0" orientation="VERTICAL" prefWrapLength="200.0" vgap="25.0" VBox.vgrow="ALWAYS">
                            <children>
                               <Label text="%menu.newNetwork.simpleMode.users" wrapText="true">
                                  <font>

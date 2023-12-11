@@ -110,7 +110,7 @@
 
 
 .separator {
-    -fx-border-width: 1 1 0 0;
+    -fx-border-width: 1;
     -fx-border-color: -fx-secondary-color;
     -fx-padding: 0;
     -fx-border-insets: 0;
@@ -265,6 +265,10 @@
     -fx-font-family: "Inter";
 }
 
+.choice-box:hover {
+    -fx-background-color: derive(-fx-secondary-color, 120%);
+}
+
 .chart-series-area-fill{
     -fx-background-color: #ffffff;
 }
@@ -296,9 +300,12 @@
     -fx-background-color: -fx-primary-color;
 }
 
-.check-box:selected .box {
+.check-box:selected .box, .check-box:selected:hover .box {
     -fx-background-color: -fx-secondary-color;
 }
+.check-box:hover .box{
+     -fx-background-color: derive(-fx-secondary-color, 120%);
+ }
 
 .button {
     -fx-padding: 5;
@@ -314,7 +321,7 @@
 }
 
 .button:hover {
-    -fx-background-color: derive(#4769ff, 120%);
+    -fx-background-color: derive(-fx-secondary-color, 120%);
 }
 
 .button:disabled, .button:default:disabled {

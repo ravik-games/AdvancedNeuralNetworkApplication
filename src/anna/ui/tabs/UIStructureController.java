@@ -1,9 +1,9 @@
 package anna.ui.tabs;
 
 import anna.Application;
-import anna.DataMaster;
+import anna.network.data.DataMaster;
 import anna.math.ActivationFunctions;
-import anna.network.DataTypes;
+import anna.network.data.DataTypes;
 import anna.network.NetworkStructure;
 import anna.ui.DefaultUIController;
 import anna.ui.Parser;
@@ -45,8 +45,8 @@ public class UIStructureController {
     protected Application application;
     protected DataMaster dataMaster;
 
-    protected List<InputLayerColumn> inputLayerColumns;
-    protected List<ArchitectureLayer> architectureLayers;
+    protected List<InputLayerColumn> inputLayerColumns = new ArrayList<>();
+    protected List<ArchitectureLayer> architectureLayers = new ArrayList<>();
 
     private static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
 
@@ -54,14 +54,11 @@ public class UIStructureController {
         networkTaskChoiceBox.getSelectionModel().select(bundle.getString("tab.architecture.networkTask.classification"));
         networkTaskChoiceBox.setDisable(true);
 
-        inputLayerColumns = new ArrayList<>();
-        architectureLayers = new ArrayList<>();
-
         lastLayerActivationFunction.getSelectionModel().select(ActivationFunctions.Types.SIGMOID);
         classParameterChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.intValue() < 0)
                 return;
-            List<String> classes = dataMaster.getDatasetUniqueClasses(classParameterChoiceBox.getItems().get(newValue.intValue()));
+            List<String> classes = dataMaster.getDatasetUniqueValues(classParameterChoiceBox.getItems().get(newValue.intValue()));
             if (classes != null && !classes.isEmpty()) {
                 outputLayerNeuronCount.setText(String.valueOf(classes.size()));
                 updateVisualisation();
@@ -108,6 +105,7 @@ public class UIStructureController {
             inputLayerPane.setManaged(!autoConfigureCheckBox.isSelected());
             if (autoConfigureCheckBox.isSelected()){
                 inputLayerPane.setVisible(false);
+                updateInputList();
             }
         });
     }
@@ -128,17 +126,16 @@ public class UIStructureController {
     }
 
     public void updateInputList() {
-        if (dataMaster.areDatasetsNotValid()) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "There is no database found.");
-            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.noDatabase"));
+        if (dataMaster.areDatasetsNotValid() || !autoConfigureCheckBox.isSelected()) {
             return;
         }
 
-        // Update list
+        // Clear
         inputLayerBox.getChildren().clear();
         inputLayerColumns.clear();
         classParameterChoiceBox.getItems().clear();
-        // Add default parameters
+
+        // Add suggested parameters
         List<String> labels = dataMaster.getTrainingSet().labels();
         for (int i = 0; i < labels.size() - 1; i++) {
             addNewInputParameter(i);
@@ -150,7 +147,7 @@ public class UIStructureController {
     // Methods for input list control
     public void addNewInputParameter(int i) {
         String currentParameter = i >= dataMaster.getTrainingSet().labels().size() ? dataMaster.getTrainingSet().labels().get(0) : dataMaster.getTrainingSet().labels().get(i);
-        InputLayerColumn column = new InputLayerColumn(i, dataMaster.getTrainingSet().labels(), currentParameter, Parser.InputTypes.NUMBER);
+        InputLayerColumn column = new InputLayerColumn(i, dataMaster.getTrainingSet().labels(), currentParameter, dataMaster.getParameterType(currentParameter));
 
         inputLayerColumns.add(i, column);
         inputLayerBox.getChildren().add(i, column.getColumn());
@@ -179,8 +176,6 @@ public class UIStructureController {
 
     public void updateArchitectureTable() {
         if (dataMaster.areDatasetsNotValid()) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "There is no database found.");
-            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.noDatabase"));
             return;
         }
 
@@ -232,6 +227,30 @@ public class UIStructureController {
             updateArchitectureTable();
         });
         masterController.fadeNode(layer.getManagement(), 200, true);
+    }
+
+    public boolean checkArchitectureStatus() {
+        return !dataMaster.areDatasetsNotValid() && inputLayerColumns != null && !inputLayerColumns.isEmpty() && classParameterChoiceBox.getValue() != null &&
+                !classParameterChoiceBox.getValue().isEmpty() && lastLayerActivationFunction.getValue() != null;
+    }
+
+    public void resetTab() {
+        // Set default to classification
+        networkTaskChoiceBox.getSelectionModel().select(0);
+
+        // Clear input parameters
+        inputLayerBox.getChildren().clear();
+        inputLayerColumns.clear();
+        classParameterChoiceBox.getItems().clear();
+
+        // Set input parameters configuration to automatic
+        autoConfigureCheckBox.setSelected(true);
+        autoConfigureInputLayer();
+
+        // Clear architecture
+        architectureLayers.forEach(this::removeLayer);
+        architectureLayers.clear();
+        updateArchitectureTable();
     }
 
     private void updateVisualisation(){

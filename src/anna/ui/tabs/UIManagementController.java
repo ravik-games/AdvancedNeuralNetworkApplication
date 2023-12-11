@@ -1,11 +1,11 @@
 package anna.ui.tabs;
 
 import anna.Application;
-import anna.DataMaster;
+import anna.network.data.DataMaster;
 import anna.math.ActivationFunctions;
 import anna.math.ErrorFunctions;
-import anna.network.DataTypes;
-import anna.network.Hyperparameters;
+import anna.network.data.DataTypes;
+import anna.network.data.Hyperparameters;
 import anna.network.NetworkStructure;
 import anna.network.NeuralNetwork;
 import anna.ui.DefaultUIController;

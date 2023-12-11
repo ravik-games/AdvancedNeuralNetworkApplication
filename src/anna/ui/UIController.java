@@ -1,7 +1,7 @@
 package anna.ui;
 
 import anna.Application;
-import anna.network.DataTypes;
+import anna.network.data.DataTypes;
 
 import java.util.List;
 

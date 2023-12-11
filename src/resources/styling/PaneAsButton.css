@@ -11,5 +11,5 @@
 }
 
 .button-pane:disabled, .button-pane:default:disabled {
-    -fx-opacity: 0.4;
+    -fx-opacity: 0.6;
 }

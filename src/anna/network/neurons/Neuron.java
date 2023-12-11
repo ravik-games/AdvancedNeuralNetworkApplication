@@ -1,7 +1,7 @@
 package anna.network.neurons;
 
 import anna.math.ActivationFunctions;
-import anna.network.Hyperparameters;
+import anna.network.data.Hyperparameters;
 import anna.network.NetworkStructure;
 import anna.ui.PopupController;
 

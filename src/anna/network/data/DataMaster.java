@@ -1,6 +1,5 @@
-package anna;
+package anna.network.data;
 
-import anna.network.DataTypes;
 import anna.ui.Parser;
 import anna.ui.PopupController;
 
@@ -72,6 +71,20 @@ public class DataMaster {
 
         trainingSet = new RawDataset(trainSetFile, rawTrainSet, labels);
 
+        // Throw error if datasets aren't equal
+        if(checkDatasetLabels()) {
+            trainingSet = null;
+            return false;
+        }
+
+        // Add data to general set
+        if (generalSet == null)
+            generalSet = new RawDataset(null, trainingSet.data(), trainingSet.labels());
+        else {
+            generalSet.labels().addAll(trainingSet.labels());
+            generalSet.data().addAll(trainingSet.data());
+        }
+
         return true;
     }
 
@@ -101,7 +114,34 @@ public class DataMaster {
 
         testingSet = new RawDataset(testSetFile, rawTestSet, labels);
 
+        // Throw error if datasets aren't equal
+        if(checkDatasetLabels()) {
+            testingSet = null;
+            return false;
+        }
+
+        // Add data to general set
+        if (generalSet == null)
+            generalSet = new RawDataset(null, testingSet.data(), testingSet.labels());
+        else {
+            generalSet.labels().addAll(testingSet.labels());
+            generalSet.data().addAll(testingSet.data());
+        }
+
         return true;
+    }
+
+    public boolean checkDatasetLabels() {
+        if (areDatasetsNotValid()){
+            return false;
+        }
+
+        if (!trainingSet.labels().equals(testingSet.labels()) || !trainingSet.labels().equals(generalSet.labels())) {
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred while reading the database. The labels of the training and test datasets do not match.");
+            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.datasetDifferentLabels"));
+            return true;
+        }
+        return false;
     }
 
     public boolean splitGeneralDataset(double trainingPart) {
@@ -126,6 +166,29 @@ public class DataMaster {
         generalSet = null;
     }
 
+    // Try to get parameter type based on its values
+    public Parser.InputTypes getParameterType(String parameterName) {
+        List<String> values = getDatasetUniqueValues(parameterName);
+
+        // If found only 2 distinct values, it's probably boolean data (represented as categorical)
+        if (values.size() == 2)
+            return Parser.InputTypes.CATEGORICAL;
+
+        // Try to parse first and random value as number
+        try {
+            Double.parseDouble(values.get(0));
+            Double.parseDouble(values.get((int) (Math.random() * values.size())));
+
+            // If more than a half of the data set is different, consider it to be numbers
+            return values.size() > generalSet.data().size() / 2 ? Parser.InputTypes.NUMBER : Parser.InputTypes.CATEGORICAL;
+        }
+        catch (NumberFormatException e){
+            // If all conditions are failed, set default to categorical data to avoid errors
+            return Parser.InputTypes.CATEGORICAL;
+        }
+
+    }
+
     public DataTypes.Dataset prepareDataset(boolean trainData, boolean isPrediction, List<DataTypes.InputParameterData> inputParameters,
                                             DataTypes.InputParameterData targetParameter) {
         RawDataset currentDataset = trainData ? trainingSet : testingSet;
@@ -142,7 +205,6 @@ public class DataMaster {
 
                 inputs[i][j] = switch (inputParameters.get(j).type()) {
                     case NUMBER -> Parser.parseNumberValue(value).doubleValue();
-                    case BOOLEAN -> Parser.parseBooleanValue(value);
                     case CATEGORICAL -> Parser.parseCategoricalValue(value, uniqueCategoricalValues.get(j));
                 };
             }
@@ -150,14 +212,14 @@ public class DataMaster {
             expectedOutputs[i] = getRowValue(currentDataset, targetParameter.parameter(), i);
         }
 
-        return new DataTypes.Dataset(inputs, expectedOutputs, getDatasetUniqueClasses(targetParameter.parameter()).toArray(new String[0]));
+        return new DataTypes.Dataset(inputs, expectedOutputs, getDatasetUniqueValues(targetParameter.parameter()).toArray(new String[0]));
     }
 
     // Get all categories of values for this parameter, assuming datasets have identical categories //TODO add check for categories
     protected List<List<String>> getCategories(List<DataTypes.InputParameterData> parametersData) {
         return parametersData.stream().map(parameterData -> {
             if (parameterData.type() == Parser.InputTypes.CATEGORICAL)
-                return getDatasetUniqueClasses(parameterData.parameter());
+                return getDatasetUniqueValues(parameterData.parameter());
             else
                 return null;
         }).toList();
@@ -215,7 +277,8 @@ public class DataMaster {
 
     public boolean areDatasetsNotValid() {
         return trainingSet == null || trainingSet.data() == null || trainingSet.data().isEmpty() || trainingSet.labels() == null || trainingSet.labels().isEmpty() ||
-                testingSet == null || testingSet.data() == null || testingSet.data().isEmpty() || testingSet.labels() == null || testingSet.labels().isEmpty();
+                testingSet == null || testingSet.data() == null || testingSet.data().isEmpty() || testingSet.labels() == null || testingSet.labels().isEmpty() ||
+                generalSet == null || generalSet.data() == null || generalSet.data().isEmpty() || generalSet.labels() == null || generalSet.labels().isEmpty();
     }
 
     // Getters for private fields
@@ -224,11 +287,11 @@ public class DataMaster {
     }
 
     // Get all unique values in selected column
-    public List<String> getDatasetUniqueClasses(String parameter) {
-        if(areDatasetsNotValid() || !trainingSet.labels().contains(parameter))
+    public List<String> getDatasetUniqueValues(String parameter) {
+        if(areDatasetsNotValid() || !generalSet.labels().contains(parameter))
             return null;
 
-        return trainingSet.data().stream().map(row -> row.get(trainingSet.labels().indexOf(parameter))).distinct().toList();
+        return generalSet.data().stream().map(row -> row.get(generalSet.labels().indexOf(parameter))).distinct().toList();
     }
 
     public RawDataset getTrainingSet() {
