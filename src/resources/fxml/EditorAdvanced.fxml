@@ -118,7 +118,7 @@
                <children>
                   <VBox fillWidth="false" style="-fx-background-color: #ffffff;">
                      <children>
-                        <BorderPane minWidth="-Infinity" prefWidth="250.0" style="-fx-background-color: #ffffff; -fx-border-color: #4769ff; -fx-border-width: 0 2 0 0; -fx-border-radius: 0;">
+                        <BorderPane minWidth="-Infinity" prefWidth="250.0" style="-fx-background-color: #ffffff; -fx-border-color: #4769ff; -fx-border-width: 0; -fx-border-radius: 0;">
                            <center>
                               <Label minHeight="-Infinity" prefHeight="48.0" text="Выбор вкладки" BorderPane.alignment="CENTER_LEFT">
                                  <font>
@@ -133,7 +133,7 @@
                               <Insets top="25.0" />
                            </VBox.margin>
                         </BorderPane>
-                        <BorderPane minWidth="-Infinity" onMouseClicked="#openDataTab" prefWidth="250.0" style="-fx-border-width: 0 2 0 0; -fx-border-radius: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css">
+                        <BorderPane minWidth="-Infinity" onMouseClicked="#openDataTab" prefWidth="250.0" style="-fx-border-width: 0; -fx-border-radius: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css">
                            <center>
                               <Label minHeight="-Infinity" prefHeight="40.0" text="%tab.data" BorderPane.alignment="CENTER_LEFT">
                                  <font>
@@ -148,22 +148,22 @@
                               <FontIcon fx:id="dataStatusIcon" iconColor="#ff4757" iconLiteral="zondi-close-outline" iconSize="28" BorderPane.alignment="CENTER" />
                            </right>
                         </BorderPane>
-                        <BorderPane fx:id="architectureButtonPane" disable="true" minWidth="-Infinity" onMouseClicked="#openArchitectureTab" prefWidth="250.0" style="-fx-border-width: 0 2 0 0; -fx-border-radius: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css">
+                        <BorderPane fx:id="architectureButtonPane" disable="true" minWidth="-Infinity" onMouseClicked="#openArchitectureTab" prefWidth="250.0" style="-fx-border-width: 0; -fx-border-radius: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css">
                            <center>
-                              <Label minHeight="-Infinity" prefHeight="40.0" text="%tab.architecture" BorderPane.alignment="CENTER_LEFT">
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="40.0" text="%tab.architecture" BorderPane.alignment="CENTER_LEFT">
                                  <font>
                                     <Font name="Inter Regular" size="18.0" />
                                  </font>
                               </Label>
                            </center>
-                           <padding>
-                              <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
-                           </padding>
                            <right>
                               <FontIcon fx:id="architectureStatusIcon" iconColor="#000000cc" iconLiteral="zondi-close-outline" iconSize="28" visible="false" BorderPane.alignment="CENTER" />
                            </right>
+                           <padding>
+                              <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
+                           </padding>
                         </BorderPane>
-                        <BorderPane fx:id="managementButtonPane" disable="true" minWidth="-Infinity" onMouseClicked="#openManagementTab" prefWidth="250.0" style="-fx-border-width: 0 2 0 0; -fx-border-radius: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css">
+                        <BorderPane fx:id="managementButtonPane" disable="true" minWidth="-Infinity" onMouseClicked="#openManagementTab" prefWidth="250.0" style="-fx-border-width: 0; -fx-border-radius: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css">
                            <center>
                               <Label minHeight="-Infinity" prefHeight="40.0" text="%tab.management" BorderPane.alignment="CENTER_LEFT">
                                  <font>
@@ -175,7 +175,7 @@
                               <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
                            </padding>
                         </BorderPane>
-                        <BorderPane fx:id="resultsButtonPane" disable="true" minWidth="-Infinity" onMouseClicked="#openResultsTab" prefWidth="250.0" style="-fx-border-width: 0 2 0 0; -fx-border-radius: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css">
+                        <BorderPane fx:id="resultsButtonPane" disable="true" minWidth="-Infinity" onMouseClicked="#openResultsTab" prefWidth="250.0" style="-fx-border-width: 0; -fx-border-radius: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css">
                            <center>
                               <Label minHeight="-Infinity" prefHeight="40.0" text="%tab.results" BorderPane.alignment="CENTER_LEFT">
                                  <font>
@@ -187,7 +187,7 @@
                               <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
                            </padding>
                         </BorderPane>
-                        <BorderPane minWidth="-Infinity" prefWidth="250.0" style="-fx-border-color: #4769ff; -fx-background-color: #ffffff; -fx-border-radius: 0; -fx-border-width: 0 2 0 0;" VBox.vgrow="ALWAYS">
+                        <BorderPane minWidth="-Infinity" prefWidth="250.0" style="-fx-border-color: #4769ff; -fx-background-color: #ffffff; -fx-border-radius: 0; -fx-border-width: 0;" VBox.vgrow="ALWAYS">
                            <bottom>
                               <VBox onMouseClicked="#returnToMenu" style="-fx-border-width: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" BorderPane.alignment="CENTER_LEFT">
                                  <children>
@@ -208,6 +208,11 @@
                         </BorderPane>
                      </children>
                   </VBox>
+                  <Separator orientation="VERTICAL" prefHeight="200.0">
+                     <HBox.margin>
+                        <Insets bottom="25.0" top="25.0" />
+                     </HBox.margin>
+                  </Separator>
                </children>
             </HBox>
          </children>

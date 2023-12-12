@@ -42,7 +42,7 @@ dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
 
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.9.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.0-M1")
 
     // Add icon packs
     implementation("org.kordamp.ikonli:ikonli-zondicons-pack:12.3.1")

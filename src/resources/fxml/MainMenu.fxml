@@ -37,11 +37,20 @@
                      <children>
                         <VBox GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                            <children>
-                              <Label text="ELENNA">
-                                 <font>
-                                    <Font name="Inter Black" size="85.0" />
-                                 </font>
-                              </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                           <children>
+                              <ImageView fitHeight="96.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/logo.png" />
+                                 </image>
+                              </ImageView>
+                                    <Label text="ELENNA">
+                                       <font>
+                                          <Font name="Inter Black" size="85.0" />
+                                       </font>
+                                    </Label>
+                           </children>
+                        </HBox>
                               <Label text="%menu.welcome">
                                  <font>
                                     <Font name="Inter SemiBold" size="28.0" />
@@ -60,7 +69,7 @@
                               <HBox>
                                  <children>
                                     <Pane layoutX="10.0" layoutY="10.0" prefWidth="5.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-color: #4769ff;" />
-                                    <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#createNewNetwork" prefHeight="45.0" prefWidth="250.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.createNewNetwork">
+                                    <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#createNewNetwork" prefHeight="45.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.createNewNetwork" HBox.hgrow="ALWAYS">
                                        <graphic>
                                           <FontIcon iconColor="#4769ff" iconLiteral="zondi-browser-window-new" iconSize="24" wrappingWidth="32.0" />
                                        </graphic>
@@ -70,7 +79,7 @@
                               <HBox>
                                  <children>
                                     <Pane layoutX="10.0" layoutY="10.0" prefWidth="5.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-color: #4769ff;" />
-                                    <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#loadNetwork" prefHeight="45.0" prefWidth="250.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.loadNetwork">
+                                    <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadNetwork" prefHeight="45.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.loadNetwork" HBox.hgrow="ALWAYS">
                                        <graphic>
                                           <FontIcon iconColor="#4769ff" iconLiteral="zondi-browser-window-open" iconSize="24" wrappingWidth="32.0" />
                                        </graphic>
@@ -80,7 +89,7 @@
                               <HBox>
                                  <children>
                                     <Pane layoutX="10.0" layoutY="10.0" prefWidth="5.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-color: #4769ff;" />
-                                    <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#openTutorialTab" prefHeight="45.0" prefWidth="250.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.tutorial">
+                                    <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openTutorialTab" prefHeight="45.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.tutorial" HBox.hgrow="ALWAYS">
                                        <graphic>
                                           <FontIcon iconColor="#4769ff" iconLiteral="zondi-education" iconSize="24" wrappingWidth="32.0" />
                                        </graphic>
@@ -90,7 +99,7 @@
                               <HBox>
                                  <children>
                                     <Pane layoutX="10.0" layoutY="10.0" prefWidth="5.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-color: #4769ff;" />
-                                    <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#openSettingsTab" prefHeight="45.0" prefWidth="250.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.settings">
+                                    <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openSettingsTab" prefHeight="45.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.settings" HBox.hgrow="ALWAYS">
                                        <graphic>
                                           <FontIcon iconColor="#4769ff" iconLiteral="zondi-cog" iconSize="24" wrappingWidth="32.0" />
                                        </graphic>
@@ -100,7 +109,7 @@
                               <HBox>
                                  <children>
                                     <Pane layoutX="10.0" layoutY="10.0" prefWidth="5.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-color: #4769ff;" />
-                                    <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#openAboutTab" prefHeight="45.0" prefWidth="250.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.about">
+                                    <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openAboutTab" prefHeight="45.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.about" HBox.hgrow="ALWAYS">
                                        <graphic>
                                           <FontIcon iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="24" wrappingWidth="32.0" />
                                        </graphic>
@@ -110,7 +119,7 @@
                               <HBox>
                                  <children>
                                     <Pane layoutX="10.0" layoutY="10.0" prefWidth="5.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-color: #4769ff;" />
-                                    <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#exit" prefHeight="45.0" prefWidth="250.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.exit">
+                                    <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exit" prefHeight="45.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.exit" HBox.hgrow="ALWAYS">
                                        <graphic>
                                           <FontIcon iconColor="#4769ff" iconLiteral="zondi-close-outline" iconSize="24" wrappingWidth="32.0" />
                                        </graphic>
@@ -159,12 +168,12 @@
         <content>
             <GridPane style="-fx-background-color: white;">
                <columnConstraints>
-                  <ColumnConstraints hgrow="NEVER" />
+                  <ColumnConstraints hgrow="NEVER" minWidth="-Infinity" />
                   <ColumnConstraints hgrow="ALWAYS" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints fillHeight="false" minHeight="158.0" valignment="TOP" vgrow="NEVER" />
-                  <RowConstraints minHeight="150.0" vgrow="ALWAYS" />
+                  <RowConstraints minHeight="-Infinity" vgrow="ALWAYS" />
                </rowConstraints>
                <children>
                   <HBox fillHeight="false" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
@@ -203,15 +212,19 @@
                         <Insets bottom="25.0" left="25.0" right="25.0" />
                      </GridPane.margin>
                   </VBox>
-                  <VBox alignment="TOP_CENTER" spacing="15.0" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" GridPane.hgrow="NEVER" GridPane.rowIndex="1">
+                  <VBox alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" spacing="15.0" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" GridPane.hgrow="NEVER" GridPane.rowIndex="1">
                      <children>
-                        <ImageView fitHeight="200.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fitWidth="350.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/educationMode.png" />
+                           </image>
+                        </ImageView>
                         <Label text="%menu.tutorial.interactiveTutorial">
                            <font>
                               <Font name="Inter SemiBold" size="28.0" />
                            </font>
                         </Label>
-                        <FlowPane alignment="CENTER_LEFT" hgap="15.0" prefWrapLength="150.0" vgap="25.0" VBox.vgrow="ALWAYS">
+                        <FlowPane alignment="CENTER_LEFT" hgap="15.0" orientation="VERTICAL" prefWrapLength="200.0" vgap="25.0" VBox.vgrow="ALWAYS">
                            <children>
                               <Label text="%menu.tutorial.interactiveTutorial.forBeginners" wrapText="true">
                                  <font>

@@ -1,12 +1,13 @@
 package anna;
 
-import anna.network.data.DataMaster;
 import anna.network.NeuralNetwork;
+import anna.network.data.DataMaster;
 import anna.ui.DefaultUIController;
 import anna.ui.DefaultUIMenuController;
 import anna.ui.PopupController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -16,6 +17,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -57,6 +59,7 @@ public class Application extends javafx.application.Application {
         mainScene.setFill(Color.WHITE); // Set default scene fill. For dark theme should be changed to BLACK or similar
         primaryStage.setTitle("Educational Learning Engine for Neural Networks Application");
         primaryStage.setScene(mainScene);
+        primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/logo.png"))));
         primaryStage.resizableProperty().setValue(true);
 
         loadMainMenu();

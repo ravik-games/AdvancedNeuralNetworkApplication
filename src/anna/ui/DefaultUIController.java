@@ -161,12 +161,13 @@ public class DefaultUIController implements UIController {
         outputController.setReferences(application, application.getDataMaster(), this);
     }
 
-    public void setupHints() {
+    // Configure and set up hint
+    public void setupHint(Node node, String text) {
         String style = """
                 -fx-font-family: Inter;
                 -fx-background-color: #ffffff;
                 -fx-background-radius: 2.5;
-                -fx-opacity: 0.8;
+                -fx-opacity: 1;
                 -fx-text-fill: #000000;
                 -fx-font-size: 14;
                 -fx-border-color: #4769ff;
@@ -174,9 +175,13 @@ public class DefaultUIController implements UIController {
                 -fx-border-radius: 2.5;
                 """;
 
-        Tooltip autoPartition = new Tooltip(bundle.getString("tab.data"));
-        autoPartition.setStyle(style);
-        //Tooltip.install(autoPartitionInfo, autoPartition);
+        Tooltip tooltip = new Tooltip(text);
+        tooltip.setMaxWidth(400);
+        tooltip.setWrapText(true);
+        tooltip.setStyle(style);
+        tooltip.setShowDuration(Duration.seconds(10));
+        tooltip.setShowDelay(Duration.millis(500));
+        Tooltip.install(node, tooltip);
     }
 
     public void updateTabStatus() {

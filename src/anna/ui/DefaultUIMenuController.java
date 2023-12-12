@@ -38,8 +38,10 @@ public class DefaultUIMenuController {
         languageChoiceBox.getItems().addAll(bundle.getString("menu.language.russian"), bundle.getString("menu.language.english"));
 
         languageChoiceBox.setValue(bundle.getString(Locale.getDefault().getLanguage().equalsIgnoreCase("ru") ? "menu.language.russian" : "menu.language.english"));
-        languageChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) ->
-                Locale.setDefault(newValue.intValue() == 0 ? new Locale("ru") : Locale.ENGLISH));
+        languageChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            Locale.setDefault(newValue.intValue() == 0 ? new Locale("ru") : Locale.ENGLISH);
+            PopupController.errorMessage("INFO", "", bundle.getString("menu.language.warning"));
+        });
 
         // Wait for initialization to fade in
         Platform.runLater(() -> sceneFade(false));

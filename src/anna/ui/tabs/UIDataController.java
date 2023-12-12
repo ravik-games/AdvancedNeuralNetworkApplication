@@ -7,6 +7,7 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.util.converter.IntegerStringConverter;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class UIDataController {
     public CheckBox autoDatasetCheckBox, previewAutoDatasetCheckBox;
     public TabPane dataLoaderPane;
     public Button loadTrainDataButton, loadTestDataButton;
+    public FontIcon datasetInfo, autoPartitionInfo;
 
     protected Application application;
     protected DefaultUIController masterController;
@@ -59,6 +61,8 @@ public class UIDataController {
         this.application = application;
         this.dataMaster = dataMaster;
         masterController = uiController;
+
+        setupHints();
     }
 
     // Load general dataset and parse it
@@ -166,6 +170,11 @@ public class UIDataController {
 
         dataMaster.clearData();
         masterController.structureController.resetTab();
+    }
+
+    protected void setupHints(){
+        masterController.setupHint(autoPartitionInfo, bundle.getString("tab.data.hints.autoSplit"));
+        masterController.setupHint(datasetInfo, bundle.getString("tab.data.hints.dataSet"));
     }
 
     //Load table to TableView

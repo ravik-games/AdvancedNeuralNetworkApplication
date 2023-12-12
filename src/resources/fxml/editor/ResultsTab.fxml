@@ -20,7 +20,7 @@
    <children>
       <HBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;">
          <children>
-            <Label text="РЕЗУЛЬТАТЫ">
+            <Label text="%tab.results.label">
                <font>
                   <Font name="Inter Black" size="85.0" />
                </font>
@@ -46,7 +46,7 @@
                                     <Font name="Inter Regular" size="12.0" />
                                  </font>
                               </Button>
-                              <Label fx:id="chartLabel" alignment="CENTER" prefWidth="300.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-border-radius: 2.5;" text="График средней ошибки">
+                              <Label fx:id="chartLabel" alignment="CENTER" prefWidth="300.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-border-radius: 2.5;" text="%tab.results.chart.meanErrorChart">
                                  <font>
                                     <Font name="Inter SemiBold" size="18.0" />
                                  </font>
@@ -85,7 +85,7 @@
                   </VBox>
                   <HBox alignment="CENTER_LEFT" spacing="25.0">
                      <children>
-                        <Label text="Набор данных для матриц">
+                        <Label text="%tab.results.matrix.data">
                            <font>
                               <Font name="Inter Regular" size="18.0" />
                            </font>
@@ -104,7 +104,7 @@
                                  <children>
                                     <HBox alignment="CENTER_LEFT" spacing="25.0">
                                        <children>
-                                          <Label text="Бинарная матрица ошибок" wrapText="true">
+                                          <Label text="%tab.results.matrix.small" wrapText="true">
                                              <font>
                                                 <Font name="Inter SemiBold" size="18.0" />
                                              </font>
@@ -112,7 +112,7 @@
                                                 <FontIcon iconLiteral="zondi-border-all" iconSize="28" wrappingWidth="32.0" />
                                              </graphic>
                                           </Label>
-                                          <FontIcon iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
+                                          <FontIcon fx:id="binaryMatrixInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
                                        </children>
                                     </HBox>
                                     <Pane HBox.hgrow="ALWAYS" />
@@ -133,7 +133,7 @@
                                  <children>
                                     <HBox alignment="CENTER_LEFT" spacing="25.0">
                                        <children>
-                                          <Label text="Полная матрица ошибок" wrapText="true">
+                                          <Label text="%tab.results.matrix.full" wrapText="true">
                                              <font>
                                                 <Font name="Inter SemiBold" size="18.0" />
                                              </font>
@@ -141,7 +141,7 @@
                                                 <FontIcon iconLiteral="zondi-border-all" iconSize="28" wrappingWidth="32.0" />
                                              </graphic>
                                           </Label>
-                                          <FontIcon iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
+                                          <FontIcon fx:id="fullMatrixInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
                                        </children>
                                     </HBox>
                                     <Pane HBox.hgrow="ALWAYS" />
@@ -160,7 +160,7 @@
                   <Separator maxWidth="1.7976931348623157E308" style="-fx-border-width: 1;" />
                   <HBox alignment="CENTER_LEFT" spacing="25.0">
                      <children>
-                        <Label text="Статистика">
+                        <Label text="%tab.results.statistics">
                            <font>
                               <Font name="Inter SemiBold" size="18.0" />
                            </font>
@@ -168,8 +168,8 @@
                               <FontIcon iconLiteral="zondi-list" iconSize="28" wrappingWidth="32.0" />
                            </graphic>
                         </Label>
-                        <FontIcon iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
-                        <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="Класс" HBox.hgrow="ALWAYS">
+                        <FontIcon fx:id="statisticsInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
+                        <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="%tab.results.statistics.class" HBox.hgrow="ALWAYS">
                            <font>
                               <Font name="Inter Regular" size="18.0" />
                            </font>
@@ -184,7 +184,7 @@
                      <children>
                         <VBox alignment="CENTER_LEFT" minWidth="-Infinity" style="-fx-border-color: #4769ff; -fx-border-width: 0 2 0 0;" HBox.hgrow="NEVER">
                            <children>
-                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Метрика" wrapText="true" VBox.vgrow="ALWAYS">
+                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%tab.results.statistics.metric" wrapText="true" VBox.vgrow="ALWAYS">
                                  <padding>
                                     <Insets bottom="25.0" left="15.0" right="15.0" top="25.0" />
                                  </padding>
@@ -192,7 +192,7 @@
                                     <Font name="Inter SemiBold" size="16.0" />
                                  </font>
                               </Label>
-                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" text="Обучение" wrapText="true" VBox.vgrow="ALWAYS">
+                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" text="%general.training" wrapText="true" VBox.vgrow="ALWAYS">
                                  <padding>
                                     <Insets bottom="25.0" left="15.0" right="15.0" top="25.0" />
                                  </padding>
@@ -200,7 +200,7 @@
                                     <Font name="Inter SemiBold" size="16.0" />
                                  </font>
                               </Label>
-                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" text="Тестирование" wrapText="true" VBox.vgrow="ALWAYS">
+                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" text="%general.testing" wrapText="true" VBox.vgrow="ALWAYS">
                                  <padding>
                                     <Insets bottom="25.0" left="15.0" right="15.0" top="25.0" />
                                  </padding>
@@ -219,12 +219,12 @@
                            <children>
                               <HBox alignment="CENTER" spacing="25.0">
                                  <children>
-                                    <Label text="Общая оценка">
+                                    <Label text="%tab.results.statistics.rating">
                                        <font>
                                           <Font name="Inter SemiBold" size="18.0" />
                                        </font>
                                     </Label>
-                                    <FontIcon iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
+                                    <FontIcon fx:id="ratingInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
                                  </children>
                               </HBox>
                               <BorderPane style="-fx-border-width: 1; -fx-border-color: #4769ff; -fx-border-radius: 2.5; -fx-background-radius: 2.5;" VBox.vgrow="ALWAYS">
@@ -243,6 +243,9 @@
                            <padding>
                               <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
                            </padding>
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
                         </VBox>
                         <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" layoutX="157.0" layoutY="11.0" minHeight="-Infinity" minWidth="-Infinity" pannable="true" style="-fx-border-width: 0;" vbarPolicy="NEVER">
                            <content>
@@ -254,7 +257,7 @@
                   <Separator maxWidth="1.7976931348623157E308" style="-fx-border-width: 1;" />
                   <HBox alignment="CENTER_LEFT" spacing="25.0" VBox.vgrow="NEVER">
                      <children>
-                        <Label text="Симулятор">
+                        <Label text="%tab.results.simulator">
                            <font>
                               <Font name="Inter SemiBold" size="18.0" />
                            </font>
@@ -262,14 +265,14 @@
                               <FontIcon iconLiteral="zondi-plugin" iconSize="28" wrappingWidth="32.0" />
                            </graphic>
                         </Label>
-                        <FontIcon iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
+                        <FontIcon fx:id="simulatorInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-border-radius: 2.5; -fx-background-radius: 2.5;">
                      <children>
                         <VBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 0 2 0 0;" HBox.hgrow="NEVER">
                            <children>
-                              <Label alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="71.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 1 0;" text="Параметр" wrapText="true" VBox.vgrow="NEVER">
+                              <Label alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="71.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 1 0;" text="%tab.results.simulator.parameter" wrapText="true" VBox.vgrow="NEVER">
                                  <padding>
                                     <Insets bottom="25.0" left="15.0" right="15.0" top="25.0" />
                                  </padding>
@@ -277,7 +280,7 @@
                                     <Font name="Inter SemiBold" size="16.0" />
                                  </font>
                               </Label>
-                              <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Значение" wrapText="true" VBox.vgrow="ALWAYS">
+                              <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="%tab.results.simulator.value" wrapText="true" VBox.vgrow="ALWAYS">
                                  <padding>
                                     <Insets bottom="25.0" left="15.0" right="15.0" top="25.0" />
                                  </padding>
@@ -308,12 +311,12 @@
                            <children>
                               <HBox alignment="CENTER" spacing="25.0">
                                  <children>
-                                    <Label text="Результат">
+                                    <Label text="%tab.results.simulator.result">
                                        <font>
                                           <Font name="Inter SemiBold" size="18.0" />
                                        </font>
                                     </Label>
-                                    <FontIcon iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
+                                    <FontIcon fx:id="simulatorResultInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
                                  </children>
                               </HBox>
                               <Label fx:id="simulatorOutput" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="..." wrapText="true" VBox.vgrow="ALWAYS">
@@ -321,11 +324,14 @@
                                     <Font name="Inter Regular" size="16.0" />
                                  </font>
                               </Label>
-                              <Button fx:id="startSimulatorButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#prepareSimulationValues" text="Рассчитать" />
+                              <Button fx:id="startSimulatorButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#prepareSimulationValues" text="%tab.results.simulator.calculate" />
                            </children>
                            <padding>
                               <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
                            </padding>
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
                         </VBox>
                      </children>
                   </HBox>

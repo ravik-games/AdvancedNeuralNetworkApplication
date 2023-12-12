@@ -30,6 +30,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.converter.DoubleStringConverter;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.awt.*;
 import java.io.IOException;
@@ -53,6 +54,7 @@ public class UIOutputController {
     public Parent confusionMatrixFull, confusionMatrixSingle;
     public Pane chartPane, binaryMatrixPane, fullMatrixPane;
     public ChoiceBox<String> matrixDataChoiceBox, statClassChoiceBox;
+    public FontIcon binaryMatrixInfo, fullMatrixInfo, statisticsInfo, ratingInfo, simulatorInfo, simulatorResultInfo;
 
     protected DefaultUIController masterController;
     protected UIClassMatrixController binaryMatrixController;
@@ -112,9 +114,9 @@ public class UIOutputController {
                 matrixDataChoiceBox.getItems().indexOf(matrixDataChoiceBox.getValue()) == 0));
 
         //Add items to data selector choice box
-        matrixDataChoiceBox.getItems().add(bundle.getString("tab.results.training"));
-        matrixDataChoiceBox.getItems().add(bundle.getString("tab.results.testing"));
-        matrixDataChoiceBox.setValue(bundle.getString("tab.results.training"));
+        matrixDataChoiceBox.getItems().add(bundle.getString("general.training"));
+        matrixDataChoiceBox.getItems().add(bundle.getString("general.testing"));
+        matrixDataChoiceBox.setValue(bundle.getString("general.training"));
         matrixDataChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> updateMatrix(t1.intValue() == 0));
 
         // Clear and prepare simulator
@@ -126,6 +128,17 @@ public class UIOutputController {
         this.application = application;
         this.dataMaster = dataMaster;
         this.masterController = masterController;
+
+        setupHints();
+    }
+
+    protected void setupHints() {
+        masterController.setupHint(binaryMatrixInfo, bundle.getString("tab.results.hints.binaryMatrix"));
+        masterController.setupHint(fullMatrixInfo, bundle.getString("tab.results.hints.fullMatrix"));
+        masterController.setupHint(statisticsInfo, bundle.getString("tab.results.hints.statistics"));
+        masterController.setupHint(ratingInfo, bundle.getString("tab.results.hints.rating"));
+        masterController.setupHint(simulatorInfo, bundle.getString("tab.results.hints.simulator"));
+        masterController.setupHint(simulatorResultInfo, bundle.getString("tab.results.hints.simulatorResult"));
     }
 
     // Create/update simulator table

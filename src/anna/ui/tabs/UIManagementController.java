@@ -19,6 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class UIManagementController {
     public VBox hyperparametersVBox;
     public TextField updateResultsEpoch;
     public CheckBox autoOpenResultsCheckBox;
+    public FontIcon startNetworkStatus, saveNetworkInfo, hyperparametersHint;
 
     protected Application application;
     protected DefaultUIController masterController;
@@ -54,6 +56,14 @@ public class UIManagementController {
         this.dataMaster = dataMaster;
         this.masterController = masterController;
         this.structureController = structureController;
+
+        setupHints();
+    }
+
+    protected void setupHints() {
+        masterController.setupHint(saveNetworkInfo, bundle.getString("tab.management.hints.networkSaveLoad"));
+        masterController.setupHint(startNetworkStatus, bundle.getString("tab.management.hints.networkStart"));
+        masterController.setupHint(hyperparametersHint, bundle.getString("tab.management.hints.hyperparameters"));
     }
 
     public void startNeuralNetwork(){

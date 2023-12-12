@@ -15,11 +15,11 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox spacing="25.0" style="-fx-background-color: #ffffff;" stylesheets="@../../styling/LightStyle.css" fx:controller="anna.ui.tabs.UIDataController" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<VBox spacing="25.0" style="-fx-background-color: #ffffff;" stylesheets="@../../styling/LightStyle.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="anna.ui.tabs.UIDataController">
    <children>
       <HBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;">
          <children>
-            <Label text="ДАННЫЕ">
+            <Label text="%tab.data.label">
                <font>
                   <Font name="Inter Black" size="85.0" />
                </font>
@@ -37,26 +37,26 @@
             <Insets />
          </VBox.margin>
          <children>
-            <CheckBox fx:id="autoDatasetCheckBox" minHeight="-Infinity" mnemonicParsing="false" onAction="#autoDatasetCheck" prefHeight="28.0" selected="true" text="Автоматически разделить на выборки" wrapText="true" HBox.hgrow="ALWAYS">
+            <CheckBox fx:id="autoDatasetCheckBox" minHeight="-Infinity" mnemonicParsing="false" onAction="#autoDatasetCheck" prefHeight="28.0" selected="true" text="%tab.data.autoSplit" wrapText="true" HBox.hgrow="ALWAYS">
                <font>
                   <Font name="Inter Regular" size="18.0" />
                </font>
             </CheckBox>
             <FlowPane fx:id="dataPartitionPane" alignment="CENTER" columnHalignment="CENTER" hgap="25.0" prefWrapLength="350.0" vgap="15.0" HBox.hgrow="ALWAYS">
                <children>
-                  <CheckBox fx:id="previewAutoDatasetCheckBox" minHeight="-Infinity" mnemonicParsing="false" onAction="#previewAutoDataset" prefHeight="28.0" text="Предпросмотр" wrapText="true">
+                  <CheckBox fx:id="previewAutoDatasetCheckBox" minHeight="-Infinity" mnemonicParsing="false" onAction="#previewAutoDataset" prefHeight="28.0" text="%tab.data.preview" wrapText="true">
                      <font>
                         <Font name="Inter Regular" size="18.0" />
                      </font>
                   </CheckBox>
                   <HBox alignment="CENTER" spacing="5.0">
                      <children>
-                        <Label text="Обучение">
+                        <Label text="%general.training">
                            <font>
                               <Font name="Inter Regular" size="18.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="trainingPartField" prefWidth="36.0" promptText="..." text="75" />
+                        <TextField fx:id="trainingPartField" alignment="CENTER" prefWidth="40.0" promptText="..." text="75" />
                         <Label text="\%">
                            <font>
                               <Font name="Inter Regular" size="18.0" />
@@ -66,12 +66,12 @@
                   </HBox>
                   <HBox alignment="CENTER" spacing="5.0">
                      <children>
-                        <Label text="Тестирование">
+                        <Label text="%general.testing">
                            <font>
                               <Font name="Inter Regular" size="18.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="testingPartField" prefWidth="36.0" promptText="..." text="25" />
+                        <TextField fx:id="testingPartField" alignment="CENTER" prefWidth="40.0" promptText="..." text="25" />
                         <Label text="\%">
                            <font>
                               <Font name="Inter Regular" size="18.0" />
@@ -95,7 +95,7 @@
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="25.0" VBox.vgrow="NEVER">
                            <children>
-                              <Label text="Набор данных" HBox.hgrow="NEVER">
+                              <Label text="%tab.data.dataset" HBox.hgrow="NEVER">
                                  <font>
                                     <Font name="Inter SemiBold" size="18.0" />
                                  </font>
@@ -106,7 +106,7 @@
                               <FontIcon fx:id="datasetInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
                               <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <Button alignment="CENTER" mnemonicParsing="false" onAction="#loadGeneralDataset" prefHeight="32.0" text="Загрузить" textAlignment="CENTER">
+                                    <Button alignment="CENTER" mnemonicParsing="false" onAction="#loadGeneralDataset" prefHeight="32.0" text="%general.load" textAlignment="CENTER">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -151,7 +151,7 @@
                                           <FontIcon iconLiteral="zondi-book-reference" iconSize="28" wrappingWidth="32.0" />
                                        </graphic>
                                     </Label>
-                                    <Button fx:id="loadTrainDataButton" alignment="CENTER" mnemonicParsing="false" onAction="#loadTrainData" prefHeight="32.0" text="Загрузить" textAlignment="CENTER">
+                                    <Button fx:id="loadTrainDataButton" alignment="CENTER" mnemonicParsing="false" onAction="#loadTrainData" prefHeight="32.0" text="%general.load" textAlignment="CENTER">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -189,7 +189,7 @@
                                           <FontIcon iconLiteral="zondi-library" iconSize="28" wrappingWidth="32.0" />
                                        </graphic>
                                     </Label>
-                                    <Button fx:id="loadTestDataButton" alignment="CENTER" mnemonicParsing="false" onAction="#loadTestData" prefHeight="32.0" text="Загрузить" textAlignment="CENTER">
+                                    <Button fx:id="loadTestDataButton" alignment="CENTER" mnemonicParsing="false" onAction="#loadTestData" prefHeight="32.0" text="%general.load" textAlignment="CENTER">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

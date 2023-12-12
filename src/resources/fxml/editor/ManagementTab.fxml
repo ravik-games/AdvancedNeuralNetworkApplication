@@ -16,7 +16,7 @@
    <children>
       <HBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;">
          <children>
-            <Label text="УПРАВЛЕНИЕ">
+            <Label text="%tab.management.label">
                <font>
                   <Font name="Inter Black" size="85.0" />
                </font>
@@ -31,7 +31,7 @@
       </HBox>
       <HBox alignment="CENTER_LEFT" spacing="25.0" style="-fx-border-color: #4769ff; -fx-border-width: 0;">
          <children>
-            <Label text="Сохранить / Загрузить нейросеть" wrapText="true" HBox.hgrow="NEVER">
+            <Label text="%tab.management.saveLoadNetwork" wrapText="true" HBox.hgrow="NEVER">
                <font>
                   <Font name="Inter SemiBold" size="18.0" />
                </font>
@@ -39,10 +39,10 @@
                   <FontIcon iconLiteral="zondi-browser-window-open" iconSize="28" wrappingWidth="32.0" />
                </graphic>
             </Label>
-            <FontIcon iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" HBox.hgrow="NEVER" />
+            <FontIcon fx:id="saveNetworkInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" HBox.hgrow="NEVER" />
             <HBox alignment="CENTER_RIGHT" spacing="25.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Button alignment="CENTER" disable="true" mnemonicParsing="false" text="Сохранить" textAlignment="CENTER">
+                  <Button alignment="CENTER" disable="true" mnemonicParsing="false" text="%general.save" textAlignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -50,7 +50,7 @@
                         <FontIcon iconColor="#4769ff" iconLiteral="zondi-folder-outline-add" iconSize="20" wrappingWidth="26.0" />
                      </graphic>
                   </Button>
-                  <Button alignment="CENTER" mnemonicParsing="false" text="Загрузить" textAlignment="CENTER">
+                  <Button alignment="CENTER" mnemonicParsing="false" text="%general.load" textAlignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -95,7 +95,7 @@
       </HBox>
       <HBox alignment="CENTER_LEFT" spacing="25.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#startNeuralNetwork" style="-fx-border-width: 2; -fx-border-radius: 5; -fx-font-size: 18;" text="Запустить нейронную сеть" HBox.hgrow="NEVER">
+            <Button mnemonicParsing="false" onAction="#startNeuralNetwork" style="-fx-border-width: 2; -fx-border-radius: 5; -fx-font-size: 18;" text="%tab.management.startNetwork" HBox.hgrow="NEVER">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -103,13 +103,13 @@
                   <FontIcon iconColor="#4769ff" iconLiteral="zondi-play" iconSize="28" wrappingWidth="32.0" />
                </graphic>
             </Button>
-            <FontIcon iconColor="#2ed573" iconLiteral="zondi-checkmark-outline" iconSize="32" text="" wrappingWidth="32.0" />
+            <FontIcon fx:id="startNetworkStatus" iconColor="#2ed573" iconLiteral="zondi-checkmark-outline" iconSize="32" text="" wrappingWidth="32.0" />
          </children>
       </HBox>
       <Separator prefWidth="200.0" style="-fx-border-width: 1;" />
       <HBox alignment="CENTER_LEFT" spacing="25.0" style="-fx-border-color: #4769ff; -fx-border-width: 0;">
          <children>
-            <Label text="Настройка гиперпараметров" wrapText="true" HBox.hgrow="NEVER">
+            <Label text="%tab.management.hyperparameters.label" wrapText="true" HBox.hgrow="NEVER">
                <font>
                   <Font name="Inter SemiBold" size="18.0" />
                </font>
@@ -117,10 +117,10 @@
                   <FontIcon iconLiteral="zondi-wrench" iconSize="28" wrappingWidth="32.0" />
                </graphic>
             </Label>
-            <FontIcon iconColor="#4769ff" iconLiteral="zondi-light-bulb" iconSize="28" HBox.hgrow="NEVER" />
+            <FontIcon fx:id="hyperparametersHint" iconColor="#4769ff" iconLiteral="zondi-light-bulb" iconSize="28" HBox.hgrow="NEVER" />
             <HBox alignment="CENTER_RIGHT" spacing="25.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Button alignment="CENTER" mnemonicParsing="false" text="Сохранить" textAlignment="CENTER">
+                  <Button alignment="CENTER" mnemonicParsing="false" text="%general.save" textAlignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -128,7 +128,7 @@
                         <FontIcon iconColor="#4769ff" iconLiteral="zondi-folder-outline-add" iconSize="20" wrappingWidth="26.0" />
                      </graphic>
                   </Button>
-                  <Button alignment="CENTER" mnemonicParsing="false" text="Загрузить" textAlignment="CENTER">
+                  <Button alignment="CENTER" mnemonicParsing="false" text="%general.load" textAlignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -144,7 +144,7 @@
          <children>
             <HBox style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;" VBox.vgrow="NEVER">
                <children>
-                  <Label alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" minWidth="-Infinity" prefWidth="200.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;" text="Название" textAlignment="CENTER" wrapText="true" HBox.hgrow="NEVER">
+                  <Label alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" minWidth="-Infinity" prefWidth="200.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;" text="%tab.management.hyperparameters.name" textAlignment="CENTER" wrapText="true" HBox.hgrow="NEVER">
                      <padding>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </padding>
@@ -152,7 +152,7 @@
                         <Font name="Inter SemiBold" size="16.0" />
                      </font>
                   </Label>
-                  <Label maxHeight="1.7976931348623157E308" minWidth="-Infinity" prefWidth="250.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;" text="Значение" wrapText="true" HBox.hgrow="NEVER">
+                  <Label maxHeight="1.7976931348623157E308" minWidth="-Infinity" prefWidth="250.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;" text="%tab.management.hyperparameters.value" wrapText="true" HBox.hgrow="NEVER">
                      <padding>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </padding>
@@ -160,7 +160,7 @@
                         <Font name="Inter SemiBold" size="16.0" />
                      </font>
                   </Label>
-                  <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="300.0" text="Описание" wrapText="true" HBox.hgrow="ALWAYS">
+                  <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="300.0" text="%tab.management.hyperparameters.description" wrapText="true" HBox.hgrow="ALWAYS">
                      <padding>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </padding>

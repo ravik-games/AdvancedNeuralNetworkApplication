@@ -40,6 +40,7 @@ public class UIStructureController {
     public Label lastLayerNumber, inputLayerNeuronCount, outputLayerNeuronCount;
     public Canvas architectureCanvas;
     public Pane inputLayerPane, inputPaneAnimationPane, canvasPane;
+    public FontIcon networkTaskInfo, autoInputParametersInfo, networkStructureHint, layerTypeHint, activationFunctionHint;
 
     protected DefaultUIController masterController;
     protected Application application;
@@ -86,6 +87,16 @@ public class UIStructureController {
         this.application = application;
         this.dataMaster = dataMaster;
         this.masterController = masterController;
+
+        setupHints();
+    }
+
+    protected void setupHints() {
+        masterController.setupHint(networkTaskInfo, bundle.getString("tab.architecture.hints.networkTask"));
+        masterController.setupHint(autoInputParametersInfo, bundle.getString("tab.architecture.hints.autoInputParameter"));
+        masterController.setupHint(networkStructureHint, bundle.getString("tab.architecture.hints.networkStructure"));
+        masterController.setupHint(layerTypeHint, bundle.getString("tab.architecture.hints.layerType"));
+        masterController.setupHint(activationFunctionHint, bundle.getString("tab.architecture.hints.activationFunction"));
     }
 
     // Hide and show configuration for input layer
@@ -388,6 +399,7 @@ public class UIStructureController {
             BorderPane typePane = new BorderPane(type);
             typePane.setStyle(style);
             typePane.setMaxWidth(Double.MAX_VALUE);
+            typePane.setMinWidth(100);
             typePane.setMaxHeight(Double.MAX_VALUE);
             typePane.setMinHeight(71);
             BorderPane.setMargin(type, new Insets(14, 15, 14,15));
