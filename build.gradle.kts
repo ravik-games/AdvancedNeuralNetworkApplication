@@ -10,6 +10,7 @@ plugins {
     id("java")
     id("idea")
     id("org.openjfx.javafxplugin") version "0.1.0"
+    id("org.beryx.runtime") version "1.13.0"
     application
 }
 
@@ -64,6 +65,62 @@ java {
 application {
     // Define the main class for the application.
     mainClass.set("anna.Main")
+}
+
+runtime {
+    options = listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages")
+    modules = listOf("java.desktop", "java.logging", "java.sql", "java.scripting", "jdk.unsupported")
+
+
+// Uncomment and adjust the code below if you want to generate images for multiple platforms.
+// (You need to also uncomment the line "targetPlatformName = ..." in the jpackage block.)
+    /*
+        targetPlatform("lin") {
+            jdkHome = jdkDownload("https://github.com/AdoptOpenJDK/openjdk15-binaries/releases/download/jdk-15.0.2%2B7/OpenJDK15U-jdk_x64_linux_hotspot_15.0.2_7.tar.gz")
+        }
+
+        targetPlatform("mac") {
+            jdkHome = jdkDownload("https://github.com/AdoptOpenJDK/openjdk15-binaries/releases/download/jdk-15.0.2%2B7/OpenJDK15U-jdk_x64_mac_hotspot_15.0.2_7.tar.gz") {
+                downloadDir = "$buildDir/myMac"
+                archiveName = "my-mac-jdk"
+                archiveExtension = "tar.gz"
+                pathToHome = "jdk-15.0.2+7/Contents/Home"
+                overwrite = true
+            }
+        }
+
+        targetPlatform("win") {
+            jdkHome = jdkDownload("https://github.com/AdoptOpenJDK/openjdk15-binaries/releases/download/jdk-15.0.2%2B7/OpenJDK15U-jdk_x64_windows_hotspot_15.0.2_7.zip")
+        }
+    */
+
+    launcher {
+        noConsole = false
+    }
+    jpackage {
+        // Uncomment and adjust the following line if your runtime task is configured to generate images for multiple platforms
+        // targetPlatformName = "mac"
+
+        val currentOs = org.gradle.internal.os.OperatingSystem.current()
+        val imgType = if (currentOs.isWindows) "ico" else if (currentOs.isMacOsX) "icns" else "png"
+
+        imageOptions.plusAssign(listOf("--icon", "src/resources/images/logo.$imgType"))
+        imageName = "ELENNA"
+        installerName = "ELENNA"
+        appVersion = "2.0"
+        installerOptions.plusAssign(listOf("--resource-dir", "src/resources"))
+        installerOptions.plusAssign(listOf("--vendor", "ravik"))
+
+        if(currentOs.isWindows) {
+            installerOptions.plusAssign(listOf("--win-per-user-install", "--win-dir-chooser", "--win-menu", "--win-shortcut"))
+        }
+        else if (currentOs.isLinux) {
+            installerOptions.plusAssign(listOf("--linux-package-name", "elenna","--linux-shortcut"))
+        }
+        else if (currentOs.isMacOsX) {
+            installerOptions.plusAssign(listOf("--mac-package-name", "elenna"))
+        }
+    }
 }
 
 tasks.named<Test>("test") {

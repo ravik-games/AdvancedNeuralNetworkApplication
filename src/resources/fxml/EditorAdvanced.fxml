@@ -191,7 +191,7 @@
                            <bottom>
                               <VBox onMouseClicked="#returnToMenu" style="-fx-border-width: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" BorderPane.alignment="CENTER_LEFT">
                                  <children>
-                                    <Label minHeight="-Infinity" prefHeight="48.0" text="Возврат в меню">
+                                    <Label minHeight="-Infinity" prefHeight="48.0" text="%general.returnToMenu">
                                        <font>
                                           <Font name="Inter Regular" size="18.0" />
                                        </font>

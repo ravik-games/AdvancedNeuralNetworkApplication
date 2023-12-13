@@ -212,7 +212,7 @@
                         <Insets bottom="25.0" left="25.0" right="25.0" />
                      </GridPane.margin>
                   </VBox>
-                  <VBox alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" spacing="15.0" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" GridPane.hgrow="NEVER" GridPane.rowIndex="1">
+                  <VBox alignment="TOP_CENTER" disable="true" minHeight="-Infinity" minWidth="-Infinity" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" GridPane.hgrow="NEVER" GridPane.rowIndex="1">
                      <children>
                         <ImageView fitWidth="350.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -223,6 +223,14 @@
                            <font>
                               <Font name="Inter SemiBold" size="28.0" />
                            </font>
+                        </Label>
+                        <Label text="%general.inDevelopment">
+                           <font>
+                              <Font name="Inter SemiBold" size="18.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="5.0" top="2.0" />
+                           </padding>
                         </Label>
                         <FlowPane alignment="CENTER_LEFT" hgap="15.0" orientation="VERTICAL" prefWrapLength="200.0" vgap="25.0" VBox.vgrow="ALWAYS">
                            <children>
@@ -317,7 +325,14 @@
                               <Font name="Inter SemiBold" size="28.0" />
                            </font>
                         </Label>
-                        <FlowPane VBox.vgrow="ALWAYS" />
+                        <FlowPane alignment="CENTER" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Label text="%general.inDevelopment">
+                                 <font>
+                                    <Font name="Inter Regular" size="20.0" />
+                                 </font>
+                              </Label>
+                           </children></FlowPane>
                      </children>
                   </VBox>
                   <VBox alignment="TOP_CENTER" spacing="10.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
@@ -327,7 +342,14 @@
                               <Font name="Inter SemiBold" size="28.0" />
                            </font>
                         </Label>
-                        <FlowPane VBox.vgrow="ALWAYS" />
+                        <FlowPane alignment="CENTER" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Label text="%general.inDevelopment">
+                                 <font>
+                                    <Font name="Inter Regular" size="20.0" />
+                                 </font>
+                              </Label>
+                           </children></FlowPane>
                      </children>
                      <GridPane.margin>
                         <Insets bottom="25.0" left="25.0" right="25.0" />
@@ -674,7 +696,7 @@
                               <Font name="Inter SemiBold" size="28.0" />
                            </font>
                         </Label>
-                        <Label text="В разработке...">
+                        <Label text="%general.inDevelopment">
                            <font>
                               <Font name="Inter SemiBold" size="18.0" />
                            </font>
