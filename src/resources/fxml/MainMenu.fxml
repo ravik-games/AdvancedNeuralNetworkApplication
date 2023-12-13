@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.image.Image?>
@@ -141,7 +142,22 @@
                                     <FontIcon iconLiteral="zondi-station" wrappingWidth="36.0" />
                                  </graphic>
                               </Label>
-                              <FlowPane style="-fx-border-width: 1; -fx-border-color: #4769ff; -fx-border-radius: 2.5; -fx-background-color: whitesmoke;" VBox.vgrow="ALWAYS" />
+                        <ScrollPane fitToWidth="true" pannable="true" VBox.vgrow="ALWAYS">
+                           <content>
+                                    <FlowPane fx:id="logPane" orientation="VERTICAL" prefWrapLength="100.0">
+                                 <children>
+                                    <Label fx:id="logLabel" minHeight="-Infinity" prefWidth="540.0" text="%menu.lastChangelog.log.15-12-2023" wrapText="true">
+                                       <font>
+                                          <Font name="Inter Regular" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                 </padding>
+                              </FlowPane>
+                           </content>
+                        </ScrollPane>
                            </children>
                         </VBox>
                         <FlowPane alignment="BOTTOM_LEFT" hgap="15.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">

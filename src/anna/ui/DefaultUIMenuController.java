@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -19,7 +20,8 @@ import java.util.logging.Logger;
 public class DefaultUIMenuController {
 
     public VBox appDescriptionVBox;
-    public Label appDescriptionLabel;
+    public Label appDescriptionLabel, logLabel;
+    public Pane logPane;
     public TabPane menuTabPane;
     public ChoiceBox<String> languageChoiceBox;
 
@@ -32,6 +34,10 @@ public class DefaultUIMenuController {
 
         // Workaround for a scene builder bug, where it cant show FXML expression bindings. It can be replaced in FXML as maxWidth="${appDescriptionVBox.width}", but then it makes working in scene builder very inconvenient
         appDescriptionLabel.setMaxWidth(appDescriptionVBox.getMaxWidth());
+        logPane.widthProperty().addListener((observable, oldValue, newValue) -> {
+            logLabel.setPrefWidth(newValue.doubleValue() - 40);
+            logLabel.setMaxWidth(newValue.doubleValue() - 40);
+        });
 
         // Set up language selector
         // There are strange bug with ChoiceBox russian characters, so as workaround names are loaded from the bundle
