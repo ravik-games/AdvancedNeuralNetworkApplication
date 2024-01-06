@@ -1,6 +1,6 @@
 package anna.math;
 
-import anna.network.Hyperparameters;
+import anna.network.data.Hyperparameters;
 
 public class ActivationFunctions {
 
@@ -75,7 +75,7 @@ public class ActivationFunctions {
         return input;
     }
 
-    public enum types{
+    public enum Types {
         RELU, LRELU, SIGMOID, TANH, ELU, LINEAR
     }
 }

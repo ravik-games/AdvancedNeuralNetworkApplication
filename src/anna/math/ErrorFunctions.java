@@ -75,4 +75,8 @@ public class ErrorFunctions {
         //Return error
         return output / ideal.length;
     }
+
+    public enum Types {
+        MSE, RMSE, ARCTAN
+    }
 }

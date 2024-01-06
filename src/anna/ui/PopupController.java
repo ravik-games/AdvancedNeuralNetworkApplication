@@ -1,5 +1,6 @@
 package anna.ui;
 
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 
@@ -15,26 +16,39 @@ public class PopupController {
     //Method for showing errors to user
 
     private static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
-    public static void errorMessage(String rawType, String title, String headerMessage, String infoMessage){
-        Alert.AlertType type = switch (rawType.toUpperCase()) {
-            case "ERROR" -> Alert.AlertType.ERROR;
-            case "INFORMATION" -> Alert.AlertType.INFORMATION;
-            default -> Alert.AlertType.WARNING;
-        };
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(headerMessage);
-        alert.setContentText(infoMessage);
-        alert.showAndWait();
+    public static void errorMessage(String rawType, String title, String headerMessage, String infoMessage, boolean close){
+        Platform.runLater(() -> {
+            Alert.AlertType type = switch (rawType.toUpperCase()) {
+                case "ERROR" -> Alert.AlertType.ERROR;
+                case "INFORMATION" -> Alert.AlertType.INFORMATION;
+                default -> Alert.AlertType.WARNING;
+            };
+            Alert alert = new Alert(type);
+            alert.setTitle(title);
+            alert.setHeaderText(headerMessage);
+            alert.setContentText(infoMessage);
+            alert.showAndWait();
+
+            if (close)
+                System.exit(1);
+        });
     }
 
-    //Automatic label with localization
     public static void errorMessage(String rawType, String headerMessage, String infoMessage){
         errorMessage(rawType, bundle.getString("logger." + switch (rawType.toUpperCase()) {
             case "ERROR" -> "error";
             case "INFORMATION" -> "info";
             default -> "warning";
-        }), headerMessage, infoMessage);
+        }), headerMessage, infoMessage, false);
+    }
+
+    //Automatic label with localization
+    public static void errorMessage(String rawType, String headerMessage, String infoMessage, boolean close){
+        errorMessage(rawType, bundle.getString("logger." + switch (rawType.toUpperCase()) {
+            case "ERROR" -> "error";
+            case "INFORMATION" -> "info";
+            default -> "warning";
+        }), headerMessage, infoMessage, close);
     }
 
     //Open window and select file

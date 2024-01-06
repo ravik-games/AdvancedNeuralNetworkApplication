@@ -3,182 +3,203 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<AnchorPane minHeight="290.0" minWidth="616.0" stylesheets="@../LightStyle.css" AnchorPane.bottomAnchor="0.0"
-            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-            xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="anna.ui.tabs.modules.UIClassMatrixController">
-   <padding>
-      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-   </padding>
-   <GridPane alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-             AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <columnConstraints>
-         <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" percentWidth="25.0" prefWidth="100.0"/>
-         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-         <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" percentWidth="27.0"/>
-         <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" percentWidth="27.0"/>
-         <ColumnConstraints hgrow="SOMETIMES" percentWidth="0.0"/>
-      </columnConstraints>
-      <rowConstraints>
-         <RowConstraints minHeight="30.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-         <RowConstraints minHeight="30.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-         <RowConstraints minHeight="25.0" vgrow="SOMETIMES"/>
-         <RowConstraints minHeight="25.0" vgrow="SOMETIMES"/>
-         <RowConstraints percentHeight="0.0" vgrow="SOMETIMES"/>
-      </rowConstraints>
-      <Label text="%tab.results.matrix.errorMatrix.realValues" textAlignment="CENTER" GridPane.columnIndex="2"
-             GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-         <font>
-            <Font name="Segoe UI Semibold" size="18.0"/>
-         </font>
-      </Label>
-      <Label text="%tab.results.matrix.errorMatrix.predictedValues" textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER"
-             GridPane.rowIndex="2" GridPane.rowSpan="2" GridPane.valignment="CENTER">
-         <font>
-            <Font name="Segoe UI Semibold" size="18.0"/>
-         </font>
-      </Label>
-      <Label text="%tab.results.matrix.errorMatrix.positive" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER"
-             GridPane.rowIndex="1" GridPane.valignment="CENTER">
-         <font>
-            <Font name="Segoe UI Semilight" size="16.0"/>
-         </font>
-      </Label>
-      <Label text="%tab.results.matrix.errorMatrix.negative" textAlignment="CENTER" GridPane.columnIndex="3" GridPane.halignment="CENTER"
-             GridPane.rowIndex="1" GridPane.valignment="CENTER">
-         <font>
-            <Font name="Segoe UI Semilight" size="16.0"/>
-         </font>
-      </Label>
-      <Label text="%tab.results.matrix.errorMatrix.positive" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER"
-             GridPane.rowIndex="2" GridPane.valignment="CENTER">
-         <font>
-            <Font name="Segoe UI Semilight" size="16.0"/>
-         </font>
-      </Label>
-      <Label text="%tab.results.matrix.errorMatrix.negative" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER"
-             GridPane.rowIndex="3" GridPane.valignment="CENTER">
-         <font>
-            <Font name="Segoe UI Semilight" size="16.0"/>
-         </font>
-      </Label>
-      <VBox alignment="CENTER" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowSpan="2"
-            GridPane.valignment="CENTER">
-         <Label alignment="CENTER" prefWidth="189.0" text="%tab.results.statistics.class" textAlignment="CENTER">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="anna.ui.tabs.modules.UIClassMatrixController">
+   <center>
+      <GridPane alignment="CENTER" style="-fx-background-color: #ffffff; -fx-border-color: #4769ff; -fx-border-radius: 2.5; -fx-background-radius: 2.5;" stylesheets="@../styling/LightStyle.css" BorderPane.alignment="CENTER">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
+            <ColumnConstraints hgrow="SOMETIMES" percentWidth="0.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
+            <RowConstraints percentHeight="0.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 1 0;" text="%tab.results.matrix.errorMatrix.realValues" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
             <font>
-               <Font name="Segoe UI Semibold" size="20.0"/>
+               <Font name="Inter SemiBold" size="16.0" />
             </font>
-            <VBox.margin>
-               <Insets bottom="5.0"/>
-            </VBox.margin>
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
          </Label>
-         <ChoiceBox fx:id="matrixClassSelector" prefWidth="200.0"/>
-      </VBox>
-      <BorderPane style="-fx-background-color: bfffda; -fx-background-insets: 1 0 1 3;" GridPane.columnIndex="2"
-                  GridPane.rowIndex="2">
-         <center>
-            <Label fx:id="truePositiveLabel" alignment="CENTER" text="...">
+         <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="150.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;" text="%tab.results.matrix.errorMatrix.predictedValues" textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.rowSpan="2" GridPane.valignment="CENTER">
+            <font>
+               <Font name="Inter SemiBold" size="16.0" />
+            </font>
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+         </Label>
+         <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 1 0;" text="%tab.results.matrix.errorMatrix.positive" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <font>
+               <Font name="Inter Light" size="16.0" />
+            </font>
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+         </Label>
+         <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 1 0;" text="%tab.results.matrix.errorMatrix.negative" textAlignment="CENTER" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <font>
+               <Font name="Inter Light" size="16.0" />
+            </font>
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+         </Label>
+         <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 1 0;" text="%tab.results.matrix.errorMatrix.positive" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+            <font>
+               <Font name="Inter Light" size="16.0" />
+            </font>
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+         </Label>
+         <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;" text="%tab.results.matrix.errorMatrix.negative" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+            <font>
+               <Font name="Inter Light" size="16.0" />
+            </font>
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+         </Label>
+         <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 1 0; -fx-border-insets: 0 0 1 0;" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowSpan="2" GridPane.valignment="CENTER">
+            <Label alignment="CENTER" text="%tab.results.statistics.class" textAlignment="CENTER">
                <font>
-                  <Font name="Segoe UI Semibold" size="16.0"/>
+                  <Font name="Inter SemiBold" size="18.0" />
                </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+               <graphic>
+                  <FontIcon iconLiteral="zondi-search" iconSize="28" wrappingWidth="32.0" />
+               </graphic>
             </Label>
-         </center>
-         <top>
-            <Label alignment="TOP_LEFT" text="TP" BorderPane.alignment="CENTER_LEFT">
-               <font>
-                  <Font name="Segoe UI Semilight" size="12.0"/>
-               </font>
-               <BorderPane.margin>
-                  <Insets left="10.0" top="5.0"/>
-               </BorderPane.margin>
-            </Label>
-         </top>
-      </BorderPane>
-      <BorderPane style="-fx-background-color: bfffda; -fx-background-insets: 1 0 1 3;" GridPane.columnIndex="3"
-                  GridPane.rowIndex="3">
-         <center>
-            <Label fx:id="trueNegativeLabel" text="...">
-               <font>
-                  <Font name="Segoe UI Semibold" size="16.0"/>
-               </font>
-            </Label>
-         </center>
-         <top>
-            <Label text="TN" BorderPane.alignment="CENTER_LEFT">
-               <font>
-                  <Font name="Segoe UI Semilight" size="12.0"/>
-               </font>
-               <BorderPane.margin>
-                  <Insets left="10.0" top="5.0"/>
-               </BorderPane.margin>
-            </Label>
-         </top>
-      </BorderPane>
-      <BorderPane style="-fx-background-color: ffb3ba; -fx-background-insets: 1 0 1 3;" GridPane.columnIndex="2"
-                  GridPane.rowIndex="3">
-         <center>
-            <Label fx:id="falseNegativeLabel" text="...">
-               <font>
-                  <Font name="Segoe UI Semibold" size="16.0"/>
-               </font>
-            </Label>
-         </center>
-         <top>
-            <Label text="FN" BorderPane.alignment="CENTER_LEFT">
-               <font>
-                  <Font name="Segoe UI Semilight" size="12.0"/>
-               </font>
-               <BorderPane.margin>
-                  <Insets left="10.0" top="5.0"/>
-               </BorderPane.margin>
-            </Label>
-         </top>
-      </BorderPane>
-      <BorderPane style="-fx-background-color: ffb3ba; -fx-background-insets: 1 0 1 3;" GridPane.columnIndex="3"
-                  GridPane.rowIndex="2">
-         <center>
-            <Label fx:id="falsePositiveLabel" text="...">
-               <font>
-                  <Font name="Segoe UI Semibold" size="16.0"/>
-               </font>
-            </Label>
-         </center>
-         <top>
-            <Label text="FP" BorderPane.alignment="BOTTOM_LEFT">
-               <font>
-                  <Font name="Segoe UI Semilight" size="12.0"/>
-               </font>
-               <BorderPane.margin>
-                  <Insets left="10.0" top="5.0"/>
-               </BorderPane.margin>
-            </Label>
-         </top>
-      </BorderPane>
-      <Separator GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.valignment="TOP"/>
-      <Separator GridPane.columnIndex="2" GridPane.rowIndex="3" GridPane.valignment="TOP"/>
-      <Separator GridPane.columnIndex="3" GridPane.rowIndex="3" GridPane.valignment="TOP"/>
-      <Separator GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.valignment="TOP"/>
-      <Separator GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="TOP"/>
-      <Separator GridPane.columnIndex="3" GridPane.rowIndex="2" GridPane.valignment="TOP"/>
-      <Separator GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.valignment="TOP"/>
-      <Separator GridPane.columnIndex="3" GridPane.rowIndex="1" GridPane.valignment="TOP"/>
-      <Separator GridPane.columnIndex="2" GridPane.valignment="TOP"/>
-      <Separator GridPane.columnIndex="3" GridPane.valignment="TOP"/>
-      <Separator GridPane.columnSpan="4" GridPane.rowIndex="4" GridPane.valignment="TOP"/>
-      <Separator GridPane.rowIndex="2" GridPane.valignment="TOP"/>
-      <Separator orientation="VERTICAL" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.rowSpan="2"/>
-      <Separator orientation="VERTICAL" GridPane.columnIndex="4" GridPane.rowSpan="4"/>
-      <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="2"/>
-      <Separator orientation="VERTICAL" GridPane.columnIndex="2" GridPane.rowSpan="4"/>
-      <Separator orientation="VERTICAL" GridPane.columnIndex="3" GridPane.rowIndex="1" GridPane.rowSpan="3"/>
-   </GridPane>
-</AnchorPane>
+            <ChoiceBox fx:id="matrixClassSelector" maxWidth="1.7976931348623157E308">
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </VBox.margin>
+            </ChoiceBox>
+            <padding>
+               <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+            </padding>
+         </VBox>
+         <BorderPane style="-fx-background-color: bfffda;" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+            <center>
+               <Label fx:id="truePositiveLabel" alignment="CENTER" text="...">
+                  <font>
+                     <Font name="Inter Regular" size="16.0" />
+                  </font>
+                  <BorderPane.margin>
+                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </BorderPane.margin>
+               </Label>
+            </center>
+            <top>
+               <Label alignment="TOP_LEFT" text="TP" BorderPane.alignment="CENTER_LEFT">
+                  <font>
+                     <Font name="Inter Light" size="12.0" />
+                  </font>
+                  <BorderPane.margin>
+                     <Insets left="10.0" top="5.0" />
+                  </BorderPane.margin>
+               </Label>
+            </top>
+            <padding>
+               <Insets bottom="5.0" right="5.0" />
+            </padding>
+         </BorderPane>
+         <BorderPane style="-fx-background-color: bfffda;" GridPane.columnIndex="3" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS">
+            <center>
+               <Label fx:id="trueNegativeLabel" text="...">
+                  <font>
+                     <Font name="Inter Regular" size="16.0" />
+                  </font>
+                  <BorderPane.margin>
+                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </BorderPane.margin>
+               </Label>
+            </center>
+            <top>
+               <Label text="TN" BorderPane.alignment="CENTER_LEFT">
+                  <font>
+                     <Font name="Inter Light" size="12.0" />
+                  </font>
+                  <BorderPane.margin>
+                     <Insets left="10.0" top="5.0" />
+                  </BorderPane.margin>
+               </Label>
+            </top>
+            <padding>
+               <Insets bottom="5.0" right="5.0" />
+            </padding>
+         </BorderPane>
+         <BorderPane style="-fx-background-color: ffb3ba;" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS">
+            <center>
+               <Label fx:id="falseNegativeLabel" text="...">
+                  <font>
+                     <Font name="Inter Regular" size="16.0" />
+                  </font>
+                  <BorderPane.margin>
+                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </BorderPane.margin>
+               </Label>
+            </center>
+            <top>
+               <Label text="FN" BorderPane.alignment="CENTER_LEFT">
+                  <font>
+                     <Font name="Inter Light" size="12.0" />
+                  </font>
+                  <BorderPane.margin>
+                     <Insets left="10.0" top="5.0" />
+                  </BorderPane.margin>
+               </Label>
+            </top>
+            <padding>
+               <Insets bottom="5.0" right="5.0" />
+            </padding>
+         </BorderPane>
+         <BorderPane style="-fx-background-color: ffb3ba;" GridPane.columnIndex="3" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+            <center>
+               <Label fx:id="falsePositiveLabel" text="...">
+                  <font>
+                     <Font name="Inter Regular" size="16.0" />
+                  </font>
+                  <BorderPane.margin>
+                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </BorderPane.margin>
+               </Label>
+            </center>
+            <top>
+               <Label text="FP" BorderPane.alignment="BOTTOM_LEFT">
+                  <font>
+                     <Font name="Inter Light" size="12.0" />
+                  </font>
+                  <BorderPane.margin>
+                     <Insets left="10.0" top="5.0" />
+                  </BorderPane.margin>
+               </Label>
+            </top>
+            <padding>
+               <Insets bottom="5.0" right="5.0" />
+            </padding>
+         </BorderPane>
+         <BorderPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </BorderPane.margin>
+      </GridPane>
+   </center>
+</BorderPane>

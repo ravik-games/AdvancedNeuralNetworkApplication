@@ -1,7 +1,7 @@
 package anna.network.neurons;
 
 import anna.math.ActivationFunctions;
-import anna.network.Hyperparameters;
+import anna.network.data.Hyperparameters;
 import anna.network.NetworkStructure;
 import anna.ui.PopupController;
 
@@ -16,10 +16,10 @@ public abstract class Neuron {
     protected double lastRawOutput; //Last output without activation function
     protected double lastOutput;
 
-    protected NetworkStructure.neuronTypes type;
-    protected ActivationFunctions.types activationFunction;
+    protected NetworkStructure.LayerTypes type;
+    protected ActivationFunctions.Types activationFunction;
 
-    public Neuron(int id, ActivationFunctions.types activationFunction, NetworkStructure.neuronTypes type) {
+    public Neuron(int id, ActivationFunctions.Types activationFunction, NetworkStructure.LayerTypes type) {
         this.id = id;
         this.activationFunction = activationFunction;
         this.type = type;
@@ -30,7 +30,7 @@ public abstract class Neuron {
         if(inputs.length != weights.length - Boolean.compare(Hyperparameters.USE_BIAS_NEURONS, false)){
             //TODO Test conditions
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "CRITICAL ERROR: length of inputs and length of weights in neuron doesn't match");
-            PopupController.errorMessage("ERROR", "Критическая ошибка", "", "Произошла критическая ошибка при работе нейронной сети. Количество входных данных и весов нейрона не совпадает.");
+            PopupController.errorMessage("ERROR", "", "Произошла критическая ошибка при работе нейронной сети. Количество входных данных и весов нейрона не совпадает.");
             return false;
         }
 
@@ -77,7 +77,7 @@ public abstract class Neuron {
         return lastRawOutput;
     }
 
-    public ActivationFunctions.types getActivationFunction() {
+    public ActivationFunctions.Types getActivationFunction() {
         return activationFunction;
     }
 }

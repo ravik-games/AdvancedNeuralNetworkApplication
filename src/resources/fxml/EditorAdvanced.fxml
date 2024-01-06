@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<HBox fx:id="rootPane" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #ffffff;" stylesheets="@../styling/LightStyle.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="anna.ui.DefaultUIController">
+   <children>
+      <VBox alignment="TOP_CENTER" onMouseClicked="#openSideMenu" style="-fx-background-color: #ffffff;">
+         <children>
+            <BorderPane>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <center>
+                  <FontIcon iconColor="#4769ff" iconLiteral="zondi-menu" iconSize="48">
+                     <BorderPane.margin>
+                        <Insets />
+                     </BorderPane.margin>
+                  </FontIcon>
+               </center>
+               <padding>
+                  <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
+               </padding>
+            </BorderPane>
+            <BorderPane>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <center>
+                  <FontIcon fx:id="dataTabIcon" iconColor="#4769ff" iconLiteral="zondi-view-tile" iconSize="36" />
+               </center>
+               <padding>
+                  <Insets bottom="17.0" top="17.0" />
+               </padding>
+            </BorderPane>
+            <BorderPane>
+               <center>
+                  <FontIcon fx:id="architectureTabIcon" iconColor="#4769ff" iconLiteral="zondi-load-balancer" iconSize="36" opacity="0.6" />
+               </center>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="17.0" top="17.0" />
+               </padding>
+            </BorderPane>
+            <BorderPane>
+               <center>
+                  <FontIcon fx:id="managementTabIcon" iconColor="#4769ff" iconLiteral="zondi-tuning" iconSize="36" opacity="0.6" />
+               </center>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="17.0" top="17.0" />
+               </padding>
+            </BorderPane>
+            <BorderPane>
+               <center>
+                  <FontIcon fx:id="resultsTabIcon" iconColor="#4769ff" iconLiteral="zondi-chart" iconSize="36" opacity="0.6" />
+               </center>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="17.0" top="17.0" />
+               </padding>
+            </BorderPane>
+            <BorderPane VBox.vgrow="ALWAYS">
+               <bottom>
+                  <FontIcon iconColor="#4769ff" iconLiteral="zondi-home" iconSize="48" BorderPane.alignment="CENTER" />
+               </bottom>
+               <VBox.margin>
+                  <Insets bottom="2.0" />
+               </VBox.margin>
+            </BorderPane>
+         </children>
+         <HBox.margin>
+            <Insets />
+         </HBox.margin>
+         <padding>
+            <Insets bottom="45.0" top="25.0" />
+         </padding>
+      </VBox>
+      <Separator fx:id="menuSeparator" orientation="VERTICAL" prefHeight="200.0" style="-fx-border-width: 1;">
+         <HBox.margin>
+            <Insets bottom="25.0" top="25.0" />
+         </HBox.margin>
+      </Separator>
+      <StackPane fx:id="menuStackPane" onMouseClicked="#closeSideMenu" HBox.hgrow="ALWAYS">
+         <children>
+            <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" StackPane.alignment="CENTER">
+               <stylesheets>
+                  <URL value="@../styling/LightStyle.css" />
+                  <URL value="@../styling/TabPane.css" />
+               </stylesheets>
+               <tabs>
+                  <Tab fx:id="dataTab" closable="false" text="Data" />
+                  <Tab fx:id="architectureTab" closable="false" text="Architecture" />
+                  <Tab fx:id="managementTab" closable="false" text="Management" />
+                  <Tab fx:id="resultsTab" closable="false" text="Results" />
+               </tabs>
+            </TabPane>
+            <HBox fx:id="sideMenuPane" visible="false" StackPane.alignment="TOP_LEFT">
+               <StackPane.margin>
+                  <Insets right="25.0" />
+               </StackPane.margin>
+               <children>
+                  <VBox fillWidth="false" style="-fx-background-color: #ffffff;">
+                     <children>
+                        <BorderPane minWidth="-Infinity" prefWidth="250.0" style="-fx-background-color: #ffffff; -fx-border-color: #4769ff; -fx-border-width: 0; -fx-border-radius: 0;">
+                           <center>
+                              <Label minHeight="-Infinity" prefHeight="48.0" text="Выбор вкладки" BorderPane.alignment="CENTER_LEFT">
+                                 <font>
+                                    <Font name="Inter SemiBold" size="20.0" />
+                                 </font>
+                              </Label>
+                           </center>
+                           <padding>
+                              <Insets bottom="15.0" left="25.0" top="15.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets top="25.0" />
+                           </VBox.margin>
+                        </BorderPane>
+                        <BorderPane minWidth="-Infinity" onMouseClicked="#openDataTab" prefWidth="250.0" style="-fx-border-width: 0; -fx-border-radius: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css">
+                           <center>
+                              <Label minHeight="-Infinity" prefHeight="40.0" text="%tab.data" BorderPane.alignment="CENTER_LEFT">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                              </Label>
+                           </center>
+                           <padding>
+                              <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
+                           </padding>
+                           <right>
+                              <FontIcon fx:id="dataStatusIcon" iconColor="#ff4757" iconLiteral="zondi-close-outline" iconSize="28" BorderPane.alignment="CENTER" />
+                           </right>
+                        </BorderPane>
+                        <BorderPane fx:id="architectureButtonPane" disable="true" minWidth="-Infinity" onMouseClicked="#openArchitectureTab" prefWidth="250.0" style="-fx-border-width: 0; -fx-border-radius: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css">
+                           <center>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="40.0" text="%tab.architecture" BorderPane.alignment="CENTER_LEFT">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                              </Label>
+                           </center>
+                           <right>
+                              <FontIcon fx:id="architectureStatusIcon" iconColor="#000000cc" iconLiteral="zondi-close-outline" iconSize="28" visible="false" BorderPane.alignment="CENTER" />
+                           </right>
+                           <padding>
+                              <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
+                           </padding>
+                        </BorderPane>
+                        <BorderPane fx:id="managementButtonPane" disable="true" minWidth="-Infinity" onMouseClicked="#openManagementTab" prefWidth="250.0" style="-fx-border-width: 0; -fx-border-radius: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css">
+                           <center>
+                              <Label minHeight="-Infinity" prefHeight="40.0" text="%tab.management" BorderPane.alignment="CENTER_LEFT">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                              </Label>
+                           </center>
+                           <padding>
+                              <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
+                           </padding>
+                        </BorderPane>
+                        <BorderPane fx:id="resultsButtonPane" disable="true" minWidth="-Infinity" onMouseClicked="#openResultsTab" prefWidth="250.0" style="-fx-border-width: 0; -fx-border-radius: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css">
+                           <center>
+                              <Label minHeight="-Infinity" prefHeight="40.0" text="%tab.results" BorderPane.alignment="CENTER_LEFT">
+                                 <font>
+                                    <Font name="Inter Regular" size="18.0" />
+                                 </font>
+                              </Label>
+                           </center>
+                           <padding>
+                              <Insets bottom="15.0" left="25.0" right="25.0" top="15.0" />
+                           </padding>
+                        </BorderPane>
+                        <BorderPane minWidth="-Infinity" prefWidth="250.0" style="-fx-border-color: #4769ff; -fx-background-color: #ffffff; -fx-border-radius: 0; -fx-border-width: 0;" VBox.vgrow="ALWAYS">
+                           <bottom>
+                              <VBox fx:id="returnButtonPane" onMouseClicked="#returnToMenu" style="-fx-border-width: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" BorderPane.alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label minHeight="-Infinity" prefHeight="48.0" text="%general.returnToMenu">
+                                       <font>
+                                          <Font name="Inter Regular" size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="20.0" left="25.0" top="15.0" />
+                                 </padding>
+                              </VBox>
+                           </bottom>
+                           <VBox.margin>
+                              <Insets bottom="25.0" />
+                           </VBox.margin>
+                        </BorderPane>
+                     </children>
+                  </VBox>
+                  <Separator orientation="VERTICAL" prefHeight="200.0">
+                     <HBox.margin>
+                        <Insets bottom="25.0" top="25.0" />
+                     </HBox.margin>
+                  </Separator>
+               </children>
+            </HBox>
+         </children>
+      </StackPane>
+   </children>
+</HBox>

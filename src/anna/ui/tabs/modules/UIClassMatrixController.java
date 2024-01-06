@@ -14,6 +14,5 @@ public class UIClassMatrixController {
         trueNegativeLabel.setText("...");
         falsePositiveLabel.setText("...");
         falseNegativeLabel.setText("...");
-        matrixClassSelector.getItems().clear();
     }
 }

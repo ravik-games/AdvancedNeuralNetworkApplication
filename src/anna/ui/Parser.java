@@ -15,30 +15,37 @@ public class Parser {
 
     private static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
 
-    //Method for parsing raw set values
-    public static double parseRawValue(String value, inputTypes type){
-        if(value.isEmpty())
+    //Methods for parsing raw set values
+    public static Number parseNumberValue(String value) {
+        if (value.isEmpty() || !checkValueForOnlyNumbers(value)) {
+            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.wrongValue") + "\n" + value);
+            Logger.getLogger(Parser.class.getName()).log(Level.WARNING, "An error has occurred while reading the value. The wrong value will be replaced by zero. Value:\t" + value);
             return 0;
-        switch(type){
-            case NUMBER -> {
-                if(checkValueForOnlyNumbers(value))
-                    return Double.parseDouble(value);
-                else
-                    return 0;
-            }
-            case BOOLEAN -> {
-                value = value.toLowerCase();
-                if(value.equals("true") || value.equals("1"))
-                    return 1;
-                else
-                    return 0;
-            }
-            default -> {
-                PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.wrongValue"));
-                Logger.getLogger(Parser.class.getName()).log(Level.WARNING, "An error has occurred while reading the value. The wrong value will be replaced by zero.");
-                return 0;
-            }
         }
+        else {
+            return Double.parseDouble(value);
+        }
+    }
+
+    public static double parseCategoricalValue(String value, List<String> categories) {
+        if (categories == null || !categories.contains(value)) {
+            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.wrongValue") + "\n" + value);
+            Logger.getLogger(Parser.class.getName()).log(Level.WARNING, "An error has occurred while reading the value. The wrong value will be replaced by zero. Value:\t" + value);
+            return 0;
+        }
+        return categories.indexOf(value);
+    }
+
+    //Get file from path
+    public static File getFileFromPath(String path, String extension){
+        File result;
+        result = new File(path);
+        int index = result.getName().lastIndexOf(".");
+        if(index <= 0 || !result.getName().substring(index + 1).equals(extension)) {
+            Logger.getLogger(Parser.class.getName()).log(Level.WARNING ,"Selected file is not valid");
+            PopupController.errorMessage("WARNING", "", bundle.getString("logger.warning.fileNotValid"));
+        }
+        return result;
     }
 
     //Parse data from file to 2D list
@@ -89,7 +96,7 @@ public class Parser {
     }
 
     //Field value types
-    public enum inputTypes{
-        NUMBER, BOOLEAN
+    public enum InputTypes {
+        NUMBER, CATEGORICAL
     }
 }

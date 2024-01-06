@@ -5,7 +5,7 @@ import anna.network.NetworkStructure;
 
 public class BiasNeuron extends Neuron{
 
-    public BiasNeuron(int id, ActivationFunctions.types activationFunction, NetworkStructure.neuronTypes type) {
+    public BiasNeuron(int id, ActivationFunctions.Types activationFunction, NetworkStructure.LayerTypes type) {
         super(id, activationFunction, type);
     }
     @Override

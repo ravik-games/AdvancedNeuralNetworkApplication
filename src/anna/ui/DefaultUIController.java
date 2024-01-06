@@ -1,258 +1,347 @@
 package anna.ui;
 
 import anna.Application;
-import anna.network.DataTypes;
+import anna.network.NetworkListener;
 import anna.network.NeuralNetwork;
+import anna.network.data.DataTypes;
+import anna.network.data.Hyperparameters;
 import anna.ui.tabs.UIDataController;
-import anna.ui.tabs.UINetworkController;
+import anna.ui.tabs.UIManagementController;
 import anna.ui.tabs.UIOutputController;
 import anna.ui.tabs.UIStructureController;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
+import javafx.animation.FadeTransition;
+import javafx.animation.Transition;
+import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Paint;
+import javafx.util.Duration;
+import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class DefaultUIController implements UIController{
+public class DefaultUIController implements UIController, NetworkListener {
     //Master class for all UI stuff
 
-    private static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
+    protected static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
+    protected Application application;
 
-    public CheckBox autoOpenResults;
-    public Button inputNeuronButton, layerAddButton, inputNeuronRemoveButton, inputNeuronAutoButton, layerRemoveButton, startSimulatorButton, newWindowChartButton, newWindowMatrixButton;
-    public VBox inputVBox, hyperparametersVBox, statVBox;
-    public HBox architectureHBox, simulatorHBox;
+    public HBox rootPane, sideMenuPane;
     public TabPane tabPane;
-    public Canvas graphicOutput;
-    public TextField updateResultsEpoch, trainDataPath, testDataPath, loadArchitecturePath, loadWeightsPath, loadHyperparametersPath,
-            loadNeuralNetworkPath, saveArchitecturePath, saveWeightsPath, saveHyperparametersPath, saveNeuralNetworkPath;
-    public TableView<List<String>> trainDataTable, testDataTable;
-    public Label trainDataLabel, testDataLabel, inputNeuronCounter, lastLayerNumber, chartLabel, matrixLabel;
-    public LineChart<Integer, Double> chart;
-    public NumberAxis chartXAxis;
-    public NumberAxis chartYAxis;
-    public ChoiceBox<String> inputsChoiceBox, lastColumnChoiceBox, statClassChoiceBox, matrixDataChoiceBox;
-    public TextArea simulatorOutput;
-    public Pane chartParent, matrixParent;
+    public StackPane menuStackPane;
+    public Separator menuSeparator;
+    public Tab dataTab, architectureTab, managementTab, resultsTab;
+    public FontIcon dataTabIcon, architectureTabIcon, managementTabIcon, resultsTabIcon, dataStatusIcon, architectureStatusIcon;
+    public Pane architectureButtonPane, managementButtonPane, resultsButtonPane, returnButtonPane;
 
     public NeuralNetwork.NetworkArguments lastArguments;
-    public Parser.inputTypes[] lastInputTypes;
 
     public UIDataController dataController;
     public UIStructureController structureController;
-    public UINetworkController networkController;
+    public UIManagementController managementController;
     public UIOutputController outputController;
+
+    protected boolean sideMenuOpen;
 
     //Initialize components
     public void initialize(){
-        dataController = new UIDataController(trainDataPath, testDataPath, trainDataLabel, testDataLabel, trainDataTable, testDataTable);
-        structureController = new UIStructureController(this, inputVBox, architectureHBox, inputsChoiceBox, lastColumnChoiceBox, inputNeuronCounter, lastLayerNumber, inputNeuronRemoveButton, inputNeuronButton, inputNeuronAutoButton, graphicOutput);
-        networkController = new UINetworkController(this, hyperparametersVBox, updateResultsEpoch);
-        outputController = new UIOutputController(this, simulatorOutput, startSimulatorButton, simulatorHBox, statVBox, chart, chartLabel, matrixLabel, statClassChoiceBox, matrixDataChoiceBox);
+        // Set invisible for fade in animation
+        rootPane.setOpacity(0);
 
-        networkController.setControllerReferences(dataController, structureController, outputController);
+        // Load tabs
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/editor/DataTab.fxml"), bundle);
+            dataTab.setContent(loader.load());
+            dataController = loader.getController();
 
-        inputsChoiceBox.getItems().addAll(bundle.getString("tab.architecture.trainingDatabase"), bundle.getString("tab.architecture.testingDatabase"));
-        inputsChoiceBox.setValue(bundle.getString("tab.architecture.selectDatabase"));
+            loader = new FXMLLoader(getClass().getResource("/fxml/editor/ArchitectureTab.fxml"), bundle);
+            architectureTab.setContent(loader.load());
+            structureController = loader.getController();
 
-        lastColumnChoiceBox.setDisable(true);
-        lastColumnChoiceBox.setValue("...");
+            loader = new FXMLLoader(getClass().getResource("/fxml/editor/ManagementTab.fxml"), bundle);
+            managementTab.setContent(loader.load());
+            managementController = loader.getController();
 
-        graphicOutput.getGraphicsContext2D().fillText("...", graphicOutput.getWidth() / 2, graphicOutput.getHeight() / 2);
+            loader = new FXMLLoader(getClass().getResource("/fxml/editor/ResultsTab.fxml"), bundle);
+            resultsTab.setContent(loader.load());
+            outputController = loader.getController();
 
-        //Create hyperparameters table
-        networkController.initializeHyperparameters();
+        } catch (IOException e) {
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            PopupController.errorMessage("ERROR", "", bundle.getString("logger.error.fileLoadingError"), true);
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE ,"Couldn't load .fxml files. See stack trace:\n" + sw);
+        }
 
-        //Clear simulator
-        outputController.initializeSimulator(false);
+        // Set correct order for side menu animation
+        menuStackPane.setViewOrder(1);
+
+        // Wait for initialization to fade in
+        Platform.runLater(() -> fadeNode(rootPane, 200, false));
     }
 
-    public void browseForTestData() {
-        dataController.browseForTestData();
+    public void cycleFadeNode(Node node, double ms, Runnable onChange) {
+        // Configure fade animation
+        FadeTransition fade = new FadeTransition(Duration.millis(ms / 2), node);
+        fade.setFromValue(1);
+        fade.setToValue(0);
+        fade.setAutoReverse(true);
+        fade.setCycleCount(2);
+        fade.play();
+
+        fade.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
+            if (fade.getDuration().equals(newValue)) {
+                onChange.run();
+            }
+        });
     }
 
-    public void applyTestData() {
-        lastColumnChoiceBox.setDisable(true);
-        lastColumnChoiceBox.getItems().clear();
-        if(!dataController.applyTestData())
+    public Transition fadeNode(Node node, double ms, boolean disappear) {
+        // Configure fade animation
+        FadeTransition fade = new FadeTransition(Duration.millis(ms), node);
+        fade.setFromValue(disappear ? 1 : 0);
+        fade.setToValue(disappear ? 0 : 1);
+        fade.play();
+
+        return fade;
+    }
+
+    public void addHorizontalScroll(ScrollPane scrollPane, Region content) {
+        scrollPane.setOnScroll(event -> {
+            if (event.getDeltaX() == 0 && event.getDeltaY() != 0) {
+                scrollPane.setHvalue(scrollPane.getHvalue() - event.getDeltaY() / content.getWidth() * 2);
+            }
+            if (scrollPane.getViewportBounds().getWidth() <= content.getWidth())
+                event.consume();
+        });
+    }
+
+    // Configure and set up hint
+    public void setupHint(Node node, String text) {
+        String style = """
+                -fx-font-family: Inter;
+                -fx-background-color: #ffffff;
+                -fx-background-radius: 2.5;
+                -fx-opacity: 1;
+                -fx-text-fill: #000000;
+                -fx-font-size: 14;
+                -fx-border-color: #4769ff;
+                -fx-border-width: 1;
+                -fx-border-radius: 2.5;
+                """;
+
+        Tooltip tooltip = new Tooltip(text);
+        tooltip.setMaxWidth(400);
+        tooltip.setWrapText(true);
+        tooltip.setStyle(style);
+        tooltip.setShowDuration(Duration.seconds(60));
+        tooltip.setShowDelay(Duration.millis(500));
+        Tooltip.install(node, tooltip);
+    }
+
+    public void updateTabStatus() {
+        Paint checkMarkColor = Paint.valueOf("#2ed573");
+        Paint crossColor = Paint.valueOf("#ff4757");
+
+        // Data tab checks
+        if (dataController.checkDataStatus() && architectureButtonPane.isDisable()){
+            dataStatusIcon.setIconLiteral("zondi-checkmark-outline");
+            dataStatusIcon.setIconColor(checkMarkColor);
+            setupHint(dataStatusIcon, bundle.getString("tab.data.ready"));
+
+            architectureButtonPane.setDisable(false);
+            architectureStatusIcon.setVisible(true);
+
+            structureController.resetTab();
+            structureController.updateInputList();
+            structureController.updateArchitectureTable();
+        }
+        else if (!dataController.checkDataStatus()){
+            dataStatusIcon.setIconLiteral("zondi-close-outline");
+            dataStatusIcon.setIconColor(crossColor);
+            setupHint(dataStatusIcon, bundle.getString("tab.data.notReady"));
+
+            architectureButtonPane.setDisable(true);
+            managementButtonPane.setDisable(true);
+            resultsButtonPane.setDisable(true);
+            architectureStatusIcon.setVisible(false);
+
+            structureController.resetTab();
             return;
+        }
 
-        //Reset inputs choice box
-        inputsChoiceBox.setValue(bundle.getString("tab.architecture.selectDatabase"));
-        lastColumnChoiceBox.setDisable(false);
-        lastColumnChoiceBox.setValue("...");
-        lastColumnChoiceBox.getItems().addAll(dataController.rawTestSet.get(0));
-        structureController.testInputSettings = null;
-        updateInputTable();
-    }
+        // Architecture tab checks
+        if (structureController.checkArchitectureStatus() && managementButtonPane.isDisable()) {
+            architectureStatusIcon.setIconLiteral("zondi-checkmark-outline");
+            architectureStatusIcon.setIconColor(checkMarkColor);
+            setupHint(architectureStatusIcon, bundle.getString("tab.architecture.ready"));
 
-    public void browseForTrainData() {
-        dataController.browseForTrainData();
-    }
+            managementButtonPane.setDisable(false);
+            resultsButtonPane.setDisable(false);
+        }
+        else if (!structureController.checkArchitectureStatus()){
+            architectureStatusIcon.setIconLiteral("zondi-close-outline");
+            architectureStatusIcon.setIconColor(crossColor);
+            setupHint(architectureStatusIcon, bundle.getString("tab.architecture.notReady"));
 
-    public void applyTrainData() {
-        lastColumnChoiceBox.setDisable(true);
-        lastColumnChoiceBox.getItems().clear();
-        if(!dataController.applyTrainData())
-            return;
-
-        //Reset inputs choice box
-        inputsChoiceBox.setValue(bundle.getString("tab.architecture.selectDatabase"));
-        lastColumnChoiceBox.setDisable(false);
-        lastColumnChoiceBox.setValue("...");
-        lastColumnChoiceBox.getItems().addAll(dataController.rawTrainSet.get(0));
-        structureController.trainInputSettings = null;
-        updateInputTable();
+            managementButtonPane.setDisable(true);
+            resultsButtonPane.setDisable(true);
+        }
     }
 
-    public void loadArchitecture() {
+    protected void animateSideMenu(boolean hide) {
+        updateTabStatus();
+
+        // Prepare animation
+        TranslateTransition transition = new TranslateTransition(Duration.millis(200), sideMenuPane);
+        transition.setFromX(hide ? 0 : -205);
+        transition.setToX(hide ? -205 : 0);
+
+        transition.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
+            // Add effects to tab pane
+            tabPane.setEffect(new GaussianBlur(hide ? (((double) 200 - newValue.toMillis()) / (double) 200) * 10 : (newValue.toMillis() / (double) 200) * 10));
+        });
+
+        transition.setOnFinished(event -> {
+            sideMenuOpen = !hide;
+            if (hide) {
+                sideMenuPane.setVisible(false);
+                menuSeparator.setVisible(true);
+                tabPane.setEffect(null);
+            }
+        });
+        if (!hide) {
+            sideMenuPane.setVisible(true);
+            menuSeparator.setVisible(false);
+        }
+
+        transition.play();
+
+    }
+    public void openSideMenu() {
+        animateSideMenu(sideMenuOpen);
+    }
+    public void closeSideMenu() {
+        if (sideMenuOpen) {
+            animateSideMenu(true);
+        }
     }
 
-    public void loadWeights() {
+    public void openDataTab() {
+        if (tabPane.getSelectionModel().getSelectedIndex() != 0)
+            cycleFadeNode(tabPane, 400, () -> {
+                tabPane.getSelectionModel().select(0);
+                changeTabIcons(0);
+            });
     }
 
-    public void loadHyperparameters() {
+    public void openArchitectureTab() {
+        if (tabPane.getSelectionModel().getSelectedIndex() != 1)
+            cycleFadeNode(tabPane, 400, () -> {
+                tabPane.getSelectionModel().select(1);
+                changeTabIcons(1);
+            });
     }
 
-    public void loadNeuralNetwork() {
+    public void openManagementTab() {
+        if (tabPane.getSelectionModel().getSelectedIndex() != 2)
+            cycleFadeNode(tabPane, 400, () -> {
+                tabPane.getSelectionModel().select(2);
+                changeTabIcons(2);
+            });
     }
 
-    public void browseForArchitecture() {
+    public void openResultsTab() {
+        if (tabPane.getSelectionModel().getSelectedIndex() != 3)
+            cycleFadeNode(tabPane, 400, () -> {
+                tabPane.getSelectionModel().select(3);
+                changeTabIcons(3);
+            });
     }
 
-    public void browseForWeights() {
+    protected void changeTabIcons(int newTab) {
+        double opacity = 0.6;
+        dataTabIcon.setOpacity(newTab == 0 ? 1 : opacity);
+        architectureTabIcon.setOpacity(newTab == 1 ? 1 : opacity);
+        managementTabIcon.setOpacity(newTab == 2 ? 1 : opacity);
+        resultsTabIcon.setOpacity(newTab == 3 ? 1 : opacity);
     }
 
-    public void browseForHyperparameters() {
-    }
-
-    public void browseForNeuralNetwork() {
-    }
-
-    public void saveArchitecture() {
-    }
-
-    public void saveWeights() {
-    }
-
-    public void saveHyperparameters() {
-    }
-
-    public void saveNeuralNetwork() {
-    }
-
-    public void browseSaveArchitecture() {
-    }
-
-    public void browseSaveWeights() {
-    }
-
-    public void browseSaveNeuralNetwork() {
-    }
-
-    public void browseSaveHyperparameters() {
-    }
-
-    public void updateInputTable() {
-        structureController.updateInputTable();
-    }
-    public void addInputNeuron() {
-        structureController.addInputNeuron();
-    }
-    public void removeInputNeuron() {
-        structureController.removeInputNeuron();
-    }
-    public void autoInputNeuron() {
-        structureController.autoInputNeurons();
-    }
-    public void addLayer() {
-        structureController.addLayer();
-    }
-    public void removeLayer() {
-        structureController.removeLayer();
-    }
-    public void startTraining() {
-        networkController.startTraining();
-    }
-    public void prepareSimulation() {
-        outputController.prepareSimulation();
-    }
-
-    //Open browser links
-    public void openFeedbackForm() {
-        PopupController.openURI("https://forms.yandex.ru/u/6443d915d046880af1ef091f/");
-    }
-    public void openVK() {
-        PopupController.openURI("https://vk.com/ravikgames");
-    }
-    public void openGitHub() {
-        PopupController.openURI("https://github.com/ravik-games/AdvancedNeuralNetworkApplication");
-    }
-    public void openMAN() {
-        PopupController.openURI("https://sevman.edusev.ru/");
-    }
-
-    //Open new window
-    public void newWindowMatrix() {
-        outputController.openMatrixInNewWindow(newWindowMatrixButton, matrixParent);
-    }
-    public void newWindowChart() {
-        outputController.openChartInNewWindow(newWindowChartButton, chartParent);
-    }
-
-    //Change output selectors
-    public void changeChartLeft() {
-        outputController.switchSelector(0, true);
-    }
-    public void changeChartRight() {
-        outputController.switchSelector(0, false);
-    }
-    public void changeMatrixLeft() {
-        outputController.switchSelector(1, true);
-    }
-    public void changeMatrixRight() {
-        outputController.switchSelector(1, true);
-    }
-    public void setChartForceYZero(boolean value){
-        chartYAxis.setForceZeroInRange(value);
+    // Fade out and load main menu
+    public void returnToMenu() {
+        fadeNode(rootPane, 200, true).setOnFinished(event -> application.loadMainMenu());
     }
 
     //Interface methods implementations
     @Override
-    public void clearResults(int chartXLength) {
-        outputController.clearCharts();
-        outputController.setChartXLength(chartXLength);
+    public void networkError() {
+        PopupController.errorMessage("ERROR", "", bundle.getString("logger.error.unexpectedNetworkError"));
     }
 
     @Override
-    public void updateResults(boolean clear, int epoch, List<DataTypes.Evaluation> trainEvaluation, List<DataTypes.Evaluation> testEvaluation) {
-        outputController.lastTrainEvaluation = trainEvaluation;
-        outputController.lastTestEvaluation = testEvaluation;
-        outputController.updateChart(clear, epoch + 1);
-        outputController.updateStatistics(clear);
-        outputController.updateSingleClassMatrix(clear);
-        outputController.updateFullMatrix(true);
+    public void networkTrainingStarted() {
+        Platform.runLater(() -> {
+            outputController.clearCharts();
+            outputController.setChartXLength(Hyperparameters.NUMBER_OF_EPOCHS);
+            outputController.initializeMatrixClasses();
+
+            // Disable return button to prevent unexpected errors
+            returnButtonPane.setDisable(true);
+        });
     }
 
     @Override
-    public void simulationClassificationResult(double[] outputValues, String outputCategory) {
-        outputController.simulationClassificationResult(outputValues, outputCategory);
+    public void logEpoch(long number, List<DataTypes.Evaluation> trainEvaluation, List<DataTypes.Evaluation> testEvaluation) {
+        Platform.runLater(() -> {
+            outputController.lastTrainEvaluation = trainEvaluation;
+            outputController.lastTestEvaluation = testEvaluation;
+            outputController.updateChart(number == 0, number + 1);
+            outputController.updateStatistics(number == 0);
+            outputController.updateSingleClassMatrix();
+            outputController.updateFullMatrix(true);
+        });
+    }
+
+    @Override
+    public void epochEnded(long number) {
+    }
+
+    @Override
+    public void networkTrainingFinished() {
+        PopupController.errorMessage("INFORMATION", "", bundle.getString("logger.info.networkFinished"));
+        Platform.runLater(() -> returnButtonPane.setDisable(false));
     }
 
     @Override
     public void simulationPredictionResult(double outputValue) {
-        outputController.simulationPredictionResult(outputValue);
+        Platform.runLater(() -> outputController.simulationPredictionResult(outputValue));
     }
 
     @Override
-    public void setMain(Application application){
-        networkController.setMain(application);
-        outputController.setMain(application);
+    public void simulationClassificationResult(double[] outputValues, String outputCategory) {
+        Platform.runLater(() -> outputController.simulationClassificationResult(outputValues, outputCategory));
+    }
+
+    @Override
+    public void setMain(Application application) {
+        this.application = application;
+        dataController.setReferences(application, application.getDataMaster(), this);
+        structureController.setReferences(application, application.getDataMaster(), this);
+        managementController.setReferences(application, application.getDataMaster(), this, structureController);
+        outputController.setReferences(application, application.getDataMaster(), this);
     }
 }
