@@ -210,7 +210,7 @@
                               </Label>
                            </children>
                         </VBox>
-                        <ScrollPane fitToHeight="true" hbarPolicy="NEVER" pannable="true" style="-fx-border-width: 0;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+                        <ScrollPane fx:id="statisticsScrollPane" fitToHeight="true" hbarPolicy="NEVER" pannable="true" style="-fx-border-width: 0;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
                            <content>
                               <HBox fx:id="statPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                            </content>
@@ -290,7 +290,7 @@
                               </Label>
                            </children>
                         </VBox>
-                        <ScrollPane fitToHeight="true" hbarPolicy="NEVER" pannable="true" style="-fx-border-width: 0;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+                        <ScrollPane fx:id="simulatorScrollPane" fitToHeight="true" hbarPolicy="NEVER" pannable="true" style="-fx-border-width: 0;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
                            <content>
                               <HBox fx:id="simulatorHBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
                                  <children>

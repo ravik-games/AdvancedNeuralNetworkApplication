@@ -40,6 +40,7 @@ public class UIStructureController {
     public Label lastLayerNumber, inputLayerNeuronCount, outputLayerNeuronCount;
     public Canvas architectureCanvas;
     public Pane inputLayerPane, inputPaneAnimationPane, canvasPane;
+    public ScrollPane parametersScrollPane, architectureScrollPane;
     public FontIcon networkTaskInfo, autoInputParametersInfo, networkStructureHint, layerTypeHint, activationFunctionHint;
 
     protected DefaultUIController masterController;
@@ -89,6 +90,10 @@ public class UIStructureController {
         this.masterController = masterController;
 
         setupHints();
+
+        // Set mouse wheel to scroll horizontally
+        masterController.addHorizontalScroll(parametersScrollPane, inputLayerBox);
+        masterController.addHorizontalScroll(architectureScrollPane, architectureLayerInfoPane);
     }
 
     protected void setupHints() {

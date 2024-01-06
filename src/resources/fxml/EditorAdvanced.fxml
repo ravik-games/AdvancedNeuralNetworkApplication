@@ -189,7 +189,7 @@
                         </BorderPane>
                         <BorderPane minWidth="-Infinity" prefWidth="250.0" style="-fx-border-color: #4769ff; -fx-background-color: #ffffff; -fx-border-radius: 0; -fx-border-width: 0;" VBox.vgrow="ALWAYS">
                            <bottom>
-                              <VBox onMouseClicked="#returnToMenu" style="-fx-border-width: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" BorderPane.alignment="CENTER_LEFT">
+                              <VBox fx:id="returnButtonPane" onMouseClicked="#returnToMenu" style="-fx-border-width: 0;" styleClass="button-pane" stylesheets="@../styling/PaneAsButton.css" BorderPane.alignment="CENTER_LEFT">
                                  <children>
                                     <Label minHeight="-Infinity" prefHeight="48.0" text="%general.returnToMenu">
                                        <font>

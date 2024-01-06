@@ -4,10 +4,9 @@ import anna.Application;
 import javafx.animation.FadeTransition;
 import javafx.animation.Transition;
 import javafx.application.Platform;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TabPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -20,8 +19,8 @@ import java.util.logging.Logger;
 public class DefaultUIMenuController {
 
     public VBox appDescriptionVBox;
-    public Label appDescriptionLabel, logLabel;
-    public Pane logPane;
+    public Label appDescriptionLabel;
+    public HBox networkLoadButtonBox;
     public TabPane menuTabPane;
     public ChoiceBox<String> languageChoiceBox;
 
@@ -34,10 +33,6 @@ public class DefaultUIMenuController {
 
         // Workaround for a scene builder bug, where it cant show FXML expression bindings. It can be replaced in FXML as maxWidth="${appDescriptionVBox.width}", but then it makes working in scene builder very inconvenient
         appDescriptionLabel.setMaxWidth(appDescriptionVBox.getMaxWidth());
-        logPane.widthProperty().addListener((observable, oldValue, newValue) -> {
-            logLabel.setPrefWidth(newValue.doubleValue() - 40);
-            logLabel.setMaxWidth(newValue.doubleValue() - 40);
-        });
 
         // Set up language selector
         // There are strange bug with ChoiceBox russian characters, so as workaround names are loaded from the bundle
@@ -48,6 +43,9 @@ public class DefaultUIMenuController {
             Locale.setDefault(newValue.intValue() == 0 ? new Locale("ru") : Locale.ENGLISH);
             PopupController.errorMessage("INFO", "", bundle.getString("menu.language.warning"));
         });
+
+        // Set Load button disabled and add tooltip "In development" TODO Remove when loading feature is done
+        setupHint(networkLoadButtonBox, bundle.getString("general.inDevelopment"));
 
         // Wait for initialization to fade in
         Platform.runLater(() -> sceneFade(false));
@@ -138,5 +136,28 @@ public class DefaultUIMenuController {
     }
     public void openSimpleMode() {
         sceneFade(true).setOnFinished(event -> main.startNetworkEditor(false));
+    }
+
+    // Configure and set up hint
+    public void setupHint(Node node, String text) {
+        String style = """
+                -fx-font-family: Inter;
+                -fx-background-color: #ffffff;
+                -fx-background-radius: 2.5;
+                -fx-opacity: 1;
+                -fx-text-fill: #000000;
+                -fx-font-size: 14;
+                -fx-border-color: #4769ff;
+                -fx-border-width: 1;
+                -fx-border-radius: 2.5;
+                """;
+
+        Tooltip tooltip = new Tooltip(text);
+        tooltip.setMaxWidth(400);
+        tooltip.setWrapText(true);
+        tooltip.setStyle(style);
+        tooltip.setShowDuration(Duration.seconds(10));
+        tooltip.setShowDelay(Duration.millis(500));
+        Tooltip.install(node, tooltip);
     }
 }

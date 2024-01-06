@@ -5,14 +5,9 @@ import anna.math.LearningFunctions;
 import anna.network.data.DataTypes;
 import anna.network.data.Hyperparameters;
 import anna.network.neurons.Neuron;
-import anna.ui.PopupController;
-import anna.ui.UIController;
-import javafx.application.Platform;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Phaser;
@@ -23,7 +18,6 @@ public class NeuralNetwork implements Runnable{
 
     private Thread thread;
     private static final Logger LOGGER = Logger.getLogger(NeuralNetwork.class.getName());
-    private static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
     private final ExecutorService neuronExecutor = Executors.newWorkStealingPool();
 
     NetworkStructure structure;
@@ -63,6 +57,10 @@ public class NeuralNetwork implements Runnable{
         //Log start time
         long startTime = System.nanoTime();
         LOGGER.info("--- Starting neural network ---\n");
+
+        // Call start event in listener
+        if(arguments.listener() != null)
+            arguments.listener().networkTrainingStarted();
 
         //Main loop
         int batchSize = Hyperparameters.BATCH_SIZE <= 0? arguments.trainSet().inputs().length : Hyperparameters.BATCH_SIZE;
@@ -140,10 +138,12 @@ public class NeuralNetwork implements Runnable{
             lastTrainEvaluation.add(trainEvaluation);
             lastTestEvaluation.add(testEvaluation);
 
+            // Call epoch event in listener
+            if(arguments.listener() != null)
+                arguments.listener().epochEnded(i);
+
             //Log data
             if(i == 0 || i == Hyperparameters.NUMBER_OF_EPOCHS - 1 || (arguments.logEpoch() != 0 && (i + 1) % arguments.logEpoch() == 0)){
-                boolean justStarted = i == 0;
-
                 //Log epoch info
                 LOGGER.info("Mean train error of epoch:\t" + trainEvaluation.getMeanError());
                 LOGGER.info("Mean test error of epoch:\t" + testEvaluation.getMeanError() + "\n");
@@ -156,24 +156,24 @@ public class NeuralNetwork implements Runnable{
                 LOGGER.info("Mean train F-score of epoch:\t" + trainEvaluation.getMeanFScore());
                 LOGGER.info("Mean test F-score of epoch: \t" + testEvaluation.getMeanFScore() + "\n");
 
-                if(arguments.uiController() != null){
-                    int finalI = i;
-
-                    //Clear charts
-                    if(justStarted)
-                        Platform.runLater(() -> arguments.uiController().clearResults(Hyperparameters.NUMBER_OF_EPOCHS));
-
-                    //Update results tab
-                    Platform.runLater(() -> arguments.uiController().updateResults(justStarted, finalI, lastTrainEvaluation, lastTestEvaluation));
-                }
+                // Call log event in listener
+                if(arguments.listener() != null)
+                    arguments.listener().logEpoch(i, lastTrainEvaluation, lastTestEvaluation);
             }
         }
 
-        //Log end time
+        // Log end time
         long elapsedTime = System.nanoTime() - startTime;
         LOGGER.info("--- Neural network finished ---");
         LOGGER.info("Elapsed time: " + (elapsedTime / 1000000000) + "s\t" + (elapsedTime / 1000000) + "ms\t" + elapsedTime + "ns\n");
-        //Print time in seconds, milliseconds and nanoseconds
+        // Print time in seconds, milliseconds and nanoseconds
+
+        // Call finish event in listener
+        if(arguments.listener() != null)
+            arguments.listener().networkTrainingFinished();
+
+        // Ask garbage collector to clean up after training TODO: Is it really efficient?
+        System.gc();
     }
 
     //Collect data about iteration
@@ -200,24 +200,24 @@ public class NeuralNetwork implements Runnable{
         return 0;
     }
 
-    public void simulation(double[] inputs){
+    public boolean simulation(double[] inputs){
         //Validate arguments and inputs
         if(lastArguments == null || inputs == null){
-            PopupController.errorMessage("ERROR", "", bundle.getString("logger.error.simulatorError"));
             Logger.getLogger(getClass().getName()).log(Level.WARNING, "An error occurred when starting the simulator. The required values are missing.");
-            return;
+            return false;
         }
         //Run neural network
         double[] outputValues = iteration(inputs);
         if (outputValues == null){
             abortNetworkMessage();
-            return;
+            return false;
         }
         //Update UI
         if(lastArguments.isPrediction())
-            lastArguments.uiController().simulationPredictionResult(outputValues[0]);
+            lastArguments.listener().simulationPredictionResult(outputValues[0]);
         else
-            lastArguments.uiController().simulationClassificationResult(outputValues, lastArguments.trainSet().allOutputTypes()[getOutputIDFromRawOutput(outputValues)]);
+            lastArguments.listener().simulationClassificationResult(outputValues, lastArguments.trainSet().allOutputTypes()[getOutputIDFromRawOutput(outputValues)]);
+        return true;
     }
 
     //Convert ideal value to array of ideal values
@@ -433,11 +433,14 @@ public class NeuralNetwork implements Runnable{
     }
 
     private void abortNetworkMessage(){
-        PopupController.errorMessage("ERROR", "", bundle.getString("logger.error.unexpectedNetworkError"));
         Logger.getLogger(getClass().getName()).log(Level.WARNING, "Unexpected network error, aborting");
+
+        // Call error event in listener
+        if (lastArguments.listener() != null)
+            lastArguments.listener().networkError();
     }
 
     //Structure class for network start arguments
     public record NetworkArguments(DataTypes.NetworkData networkData, DataTypes.Dataset trainSet, DataTypes.Dataset testSet,
-                                   boolean isPrediction, UIController uiController, int logEpoch) { }
+                                   boolean isPrediction, NetworkListener listener, int logEpoch) { }
 }

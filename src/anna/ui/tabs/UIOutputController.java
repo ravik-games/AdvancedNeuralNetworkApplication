@@ -22,6 +22,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -49,12 +50,13 @@ public class UIOutputController {
     public HBox simulatorHBox, statPane;
     public Button startSimulatorButton, newWindowChartButton, newWindowBinaryMatrixButton, newWindowFullMatrixButton;
     public Label simulatorOutput, overallRatingLabel;
-    public LineChart<Integer, Double> chart;
+    public LineChart<Long, Double> chart;
     public NumberAxis chartXAxis, chartYAxis;
     public Parent confusionMatrixFull, confusionMatrixSingle;
     public Pane chartPane, binaryMatrixPane, fullMatrixPane;
     public ChoiceBox<String> matrixDataChoiceBox, statClassChoiceBox;
     public FontIcon binaryMatrixInfo, fullMatrixInfo, statisticsInfo, ratingInfo, simulatorInfo, simulatorResultInfo;
+    public ScrollPane statisticsScrollPane, simulatorScrollPane;
 
     protected DefaultUIController masterController;
     protected UIClassMatrixController binaryMatrixController;
@@ -130,6 +132,10 @@ public class UIOutputController {
         this.masterController = masterController;
 
         setupHints();
+
+        // Set mouse wheel to scroll horizontally
+        masterController.addHorizontalScroll(statisticsScrollPane, statPane);
+        masterController.addHorizontalScroll(simulatorScrollPane, simulatorHBox);
     }
 
     protected void setupHints() {
@@ -181,14 +187,14 @@ public class UIOutputController {
     }
 
     //Show data on chart
-    public void updateChart(boolean newSeries, int epoch){
+    public void updateChart(boolean newSeries, long epoch){
         DataTypes.Evaluation trainData = lastTrainEvaluation.get(lastTrainEvaluation.size() - 1);
         DataTypes.Evaluation testData = lastTestEvaluation.get(lastTestEvaluation.size() - 1);
 
         //Create series if not exist
         if(chart.getData().isEmpty() || chart.getData().get(chart.getData().size() - 1) == null || newSeries) {
-            XYChart.Series<Integer, Double> trainSeries = new XYChart.Series<>();
-            XYChart.Series<Integer, Double> testSeries = new XYChart.Series<>();
+            XYChart.Series<Long, Double> trainSeries = new XYChart.Series<>();
+            XYChart.Series<Long, Double> testSeries = new XYChart.Series<>();
             trainSeries.setName(bundle.getString("tab.data.trainDataset"));
             testSeries.setName(bundle.getString("tab.data.testDataset"));
             chart.getData().add(trainSeries);
@@ -225,39 +231,39 @@ public class UIOutputController {
             return;
         clearCharts();
         //Prepare chart
-        XYChart.Series<Integer, Double> trainSeries = new XYChart.Series<>();
-        XYChart.Series<Integer, Double> testSeries = new XYChart.Series<>();
+        XYChart.Series<Long, Double> trainSeries = new XYChart.Series<>();
+        XYChart.Series<Long, Double> testSeries = new XYChart.Series<>();
         trainSeries.setName(bundle.getString("tab.data.trainDataset"));
         testSeries.setName(bundle.getString("tab.data.testDataset"));
         chart.getData().add(trainSeries);
         chart.getData().add(testSeries);
-        List<XYChart.Data<Integer, Double>> trainValues = new ArrayList<>();
-        List<XYChart.Data<Integer, Double>> testValues = new ArrayList<>();
+        List<XYChart.Data<Long, Double>> trainValues = new ArrayList<>();
+        List<XYChart.Data<Long, Double>> testValues = new ArrayList<>();
 
         //Collect and add data to chart
         switch (ChartSelector.values()[chartSelectionID]){
             case LOSS_CHART -> {
-                for (int i = 0; i < lastTrainEvaluation.size(); i++) {
-                    trainValues.add(new XYChart.Data<>(i + 1, lastTrainEvaluation.get(i).getMeanError()));
+                for (long i = 0; i < lastTrainEvaluation.size(); i++) {
+                    trainValues.add(new XYChart.Data<>(i + 1, lastTrainEvaluation.get(Math.toIntExact(i)).getMeanError()));
                 }
-                for (int i = 0; i < lastTestEvaluation.size(); i++) {
-                    testValues.add(new XYChart.Data<>(i + 1, lastTestEvaluation.get(i).getMeanError()));
+                for (long i = 0; i < lastTestEvaluation.size(); i++) {
+                    testValues.add(new XYChart.Data<>(i + 1, lastTestEvaluation.get(Math.toIntExact(i)).getMeanError()));
                 }
             }
             case ACCURACY_CHART -> {
-                for (int i = 0; i < lastTrainEvaluation.size(); i++) {
-                    trainValues.add(new XYChart.Data<>(i + 1, lastTrainEvaluation.get(i).getMeanAccuracy()));
+                for (long i = 0; i < lastTrainEvaluation.size(); i++) {
+                    trainValues.add(new XYChart.Data<>(i + 1, lastTrainEvaluation.get(Math.toIntExact(i)).getMeanAccuracy()));
                 }
-                for (int i = 0; i < lastTestEvaluation.size(); i++) {
-                    testValues.add(new XYChart.Data<>(i + 1, lastTestEvaluation.get(i).getMeanAccuracy()));
+                for (long i = 0; i < lastTestEvaluation.size(); i++) {
+                    testValues.add(new XYChart.Data<>(i + 1, lastTestEvaluation.get(Math.toIntExact(i)).getMeanAccuracy()));
                 }
             }
             case F_SCORE_CHART -> {
-                for (int i = 0; i < lastTrainEvaluation.size(); i++) {
-                    trainValues.add(new XYChart.Data<>(i + 1, lastTrainEvaluation.get(i).getMeanFScore()));
+                for (long i = 0; i < lastTrainEvaluation.size(); i++) {
+                    trainValues.add(new XYChart.Data<>(i + 1, lastTrainEvaluation.get(Math.toIntExact(i)).getMeanFScore()));
                 }
-                for (int i = 0; i < lastTestEvaluation.size(); i++) {
-                    testValues.add(new XYChart.Data<>(i + 1, lastTestEvaluation.get(i).getMeanFScore()));
+                for (long i = 0; i < lastTestEvaluation.size(); i++) {
+                    testValues.add(new XYChart.Data<>(i + 1, lastTestEvaluation.get(Math.toIntExact(i)).getMeanFScore()));
                 }
             }
         }

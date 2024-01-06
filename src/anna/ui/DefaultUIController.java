@@ -1,8 +1,10 @@
 package anna.ui;
 
 import anna.Application;
+import anna.network.NetworkListener;
 import anna.network.NeuralNetwork;
 import anna.network.data.DataTypes;
+import anna.network.data.Hyperparameters;
 import anna.ui.tabs.UIDataController;
 import anna.ui.tabs.UIManagementController;
 import anna.ui.tabs.UIOutputController;
@@ -13,13 +15,11 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Separator;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.util.Duration;
@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DefaultUIController implements UIController {
+public class DefaultUIController implements UIController, NetworkListener {
     //Master class for all UI stuff
 
     protected static final ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault()); // Get current localization
@@ -46,8 +46,7 @@ public class DefaultUIController implements UIController {
     public Separator menuSeparator;
     public Tab dataTab, architectureTab, managementTab, resultsTab;
     public FontIcon dataTabIcon, architectureTabIcon, managementTabIcon, resultsTabIcon, dataStatusIcon, architectureStatusIcon;
-    public Pane architectureButtonPane, managementButtonPane, resultsButtonPane;
-
+    public Pane architectureButtonPane, managementButtonPane, resultsButtonPane, returnButtonPane;
 
     public NeuralNetwork.NetworkArguments lastArguments;
 
@@ -91,29 +90,8 @@ public class DefaultUIController implements UIController {
         // Set correct order for side menu animation
         menuStackPane.setViewOrder(1);
 
-        //Setup all hints
-        //setupHints();
-
         // Wait for initialization to fade in
         Platform.runLater(() -> fadeNode(rootPane, 200, false));
-    }
-
-    //Interface methods implementations
-    @Override
-    public void clearResults(int chartXLength) {
-        outputController.clearCharts();
-        outputController.setChartXLength(chartXLength);
-        outputController.initializeMatrixClasses();
-    }
-
-    @Override
-    public void updateResults(boolean clear, int epoch, List<DataTypes.Evaluation> trainEvaluation, List<DataTypes.Evaluation> testEvaluation) {
-        outputController.lastTrainEvaluation = trainEvaluation;
-        outputController.lastTestEvaluation = testEvaluation;
-        outputController.updateChart(clear, epoch + 1);
-        outputController.updateStatistics(clear);
-        outputController.updateSingleClassMatrix();
-        outputController.updateFullMatrix(true);
     }
 
     public void cycleFadeNode(Node node, double ms, Runnable onChange) {
@@ -142,23 +120,14 @@ public class DefaultUIController implements UIController {
         return fade;
     }
 
-    @Override
-    public void simulationClassificationResult(double[] outputValues, String outputCategory) {
-        outputController.simulationClassificationResult(outputValues, outputCategory);
-    }
-
-    @Override
-    public void simulationPredictionResult(double outputValue) {
-        outputController.simulationPredictionResult(outputValue);
-    }
-
-    @Override
-    public void setMain(Application application) {
-        this.application = application;
-        dataController.setReferences(application, application.getDataMaster(), this);
-        structureController.setReferences(application, application.getDataMaster(), this);
-        managementController.setReferences(application, application.getDataMaster(), this, structureController);
-        outputController.setReferences(application, application.getDataMaster(), this);
+    public void addHorizontalScroll(ScrollPane scrollPane, Region content) {
+        scrollPane.setOnScroll(event -> {
+            if (event.getDeltaX() == 0 && event.getDeltaY() != 0) {
+                scrollPane.setHvalue(scrollPane.getHvalue() - event.getDeltaY() / content.getWidth() * 2);
+            }
+            if (scrollPane.getViewportBounds().getWidth() <= content.getWidth())
+                event.consume();
+        });
     }
 
     // Configure and set up hint
@@ -179,7 +148,7 @@ public class DefaultUIController implements UIController {
         tooltip.setMaxWidth(400);
         tooltip.setWrapText(true);
         tooltip.setStyle(style);
-        tooltip.setShowDuration(Duration.seconds(10));
+        tooltip.setShowDuration(Duration.seconds(60));
         tooltip.setShowDelay(Duration.millis(500));
         Tooltip.install(node, tooltip);
     }
@@ -192,6 +161,7 @@ public class DefaultUIController implements UIController {
         if (dataController.checkDataStatus() && architectureButtonPane.isDisable()){
             dataStatusIcon.setIconLiteral("zondi-checkmark-outline");
             dataStatusIcon.setIconColor(checkMarkColor);
+            setupHint(dataStatusIcon, bundle.getString("tab.data.ready"));
 
             architectureButtonPane.setDisable(false);
             architectureStatusIcon.setVisible(true);
@@ -203,6 +173,7 @@ public class DefaultUIController implements UIController {
         else if (!dataController.checkDataStatus()){
             dataStatusIcon.setIconLiteral("zondi-close-outline");
             dataStatusIcon.setIconColor(crossColor);
+            setupHint(dataStatusIcon, bundle.getString("tab.data.notReady"));
 
             architectureButtonPane.setDisable(true);
             managementButtonPane.setDisable(true);
@@ -217,6 +188,7 @@ public class DefaultUIController implements UIController {
         if (structureController.checkArchitectureStatus() && managementButtonPane.isDisable()) {
             architectureStatusIcon.setIconLiteral("zondi-checkmark-outline");
             architectureStatusIcon.setIconColor(checkMarkColor);
+            setupHint(architectureStatusIcon, bundle.getString("tab.architecture.ready"));
 
             managementButtonPane.setDisable(false);
             resultsButtonPane.setDisable(false);
@@ -224,6 +196,7 @@ public class DefaultUIController implements UIController {
         else if (!structureController.checkArchitectureStatus()){
             architectureStatusIcon.setIconLiteral("zondi-close-outline");
             architectureStatusIcon.setIconColor(crossColor);
+            setupHint(architectureStatusIcon, bundle.getString("tab.architecture.notReady"));
 
             managementButtonPane.setDisable(true);
             resultsButtonPane.setDisable(true);
@@ -311,5 +284,64 @@ public class DefaultUIController implements UIController {
     // Fade out and load main menu
     public void returnToMenu() {
         fadeNode(rootPane, 200, true).setOnFinished(event -> application.loadMainMenu());
+    }
+
+    //Interface methods implementations
+    @Override
+    public void networkError() {
+        PopupController.errorMessage("ERROR", "", bundle.getString("logger.error.unexpectedNetworkError"));
+    }
+
+    @Override
+    public void networkTrainingStarted() {
+        Platform.runLater(() -> {
+            outputController.clearCharts();
+            outputController.setChartXLength(Hyperparameters.NUMBER_OF_EPOCHS);
+            outputController.initializeMatrixClasses();
+
+            // Disable return button to prevent unexpected errors
+            returnButtonPane.setDisable(true);
+        });
+    }
+
+    @Override
+    public void logEpoch(long number, List<DataTypes.Evaluation> trainEvaluation, List<DataTypes.Evaluation> testEvaluation) {
+        Platform.runLater(() -> {
+            outputController.lastTrainEvaluation = trainEvaluation;
+            outputController.lastTestEvaluation = testEvaluation;
+            outputController.updateChart(number == 0, number + 1);
+            outputController.updateStatistics(number == 0);
+            outputController.updateSingleClassMatrix();
+            outputController.updateFullMatrix(true);
+        });
+    }
+
+    @Override
+    public void epochEnded(long number) {
+    }
+
+    @Override
+    public void networkTrainingFinished() {
+        PopupController.errorMessage("INFORMATION", "", bundle.getString("logger.info.networkFinished"));
+        Platform.runLater(() -> returnButtonPane.setDisable(false));
+    }
+
+    @Override
+    public void simulationPredictionResult(double outputValue) {
+        Platform.runLater(() -> outputController.simulationPredictionResult(outputValue));
+    }
+
+    @Override
+    public void simulationClassificationResult(double[] outputValues, String outputCategory) {
+        Platform.runLater(() -> outputController.simulationClassificationResult(outputValues, outputCategory));
+    }
+
+    @Override
+    public void setMain(Application application) {
+        this.application = application;
+        dataController.setReferences(application, application.getDataMaster(), this);
+        structureController.setReferences(application, application.getDataMaster(), this);
+        managementController.setReferences(application, application.getDataMaster(), this, structureController);
+        outputController.setReferences(application, application.getDataMaster(), this);
     }
 }

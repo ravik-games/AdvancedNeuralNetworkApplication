@@ -6,9 +6,9 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -27,16 +27,16 @@
          <content>
             <GridPane style="-fx-background-color: white;">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
-                      <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+                      <ColumnConstraints hgrow="NEVER" />
+                      <ColumnConstraints hgrow="ALWAYS" />
                     </columnConstraints>
                     <rowConstraints>
-                      <RowConstraints percentHeight="30.0" vgrow="ALWAYS" />
-                      <RowConstraints minHeight="150.0" percentHeight="55.0" vgrow="ALWAYS" />
-                      <RowConstraints percentHeight="15.0" vgrow="ALWAYS" />
+                      <RowConstraints maxHeight="-Infinity" vgrow="NEVER" />
+                      <RowConstraints vgrow="ALWAYS" />
+                      <RowConstraints maxHeight="-Infinity" vgrow="NEVER" />
                     </rowConstraints>
                      <children>
-                        <VBox GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+                        <VBox GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                            <children>
                         <HBox alignment="CENTER_LEFT" spacing="15.0">
                            <children>
@@ -45,13 +45,21 @@
                                     <Image url="@../images/logo.png" />
                                  </image>
                               </ImageView>
-                                    <Label text="ELENNA">
+                                    <Label minWidth="-Infinity" text="ELENNA">
                                        <font>
                                           <Font name="Inter Black" size="85.0" />
                                        </font>
                                     </Label>
                            </children>
                         </HBox>
+                        <Label text="Educational Learning Engine for Neural Network Application" wrapText="true">
+                           <font>
+                              <Font name="Inter Regular" size="16.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="25.0" />
+                           </VBox.margin>
+                        </Label>
                               <Label text="%menu.welcome">
                                  <font>
                                     <Font name="Inter SemiBold" size="28.0" />
@@ -59,10 +67,10 @@
                               </Label>
                            </children>
                            <GridPane.margin>
-                              <Insets left="25.0" top="25.0" />
+                              <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
                            </GridPane.margin>
                         </VBox>
-                        <FlowPane alignment="CENTER_LEFT" hgap="25.0" orientation="VERTICAL" prefWrapLength="200.0" vgap="15.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+                        <FlowPane alignment="CENTER_LEFT" hgap="25.0" orientation="VERTICAL" prefWrapLength="200.0" vgap="15.0" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
                            <GridPane.margin>
                               <Insets left="25.0" right="25.0" />
                            </GridPane.margin>
@@ -77,10 +85,10 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <HBox>
+                              <HBox fx:id="networkLoadButtonBox">
                                  <children>
                                     <Pane layoutX="10.0" layoutY="10.0" prefWidth="5.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-color: #4769ff;" />
-                                    <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadNetwork" prefHeight="45.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.loadNetwork" HBox.hgrow="ALWAYS">
+                                    <Button alignment="BASELINE_LEFT" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadNetwork" prefHeight="45.0" style="-fx-border-radius: 0 2.5 2.5 0;" text="%menu.buttons.loadNetwork" HBox.hgrow="ALWAYS">
                                        <graphic>
                                           <FontIcon iconColor="#4769ff" iconLiteral="zondi-browser-window-open" iconSize="24" wrappingWidth="32.0" />
                                        </graphic>
@@ -142,25 +150,14 @@
                                     <FontIcon iconLiteral="zondi-station" wrappingWidth="36.0" />
                                  </graphic>
                               </Label>
-                        <ScrollPane fitToWidth="true" pannable="true" VBox.vgrow="ALWAYS">
-                           <content>
-                                    <FlowPane fx:id="logPane" orientation="VERTICAL" prefWrapLength="100.0">
-                                 <children>
-                                    <Label fx:id="logLabel" minHeight="-Infinity" prefWidth="540.0" text="%menu.lastChangelog.log.15-12-2023" wrapText="true">
-                                       <font>
-                                          <Font name="Inter Regular" size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                                 </padding>
-                              </FlowPane>
-                           </content>
-                        </ScrollPane>
+                        <TextArea editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-font-family: Inter Light; -fx-font-size: 14;" text="%menu.lastChangelog.log" wrapText="true" VBox.vgrow="ALWAYS">
+                           <font>
+                              <Font name="Inter Light" size="14.0" />
+                           </font>
+                        </TextArea>
                            </children>
                         </VBox>
-                        <FlowPane alignment="BOTTOM_LEFT" hgap="15.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+                        <FlowPane alignment="BOTTOM_LEFT" hgap="15.0" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
                            <GridPane.margin>
                               <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
                            </GridPane.margin>

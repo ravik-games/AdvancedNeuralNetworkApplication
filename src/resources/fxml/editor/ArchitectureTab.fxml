@@ -113,7 +113,7 @@
                                     </Label>
                                  </children>
                               </VBox>
-                              <ScrollPane fitToHeight="true" hbarPolicy="NEVER" pannable="true" style="-fx-border-width: 0;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+                              <ScrollPane fx:id="parametersScrollPane" fitToHeight="true" hbarPolicy="NEVER" pannable="true" style="-fx-border-width: 0;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
                                  <content>
                                     <HBox fx:id="inputLayerBox" />
                                  </content>
@@ -273,7 +273,7 @@
                               </Label>
                            </children>
                         </VBox>
-                        <ScrollPane fitToHeight="true" hbarPolicy="NEVER" pannable="true" style="-fx-border-width: 0;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+                        <ScrollPane fx:id="architectureScrollPane" fitToHeight="true" hbarPolicy="NEVER" pannable="true" style="-fx-border-width: 0;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
                            <content>
                               <VBox>
                                  <children>

@@ -93,6 +93,8 @@ public class Application extends javafx.application.Application {
 
             DefaultUIController controller = loader.getController();
             controller.setMain(this);
+
+            dataMaster.clearData();
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
@@ -108,9 +110,10 @@ public class Application extends javafx.application.Application {
     }
 
     public void runSimulation(double[] inputs){
-        if(network == null)
+        if (network == null)
             return;
-        network.simulation(inputs);
+        if (!network.simulation(inputs))
+            PopupController.errorMessage("ERROR", "", bundle.getString("logger.error.simulatorError"));
     }
 
     public void stop(){
