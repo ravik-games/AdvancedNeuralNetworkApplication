@@ -1,7 +1,18 @@
-# Advanced Neural Network Application
+<div align="center">
+  
+![Static Badge](https://img.shields.io/badge/Java-gray?style=for-the-badge&logo=openjdk&logoColor=white&labelColor=orange)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/ravik-games/AdvancedNeuralNetworkApplication/total?style=for-the-badge&logo=github)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/ravik-games/AdvancedNeuralNetworkApplication?style=for-the-badge&logo=github)
+![GitHub issues](https://img.shields.io/github/issues/ravik-games/AdvancedNeuralNetworkApplication?style=for-the-badge&)
+![GitHub License](https://img.shields.io/github/license/ravik-games/AdvancedNeuralNetworkApplication?style=for-the-badge&)
+![GitHub Release](https://img.shields.io/github/v/release/ravik-games/AdvancedNeuralNetworkApplication?style=for-the-badge&)
+[![Static Badge](https://img.shields.io/badge/Follow_on_VK-gray?style=for-the-badge&logo=VK&logoColor=white&labelColor=blue)](https://vk.com/macrogamedev)
+[![Static Badge](https://img.shields.io/badge/Follow_on_Telegram-gray?style=for-the-badge&logo=telegram&logoColor=white&labelColor=blue)](https://t.me/macrogamedev)
 
-Приложение для создания и использования нейронных сетей - anna.
-Приложение позволяет Пользователю создать, настроить и обучить нейронную сеть прямого распространения (FFNN) для решения задач классификации и прогнозирования (в разработке).
+</div>
+
+# Платформа ANNA/ELENNA
+**Платформа ELENNA** (_Educational Learning Engine for Neural Network Application_) -- это приложение, позволяющее создавать, настраивать и обучать свои нейронные сети для решения задач классификации и прогнозирования (в разработке).
 
 **На данный момент вмещает в себя большую часть задуманного функционала, в том числе:**
 - Загрузка обучающих/тестовых данных;
