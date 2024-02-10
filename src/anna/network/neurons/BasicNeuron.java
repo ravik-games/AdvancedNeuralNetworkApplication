@@ -5,6 +5,7 @@ import anna.network.data.Hyperparameters;
 import anna.network.NetworkStructure;
 
 public class BasicNeuron extends Neuron {
+
     public BasicNeuron(int id, ActivationFunctions.Types activationFunction, NetworkStructure.LayerTypes type) {
         super(id, activationFunction, type);
     }

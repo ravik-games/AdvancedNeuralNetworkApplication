@@ -12,173 +12,170 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox spacing="25.0" style="-fx-background-color: #ffffff;" stylesheets="@../../styling/LightStyle.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="anna.ui.tabs.UIManagementController">
-   <children>
-      <HBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;">
-         <children>
-            <Label text="%tab.management.label">
-               <font>
-                  <Font name="Inter Black" size="85.0" />
-               </font>
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Label>
-         </children>
-         <VBox.margin>
-            <Insets />
-         </VBox.margin>
-      </HBox>
-      <HBox alignment="CENTER_LEFT" spacing="25.0" style="-fx-border-color: #4769ff; -fx-border-width: 0;">
-         <children>
-            <Label text="%tab.management.saveLoadNetwork" wrapText="true" HBox.hgrow="NEVER">
-               <font>
-                  <Font name="Inter SemiBold" size="18.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconLiteral="zondi-browser-window-open" iconSize="28" wrappingWidth="32.0" />
-               </graphic>
-            </Label>
-            <FontIcon fx:id="saveNetworkInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" HBox.hgrow="NEVER" />
-            <HBox alignment="CENTER_RIGHT" spacing="25.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <Button alignment="CENTER" disable="true" mnemonicParsing="false" text="%general.save" textAlignment="CENTER">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="#4769ff" iconLiteral="zondi-folder-outline-add" iconSize="20" wrappingWidth="26.0" />
-                     </graphic>
-                  </Button>
-                  <Button alignment="CENTER" mnemonicParsing="false" text="%general.load" textAlignment="CENTER">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="#4769ff" iconLiteral="zondi-folder-outline" iconSize="20" wrappingWidth="26.0" />
-                     </graphic>
-                  </Button>
-               </children>
-            </HBox>
-         </children>
-      </HBox>
-      <Separator prefWidth="200.0" />
-      <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-         <children>
-            <Label text="%tab.management.saveStatistics">
-               <font>
-                  <Font name="Inter Regular" size="18.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconLiteral="zondi-edit-pencil" iconSize="28" wrappingWidth="32.0" />
-               </graphic>
-            </Label>
-            <TextField fx:id="updateResultsEpoch" prefWidth="100.0" promptText="10" text="10" />
-            <Label text="%tab.management.epoch">
-               <font>
-                  <Font name="Inter Regular" size="18.0" />
-               </font>
-            </Label>
-            <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
-               <children>
-                  <CheckBox fx:id="autoOpenResultsCheckBox" mnemonicParsing="false" selected="true" text="%tab.management.openResults" wrapText="true">
-                     <font>
-                        <Font name="Inter Regular" size="18.0" />
-                     </font>
-                  </CheckBox>
-               </children>
-               <HBox.margin>
-                  <Insets left="15.0" />
-               </HBox.margin>
-            </HBox>
-         </children>
-      </HBox>
-      <HBox alignment="CENTER_LEFT" spacing="25.0">
-         <children>
-            <Button mnemonicParsing="false" onAction="#startNeuralNetwork" style="-fx-border-width: 2; -fx-border-radius: 5; -fx-font-size: 18;" text="%tab.management.startNetwork" HBox.hgrow="NEVER">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-               <graphic>
-                  <FontIcon iconColor="#4769ff" iconLiteral="zondi-play" iconSize="28" wrappingWidth="32.0" />
-               </graphic>
+<VBox spacing="25.0" style="-fx-background-color: #ffffff;" stylesheets="@../../styling/LightStyle.css"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="anna.ui.tabs.UIManagementController">
+    <padding>
+        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0"/>
+    </padding>
+    <HBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;">
+        <VBox.margin>
+            <Insets/>
+        </VBox.margin>
+        <Label text="%tab.management.label">
+            <font>
+                <Font name="Inter Black" size="85.0"/>
+            </font>
+            <HBox.margin>
+                <Insets/>
+            </HBox.margin>
+        </Label>
+    </HBox>
+    <HBox alignment="CENTER_LEFT" spacing="25.0" style="-fx-border-color: #4769ff; -fx-border-width: 0;">
+        <Label text="%tab.management.saveLoadNetwork" wrapText="true" HBox.hgrow="NEVER">
+            <font>
+                <Font name="Inter SemiBold" size="18.0"/>
+            </font>
+            <graphic>
+                <FontIcon iconLiteral="zondi-browser-window-open" iconSize="28" wrappingWidth="32.0"/>
+            </graphic>
+        </Label>
+        <FontIcon fx:id="saveNetworkInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28"
+                  HBox.hgrow="NEVER"/>
+        <HBox alignment="CENTER_RIGHT" spacing="25.0" HBox.hgrow="ALWAYS">
+            <Button alignment="CENTER" disable="true" mnemonicParsing="false" text="%general.save"
+                    textAlignment="CENTER">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+                <graphic>
+                    <FontIcon iconColor="#4769ff" iconLiteral="zondi-folder-outline-add" iconSize="20"
+                              wrappingWidth="26.0"/>
+                </graphic>
             </Button>
-            <FontIcon fx:id="startNetworkStatus" iconColor="#2ed573" iconLiteral="zondi-checkmark-outline" iconSize="32" text="" wrappingWidth="32.0" />
-         </children>
-      </HBox>
-      <Separator prefWidth="200.0" style="-fx-border-width: 1;" />
-      <HBox alignment="CENTER_LEFT" spacing="25.0" style="-fx-border-color: #4769ff; -fx-border-width: 0;">
-         <children>
-            <Label text="%tab.management.hyperparameters.label" wrapText="true" HBox.hgrow="NEVER">
-               <font>
-                  <Font name="Inter SemiBold" size="18.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconLiteral="zondi-wrench" iconSize="28" wrappingWidth="32.0" />
-               </graphic>
+            <Button alignment="CENTER" mnemonicParsing="false" text="%general.load" textAlignment="CENTER">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+                <graphic>
+                    <FontIcon iconColor="#4769ff" iconLiteral="zondi-folder-outline" iconSize="20"
+                              wrappingWidth="26.0"/>
+                </graphic>
+            </Button>
+        </HBox>
+    </HBox>
+    <Separator prefWidth="200.0"/>
+    <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+        <Label text="%tab.management.saveStatistics">
+            <font>
+                <Font name="Inter Regular" size="18.0"/>
+            </font>
+            <graphic>
+                <FontIcon iconLiteral="zondi-edit-pencil" iconSize="28" wrappingWidth="32.0"/>
+            </graphic>
+        </Label>
+        <TextField fx:id="updateResultsEpoch" prefWidth="100.0" promptText="10" text="10"/>
+        <Label text="%tab.management.epoch">
+            <font>
+                <Font name="Inter Regular" size="18.0"/>
+            </font>
+        </Label>
+        <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
+            <HBox.margin>
+                <Insets left="15.0"/>
+            </HBox.margin>
+            <CheckBox fx:id="autoOpenResultsCheckBox" mnemonicParsing="false" selected="true"
+                      text="%tab.management.openResults" wrapText="true">
+                <font>
+                    <Font name="Inter Regular" size="18.0"/>
+                </font>
+            </CheckBox>
+        </HBox>
+    </HBox>
+    <HBox alignment="CENTER_LEFT" spacing="25.0">
+        <Button mnemonicParsing="false" onAction="#startNeuralNetwork"
+                style="-fx-border-width: 2; -fx-border-radius: 5; -fx-font-size: 18;"
+                text="%tab.management.startNetwork" HBox.hgrow="NEVER">
+            <HBox.margin>
+                <Insets/>
+            </HBox.margin>
+            <graphic>
+                <FontIcon iconColor="#4769ff" iconLiteral="zondi-play" iconSize="28" wrappingWidth="32.0"/>
+            </graphic>
+        </Button>
+        <FontIcon fx:id="startNetworkStatus" iconColor="#2ed573" iconLiteral="zondi-checkmark-outline" iconSize="32"
+                  text="" wrappingWidth="32.0"/>
+    </HBox>
+    <Separator prefWidth="200.0" style="-fx-border-width: 1;"/>
+    <HBox alignment="CENTER_LEFT" spacing="25.0" style="-fx-border-color: #4769ff; -fx-border-width: 0;">
+        <Label text="%tab.management.hyperparameters.label" wrapText="true" HBox.hgrow="NEVER">
+            <font>
+                <Font name="Inter SemiBold" size="18.0"/>
+            </font>
+            <graphic>
+                <FontIcon iconLiteral="zondi-wrench" iconSize="28" wrappingWidth="32.0"/>
+            </graphic>
+        </Label>
+        <FontIcon fx:id="hyperparametersHint" iconColor="#4769ff" iconLiteral="zondi-light-bulb" iconSize="28"
+                  HBox.hgrow="NEVER"/>
+        <HBox alignment="CENTER_RIGHT" spacing="25.0" HBox.hgrow="ALWAYS">
+            <Button alignment="CENTER" mnemonicParsing="false" text="%general.save" textAlignment="CENTER">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+                <graphic>
+                    <FontIcon iconColor="#4769ff" iconLiteral="zondi-folder-outline-add" iconSize="20"
+                              wrappingWidth="26.0"/>
+                </graphic>
+            </Button>
+            <Button alignment="CENTER" mnemonicParsing="false" text="%general.load" textAlignment="CENTER">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+                <graphic>
+                    <FontIcon iconColor="#4769ff" iconLiteral="zondi-folder-outline" iconSize="20"
+                              wrappingWidth="26.0"/>
+                </graphic>
+            </Button>
+        </HBox>
+    </HBox>
+    <VBox style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-radius: 2.5; -fx-border-radius: 2.5;"
+          VBox.vgrow="ALWAYS">
+        <HBox style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;" VBox.vgrow="NEVER">
+            <Label alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" minWidth="-Infinity"
+                   prefWidth="200.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;"
+                   text="%tab.management.hyperparameters.name" textAlignment="CENTER" wrapText="true"
+                   HBox.hgrow="NEVER">
+                <padding>
+                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                </padding>
+                <font>
+                    <Font name="Inter SemiBold" size="16.0"/>
+                </font>
             </Label>
-            <FontIcon fx:id="hyperparametersHint" iconColor="#4769ff" iconLiteral="zondi-light-bulb" iconSize="28" HBox.hgrow="NEVER" />
-            <HBox alignment="CENTER_RIGHT" spacing="25.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <Button alignment="CENTER" mnemonicParsing="false" text="%general.save" textAlignment="CENTER">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="#4769ff" iconLiteral="zondi-folder-outline-add" iconSize="20" wrappingWidth="26.0" />
-                     </graphic>
-                  </Button>
-                  <Button alignment="CENTER" mnemonicParsing="false" text="%general.load" textAlignment="CENTER">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="#4769ff" iconLiteral="zondi-folder-outline" iconSize="20" wrappingWidth="26.0" />
-                     </graphic>
-                  </Button>
-               </children>
-            </HBox>
-         </children>
-      </HBox>
-      <VBox style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-background-radius: 2.5; -fx-border-radius: 2.5;" VBox.vgrow="ALWAYS">
-         <children>
-            <HBox style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;" VBox.vgrow="NEVER">
-               <children>
-                  <Label alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" minWidth="-Infinity" prefWidth="200.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;" text="%tab.management.hyperparameters.name" textAlignment="CENTER" wrapText="true" HBox.hgrow="NEVER">
-                     <padding>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                     </padding>
-                     <font>
-                        <Font name="Inter SemiBold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label maxHeight="1.7976931348623157E308" minWidth="-Infinity" prefWidth="250.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;" text="%tab.management.hyperparameters.value" wrapText="true" HBox.hgrow="NEVER">
-                     <padding>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                     </padding>
-                     <font>
-                        <Font name="Inter SemiBold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="300.0" text="%tab.management.hyperparameters.description" wrapText="true" HBox.hgrow="ALWAYS">
-                     <padding>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                     </padding>
-                     <font>
-                        <Font name="Inter SemiBold" size="16.0" />
-                     </font>
-                  </Label>
-               </children>
-            </HBox>
-            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" pannable="true" style="-fx-border-width: 0;" VBox.vgrow="ALWAYS">
-               <content>
-                  <VBox fx:id="hyperparametersVBox" />
-               </content>
-            </ScrollPane>
-         </children>
-      </VBox>
-   </children>
-   <padding>
-      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
-   </padding>
+            <Label maxHeight="1.7976931348623157E308" minWidth="-Infinity" prefWidth="250.0"
+                   style="-fx-border-color: #4769ff; -fx-border-width: 0 1 0 0;"
+                   text="%tab.management.hyperparameters.value" wrapText="true" HBox.hgrow="NEVER">
+                <padding>
+                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                </padding>
+                <font>
+                    <Font name="Inter SemiBold" size="16.0"/>
+                </font>
+            </Label>
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="300.0"
+                   text="%tab.management.hyperparameters.description" wrapText="true" HBox.hgrow="ALWAYS">
+                <padding>
+                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+                </padding>
+                <font>
+                    <Font name="Inter SemiBold" size="16.0"/>
+                </font>
+            </Label>
+        </HBox>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" pannable="true" style="-fx-border-width: 0;"
+                    VBox.vgrow="ALWAYS">
+            <VBox fx:id="hyperparametersVBox"/>
+        </ScrollPane>
+    </VBox>
 </VBox>
