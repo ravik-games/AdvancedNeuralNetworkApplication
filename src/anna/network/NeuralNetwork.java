@@ -4,6 +4,7 @@ import anna.math.ErrorFunctions;
 import anna.math.LearningFunctions;
 import anna.network.data.DataTypes;
 import anna.network.data.Hyperparameters;
+import anna.network.neurons.BiasNeuron;
 import anna.network.neurons.Neuron;
 
 import java.util.ArrayList;
@@ -256,7 +257,7 @@ public class NeuralNetwork implements Runnable{
     //Contains main structure of NN.
     private double[] iteration(double[] inputs){
         //Set input neurons values
-        for (int i = 0; i < structure.getNeuronsAmountInLayer(0); i++) {
+        for (int i = 0; i < structure.getNeuronsAmountInLayer(0) - Boolean.compare(Hyperparameters.USE_BIAS_NEURONS, false); i++) {
             structure.getNeuronByPosition(0, i).setLastOutput(inputs[i]);
         }
 
@@ -325,8 +326,9 @@ public class NeuralNetwork implements Runnable{
                     updateWeights(outputConnections, currentNeuron, k);
                 }
 
-                //Calculate delta
-                currentNeuron.setDelta(LearningFunctions.hiddenDelta(neuronWeights, neuronDeltas, currentNeuron.getLastRawOutput(), currentNeuron.getActivationFunction()));
+                //Calculate delta, skip for bias neuron
+                if (!(currentNeuron instanceof BiasNeuron))
+                    currentNeuron.setDelta(LearningFunctions.hiddenDelta(neuronWeights, neuronDeltas, currentNeuron.getLastRawOutput(), currentNeuron.getActivationFunction()));
             }
         }
 

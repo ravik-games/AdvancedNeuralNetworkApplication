@@ -1,10 +1,11 @@
 package anna.network.neurons;
 
 import anna.math.ActivationFunctions;
-import anna.network.data.Hyperparameters;
 import anna.network.NetworkStructure;
 import anna.ui.PopupController;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,21 +17,21 @@ public abstract class Neuron {
     protected double lastRawOutput; //Last output without activation function
     protected double lastOutput;
 
-    protected NetworkStructure.LayerTypes type;
+    protected NetworkStructure.LayerTypes layerType;
     protected ActivationFunctions.Types activationFunction;
 
-    public Neuron(int id, ActivationFunctions.Types activationFunction, NetworkStructure.LayerTypes type) {
+    public Neuron(int id, ActivationFunctions.Types activationFunction, NetworkStructure.LayerTypes layerTypes) {
         this.id = id;
         this.activationFunction = activationFunction;
-        this.type = type;
+        this.layerType = layerTypes;
     }
 
     public boolean calculateOutput(double[] inputs, double[] weights){
         //Throw error and stop program when length of inputs and length of weights doesn't match.
-        if(inputs.length != weights.length - Boolean.compare(Hyperparameters.USE_BIAS_NEURONS, false)){
-            //TODO Test conditions
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "CRITICAL ERROR: length of inputs and length of weights in neuron doesn't match");
-            PopupController.errorMessage("ERROR", "", "Произошла критическая ошибка при работе нейронной сети. Количество входных данных и весов нейрона не совпадает.");
+        if(inputs.length != weights.length){
+            ResourceBundle bundle = ResourceBundle.getBundle("fxml/bindings/Localization", Locale.getDefault());
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "CRITICAL ERROR: length of inputs and length of weights in neuron doesn't match");
+            PopupController.errorMessage("ERROR", "", bundle.getString("logger.error.neuronInputsMismatch"));
             return false;
         }
 
@@ -52,6 +53,14 @@ public abstract class Neuron {
     }
 
     protected abstract double calculateRawOutput(double[] inputs, double[] weights);
+
+    public boolean isBias() {
+        return false;
+    }
+
+    public NetworkStructure.LayerTypes getType() {
+        return layerType;
+    }
 
     public int getId() {
         return id;

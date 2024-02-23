@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -53,6 +54,7 @@ public class Application extends javafx.application.Application {
     @Override
     public void start(Stage primaryStage) {
         Locale.setDefault(DataMaster.loadProgramData().locale());
+        loadFonts();
         dataMaster = new DataMaster(); // Initialize DataMaster class for working with dataset
 
         mainScene = new Scene(new Pane(), 1280, 720);
@@ -65,6 +67,13 @@ public class Application extends javafx.application.Application {
         loadMainMenu();
 
         primaryStage.show();
+    }
+
+    protected void loadFonts() {
+        Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-Light.ttf"), 14);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-Regular.ttf"), 14);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-SemiBold.ttf"), 14);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-Black.ttf"), 14);
     }
 
     // Load main menu

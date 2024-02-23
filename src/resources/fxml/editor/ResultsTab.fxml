@@ -16,334 +16,343 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox spacing="25.0" style="-fx-background-color: #ffffff;" stylesheets="@../../styling/LightStyle.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="anna.ui.tabs.UIOutputController">
-   <children>
-      <HBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;">
-         <children>
-            <Label text="%tab.results.label">
-               <font>
-                  <Font name="Inter Black" size="85.0" />
-               </font>
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Label>
-         </children>
-         <VBox.margin>
-            <Insets />
-         </VBox.margin>
-      </HBox>
-      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-border-width: 0; -fx-background-color: transparent; -fx-padding: 0; -fx-background-insets: 0;" VBox.vgrow="ALWAYS">
-         <content>
-            <VBox spacing="25.0">
-               <children>
-                  <VBox spacing="10.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;" VBox.vgrow="ALWAYS">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                           <children>
-                              <Button mnemonicParsing="false" onAction="#changeChartLeft" text="&lt;">
-                                 <font>
-                                    <Font name="Inter Regular" size="12.0" />
-                                 </font>
-                              </Button>
-                              <Label fx:id="chartLabel" alignment="CENTER" prefWidth="300.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-border-radius: 2.5;" text="%tab.results.chart.meanErrorChart">
-                                 <font>
-                                    <Font name="Inter SemiBold" size="18.0" />
-                                 </font>
-                                 <padding>
-                                    <Insets bottom="3.0" top="3.0" />
-                                 </padding>
-                              </Label>
-                              <Button mnemonicParsing="false" onAction="#changeChartRight" text="&gt;" />
-                              <Pane HBox.hgrow="ALWAYS" />
-                              <Button fx:id="newWindowChartButton" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#newWindowChart" text="%tab.results.openInNewWindow" textAlignment="CENTER">
-                                 <font>
-                                    <Font name="Segoe UI" size="14.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                        </HBox>
-                        <AnchorPane fx:id="chartPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="250.0" VBox.vgrow="ALWAYS">
-                           <children>
-                              <LineChart fx:id="chart" animated="false" createSymbols="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@../../styling/LightStyle.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <xAxis>
-                                    <NumberAxis fx:id="chartXAxis" forceZeroInRange="false" label="%tab.results.chart.epoch" lowerBound="1.0" minorTickVisible="false" side="BOTTOM" tickUnit="1.0" />
-                                 </xAxis>
-                                 <yAxis>
-                                    <NumberAxis fx:id="chartYAxis" label="%tab.results.chart.meanError" minorTickCount="2" side="LEFT" tickUnit="0.1" upperBound="1.0" />
-                                 </yAxis>
-                              </LineChart>
-                           </children>
-                        </AnchorPane>
-                     </children>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                     <padding>
-                        <Insets bottom="5.0" />
-                     </padding>
-                  </VBox>
-                  <HBox alignment="CENTER_LEFT" spacing="25.0">
-                     <children>
-                        <Label text="%tab.results.matrix.data">
-                           <font>
-                              <Font name="Inter Regular" size="18.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconLiteral="zondi-servers" iconSize="28" wrappingWidth="32.0" />
-                           </graphic>
-                        </Label>
-                        <ChoiceBox fx:id="matrixDataChoiceBox" minWidth="150.0" />
-                     </children>
-                  </HBox>
-                  <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="25.0" VBox.vgrow="ALWAYS">
-                     <children>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="25.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                 <children>
-                                    <HBox alignment="CENTER_LEFT" spacing="25.0">
-                                       <children>
-                                          <Label text="%tab.results.matrix.small" wrapText="true">
-                                             <font>
-                                                <Font name="Inter SemiBold" size="18.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconLiteral="zondi-border-all" iconSize="28" wrappingWidth="32.0" />
-                                             </graphic>
-                                          </Label>
-                                          <FontIcon fx:id="binaryMatrixInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
-                                       </children>
-                                    </HBox>
-                                    <Pane HBox.hgrow="ALWAYS" />
-                                    <Button fx:id="newWindowBinaryMatrixButton" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#newWindowBinaryMatrix" text="%tab.results.openInNewWindow" textAlignment="CENTER">
-                                       <font>
-                                          <Font name="Segoe UI" size="14.0" />
-                                       </font>
-                                    </Button>
-                                 </children>
-                              </HBox>
-                              <AnchorPane fx:id="binaryMatrixPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" VBox.vgrow="ALWAYS" />
-                           </children>
-                        </VBox>
-                        <Separator maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" style="-fx-border-width: 1;" />
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="25.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                 <children>
-                                    <HBox alignment="CENTER_LEFT" spacing="25.0">
-                                       <children>
-                                          <Label text="%tab.results.matrix.full" wrapText="true">
-                                             <font>
-                                                <Font name="Inter SemiBold" size="18.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconLiteral="zondi-border-all" iconSize="28" wrappingWidth="32.0" />
-                                             </graphic>
-                                          </Label>
-                                          <FontIcon fx:id="fullMatrixInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
-                                       </children>
-                                    </HBox>
-                                    <Pane HBox.hgrow="ALWAYS" />
-                                    <Button fx:id="newWindowFullMatrixButton" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#newWindowFullMatrix" text="%tab.results.openInNewWindow" textAlignment="CENTER">
-                                       <font>
-                                          <Font name="Segoe UI" size="14.0" />
-                                       </font>
-                                    </Button>
-                                 </children>
-                              </HBox>
-                              <AnchorPane fx:id="fullMatrixPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                           </children>
-                        </VBox>
-                     </children>
-                  </HBox>
-                  <Separator maxWidth="1.7976931348623157E308" style="-fx-border-width: 1;" />
-                  <HBox alignment="CENTER_LEFT" spacing="25.0">
-                     <children>
-                        <Label text="%tab.results.statistics">
-                           <font>
-                              <Font name="Inter SemiBold" size="18.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconLiteral="zondi-list" iconSize="28" wrappingWidth="32.0" />
-                           </graphic>
-                        </Label>
-                        <FontIcon fx:id="statisticsInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
-                        <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="%tab.results.statistics.class" HBox.hgrow="ALWAYS">
-                           <font>
-                              <Font name="Inter Regular" size="18.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconLiteral="zondi-search" iconSize="28" wrappingWidth="32.0" />
-                           </graphic>
-                        </Label>
-                        <ChoiceBox fx:id="statClassChoiceBox" minWidth="150.0" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="524.0" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-border-radius: 2.5; -fx-background-radius: 2.5;">
-                     <children>
-                        <VBox alignment="CENTER_LEFT" minWidth="-Infinity" style="-fx-border-color: #4769ff; -fx-border-width: 0 2 0 0;" HBox.hgrow="NEVER">
-                           <children>
-                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%tab.results.statistics.metric" wrapText="true" VBox.vgrow="ALWAYS">
-                                 <padding>
-                                    <Insets bottom="25.0" left="15.0" right="15.0" top="25.0" />
-                                 </padding>
-                                 <font>
-                                    <Font name="Inter SemiBold" size="16.0" />
-                                 </font>
-                              </Label>
-                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" text="%general.training" wrapText="true" VBox.vgrow="ALWAYS">
-                                 <padding>
-                                    <Insets bottom="25.0" left="15.0" right="15.0" top="25.0" />
-                                 </padding>
-                                 <font>
-                                    <Font name="Inter SemiBold" size="16.0" />
-                                 </font>
-                              </Label>
-                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;" text="%general.testing" wrapText="true" VBox.vgrow="ALWAYS">
-                                 <padding>
-                                    <Insets bottom="25.0" left="15.0" right="15.0" top="25.0" />
-                                 </padding>
-                                 <font>
-                                    <Font name="Inter SemiBold" size="16.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </VBox>
-                        <ScrollPane fx:id="statisticsScrollPane" fitToHeight="true" hbarPolicy="NEVER" pannable="true" style="-fx-border-width: 0;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
-                           <content>
-                              <HBox fx:id="statPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-                           </content>
-                        </ScrollPane>
-                        <VBox alignment="TOP_CENTER" minWidth="-Infinity" prefWidth="250.0" spacing="25.0" style="-fx-border-width: 0 0 0 2; -fx-border-color: #4769ff;">
-                           <children>
-                              <HBox alignment="CENTER" spacing="25.0">
-                                 <children>
-                                    <Label text="%tab.results.statistics.rating">
-                                       <font>
-                                          <Font name="Inter SemiBold" size="18.0" />
-                                       </font>
-                                    </Label>
-                                    <FontIcon fx:id="ratingInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
-                                 </children>
-                              </HBox>
-                              <BorderPane style="-fx-border-width: 1; -fx-border-color: #4769ff; -fx-border-radius: 2.5; -fx-background-radius: 2.5;" VBox.vgrow="ALWAYS">
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin>
-                                 <center>
-                                    <Label fx:id="overallRatingLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="..." wrapText="true">
-                                       <font>
-                                          <Font name="Inter Regular" size="32.0" />
-                                       </font>
-                                    </Label>
-                                 </center>
-                              </BorderPane>
-                           </children>
-                           <padding>
-                              <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
-                           </padding>
-                           <HBox.margin>
-                              <Insets left="5.0" />
-                           </HBox.margin>
-                        </VBox>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" layoutX="157.0" layoutY="11.0" minHeight="-Infinity" minWidth="-Infinity" pannable="true" style="-fx-border-width: 0;" vbarPolicy="NEVER">
-                           <content>
-                              <HBox fx:id="statPane1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-                           </content>
-                        </ScrollPane>
-                     </children>
-                  </HBox>
-                  <Separator maxWidth="1.7976931348623157E308" style="-fx-border-width: 1;" />
-                  <HBox alignment="CENTER_LEFT" spacing="25.0" VBox.vgrow="NEVER">
-                     <children>
-                        <Label text="%tab.results.simulator">
-                           <font>
-                              <Font name="Inter SemiBold" size="18.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconLiteral="zondi-plugin" iconSize="28" wrappingWidth="32.0" />
-                           </graphic>
-                        </Label>
-                        <FontIcon fx:id="simulatorInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-border-radius: 2.5; -fx-background-radius: 2.5;">
-                     <children>
-                        <VBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 0 2 0 0;" HBox.hgrow="NEVER">
-                           <children>
-                              <Label alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="71.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 1 0;" text="%tab.results.simulator.parameter" wrapText="true" VBox.vgrow="NEVER">
-                                 <padding>
-                                    <Insets bottom="25.0" left="15.0" right="15.0" top="25.0" />
-                                 </padding>
-                                 <font>
-                                    <Font name="Inter SemiBold" size="16.0" />
-                                 </font>
-                              </Label>
-                              <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="%tab.results.simulator.value" wrapText="true" VBox.vgrow="ALWAYS">
-                                 <padding>
-                                    <Insets bottom="25.0" left="15.0" right="15.0" top="25.0" />
-                                 </padding>
-                                 <font>
-                                    <Font name="Inter SemiBold" size="16.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </VBox>
-                        <ScrollPane fx:id="simulatorScrollPane" fitToHeight="true" hbarPolicy="NEVER" pannable="true" style="-fx-border-width: 0;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
-                           <content>
-                              <HBox fx:id="simulatorHBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
-                                 <children>
-                                    <VBox HBox.hgrow="ALWAYS">
-                                       <children>
-                                          <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                             <padding>
-                                                <Insets bottom="15.0" left="25.0" right="15.0" top="25.0" />
-                                             </padding>
-                                          </BorderPane>
-                                       </children>
-                                    </VBox>
-                                 </children>
-                              </HBox>
-                           </content>
-                        </ScrollPane>
-                        <VBox alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" prefWidth="350.0" spacing="25.0" style="-fx-border-width: 0 0 0 2; -fx-border-color: #4769ff;">
-                           <children>
-                              <HBox alignment="CENTER" spacing="25.0">
-                                 <children>
-                                    <Label text="%tab.results.simulator.result">
-                                       <font>
-                                          <Font name="Inter SemiBold" size="18.0" />
-                                       </font>
-                                    </Label>
-                                    <FontIcon fx:id="simulatorResultInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline" iconSize="28" />
-                                 </children>
-                              </HBox>
-                              <Label fx:id="simulatorOutput" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="..." wrapText="true" VBox.vgrow="ALWAYS">
-                                 <font>
-                                    <Font name="Inter Regular" size="16.0" />
-                                 </font>
-                              </Label>
-                              <Button fx:id="startSimulatorButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#prepareSimulationValues" text="%tab.results.simulator.calculate" />
-                           </children>
-                           <padding>
-                              <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
-                           </padding>
-                           <HBox.margin>
-                              <Insets left="5.0" />
-                           </HBox.margin>
-                        </VBox>
-                     </children>
-                  </HBox>
-               </children>
-               <padding>
-                  <Insets right="5.0" />
-               </padding>
+<VBox spacing="25.0" style="-fx-background-color: #ffffff;" stylesheets="@../../styling/LightStyle.css"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="anna.ui.tabs.UIOutputController">
+    <padding>
+        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0"/>
+    </padding>
+    <HBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;">
+        <VBox.margin>
+            <Insets/>
+        </VBox.margin>
+        <Label text="%tab.results.label">
+            <font>
+                <Font name="Inter Black" size="85.0"/>
+            </font>
+            <HBox.margin>
+                <Insets/>
+            </HBox.margin>
+        </Label>
+    </HBox>
+    <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER"
+                style="-fx-border-width: 0; -fx-background-color: transparent; -fx-padding: 0; -fx-background-insets: 0;"
+                VBox.vgrow="ALWAYS">
+        <VBox spacing="25.0">
+            <padding>
+                <Insets right="5.0"/>
+            </padding>
+            <VBox spacing="10.0" style="-fx-border-color: #4769ff; -fx-border-width: 0 0 2 0;"
+                  VBox.vgrow="ALWAYS">
+                <VBox.margin>
+                    <Insets/>
+                </VBox.margin>
+                <padding>
+                    <Insets bottom="5.0"/>
+                </padding>
+                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                    <Button mnemonicParsing="false" onAction="#changeChartLeft" text="&lt;">
+                        <font>
+                            <Font name="Inter Regular" size="12.0"/>
+                        </font>
+                    </Button>
+                    <Label fx:id="chartLabel" alignment="CENTER" prefWidth="300.0"
+                           style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-border-radius: 2.5;"
+                           text="%tab.results.chart.meanErrorChart">
+                        <font>
+                            <Font name="Inter SemiBold" size="18.0"/>
+                        </font>
+                        <padding>
+                            <Insets bottom="3.0" top="3.0"/>
+                        </padding>
+                    </Label>
+                    <Button mnemonicParsing="false" onAction="#changeChartRight" text="&gt;"/>
+                    <Pane HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="newWindowChartButton" alignment="CENTER" minHeight="-Infinity"
+                            minWidth="-Infinity" mnemonicParsing="false" onAction="#newWindowChart"
+                            text="%tab.results.openInNewWindow" textAlignment="CENTER">
+                        <font>
+                            <Font name="Segoe UI" size="14.0"/>
+                        </font>
+                    </Button>
+                </HBox>
+                <AnchorPane fx:id="chartPane" maxHeight="1.7976931348623157E308"
+                            maxWidth="1.7976931348623157E308" minHeight="250.0" VBox.vgrow="ALWAYS">
+                    <LineChart fx:id="chart" animated="false" createSymbols="false" legendSide="TOP"
+                               maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                               stylesheets="@../../styling/LightStyle.css" AnchorPane.bottomAnchor="0.0"
+                               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                               AnchorPane.topAnchor="0.0">
+                        <xAxis>
+                            <NumberAxis fx:id="chartXAxis" forceZeroInRange="false"
+                                        label="%tab.results.chart.epoch" lowerBound="1.0"
+                                        minorTickVisible="false" side="BOTTOM" tickUnit="1.0"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis fx:id="chartYAxis" label="%tab.results.chart.meanError"
+                                        minorTickCount="2" side="LEFT" tickUnit="0.1" upperBound="1.0"/>
+                        </yAxis>
+                    </LineChart>
+                </AnchorPane>
             </VBox>
-         </content>
-      </ScrollPane>
-   </children>
-   <padding>
-      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
-   </padding>
+            <HBox alignment="CENTER_LEFT" spacing="25.0">
+                <Label text="%tab.results.matrix.data">
+                    <font>
+                        <Font name="Inter Regular" size="18.0"/>
+                    </font>
+                    <graphic>
+                        <FontIcon iconLiteral="zondi-servers" iconSize="28" wrappingWidth="32.0"/>
+                    </graphic>
+                </Label>
+                <ChoiceBox fx:id="matrixDataChoiceBox" minWidth="150.0"/>
+            </HBox>
+            <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="25.0"
+                  VBox.vgrow="ALWAYS">
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="25.0"
+                      HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                        <HBox alignment="CENTER_LEFT" spacing="25.0">
+                            <Label text="%tab.results.matrix.small" wrapText="true">
+                                <font>
+                                    <Font name="Inter SemiBold" size="18.0"/>
+                                </font>
+                                <graphic>
+                                    <FontIcon iconLiteral="zondi-border-all" iconSize="28"
+                                              wrappingWidth="32.0"/>
+                                </graphic>
+                            </Label>
+                            <FontIcon fx:id="binaryMatrixInfo" iconColor="#4769ff"
+                                      iconLiteral="zondi-information-outline" iconSize="28"/>
+                        </HBox>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="newWindowBinaryMatrixButton" alignment="CENTER" minHeight="-Infinity"
+                                minWidth="-Infinity" mnemonicParsing="false"
+                                onAction="#newWindowBinaryMatrix" text="%tab.results.openInNewWindow"
+                                textAlignment="CENTER">
+                            <font>
+                                <Font name="Segoe UI" size="14.0"/>
+                            </font>
+                        </Button>
+                    </HBox>
+                    <AnchorPane fx:id="binaryMatrixPane" maxHeight="1.7976931348623157E308"
+                                maxWidth="1.7976931348623157E308" minHeight="-Infinity" VBox.vgrow="ALWAYS"/>
+                </VBox>
+                <Separator maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                           orientation="VERTICAL" style="-fx-border-width: 1;"/>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="25.0"
+                      HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                        <HBox alignment="CENTER_LEFT" spacing="25.0">
+                            <Label text="%tab.results.matrix.full" wrapText="true">
+                                <font>
+                                    <Font name="Inter SemiBold" size="18.0"/>
+                                </font>
+                                <graphic>
+                                    <FontIcon iconLiteral="zondi-border-all" iconSize="28"
+                                              wrappingWidth="32.0"/>
+                                </graphic>
+                            </Label>
+                            <FontIcon fx:id="fullMatrixInfo" iconColor="#4769ff"
+                                      iconLiteral="zondi-information-outline" iconSize="28"/>
+                        </HBox>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="newWindowFullMatrixButton" alignment="CENTER" minHeight="-Infinity"
+                                minWidth="-Infinity" mnemonicParsing="false" onAction="#newWindowFullMatrix"
+                                text="%tab.results.openInNewWindow" textAlignment="CENTER">
+                            <font>
+                                <Font name="Segoe UI" size="14.0"/>
+                            </font>
+                        </Button>
+                    </HBox>
+                    <AnchorPane fx:id="fullMatrixPane" maxHeight="1.7976931348623157E308"
+                                maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS"/>
+                </VBox>
+            </HBox>
+            <Separator maxWidth="1.7976931348623157E308" style="-fx-border-width: 1;"/>
+            <HBox alignment="CENTER_LEFT" spacing="25.0">
+                <Label text="%tab.results.statistics">
+                    <font>
+                        <Font name="Inter SemiBold" size="18.0"/>
+                    </font>
+                    <graphic>
+                        <FontIcon iconLiteral="zondi-list" iconSize="28" wrappingWidth="32.0"/>
+                    </graphic>
+                </Label>
+                <FontIcon fx:id="statisticsInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline"
+                          iconSize="28"/>
+                <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308"
+                       text="%tab.results.statistics.class" HBox.hgrow="ALWAYS">
+                    <font>
+                        <Font name="Inter Regular" size="18.0"/>
+                    </font>
+                    <graphic>
+                        <FontIcon iconLiteral="zondi-search" iconSize="28" wrappingWidth="32.0"/>
+                    </graphic>
+                </Label>
+                <ChoiceBox fx:id="statClassChoiceBox" minWidth="150.0"/>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="524.0"
+                  style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-border-radius: 2.5; -fx-background-radius: 2.5;">
+                <VBox alignment="CENTER_LEFT" minWidth="-Infinity"
+                      style="-fx-border-color: #4769ff; -fx-border-width: 0 2 0 0;" HBox.hgrow="NEVER">
+                    <Label alignment="CENTER" maxWidth="1.7976931348623157E308"
+                           text="%tab.results.statistics.metric" wrapText="true" VBox.vgrow="ALWAYS">
+                        <padding>
+                            <Insets bottom="25.0" left="15.0" right="15.0" top="25.0"/>
+                        </padding>
+                        <font>
+                            <Font name="Inter SemiBold" size="16.0"/>
+                        </font>
+                    </Label>
+                    <Label alignment="CENTER" maxWidth="1.7976931348623157E308"
+                           style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;"
+                           text="%general.training" wrapText="true" VBox.vgrow="ALWAYS">
+                        <padding>
+                            <Insets bottom="25.0" left="15.0" right="15.0" top="25.0"/>
+                        </padding>
+                        <font>
+                            <Font name="Inter SemiBold" size="16.0"/>
+                        </font>
+                    </Label>
+                    <Label alignment="CENTER" maxWidth="1.7976931348623157E308"
+                           style="-fx-border-color: #4769ff; -fx-border-width: 1 0 0 0;"
+                           text="%general.testing" wrapText="true" VBox.vgrow="ALWAYS">
+                        <padding>
+                            <Insets bottom="25.0" left="15.0" right="15.0" top="25.0"/>
+                        </padding>
+                        <font>
+                            <Font name="Inter SemiBold" size="16.0"/>
+                        </font>
+                    </Label>
+                </VBox>
+                <ScrollPane fx:id="statisticsScrollPane" fitToHeight="true" hbarPolicy="NEVER" pannable="true"
+                            style="-fx-border-width: 0;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+                    <HBox fx:id="statPane" maxHeight="1.7976931348623157E308"
+                          maxWidth="1.7976931348623157E308"/>
+                </ScrollPane>
+                <VBox alignment="TOP_CENTER" minWidth="-Infinity" prefWidth="250.0" spacing="25.0"
+                      style="-fx-border-width: 0 0 0 2; -fx-border-color: #4769ff;">
+                    <padding>
+                        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0"/>
+                    </padding>
+                    <HBox.margin>
+                        <Insets left="5.0"/>
+                    </HBox.margin>
+                    <HBox alignment="CENTER" spacing="25.0">
+                        <Label text="%tab.results.statistics.rating">
+                            <font>
+                                <Font name="Inter SemiBold" size="18.0"/>
+                            </font>
+                        </Label>
+                        <FontIcon fx:id="ratingInfo" iconColor="#4769ff"
+                                  iconLiteral="zondi-information-outline" iconSize="28"/>
+                    </HBox>
+                    <BorderPane
+                            style="-fx-border-width: 1; -fx-border-color: #4769ff; -fx-border-radius: 2.5; -fx-background-radius: 2.5;"
+                            VBox.vgrow="ALWAYS">
+                        <VBox.margin>
+                            <Insets/>
+                        </VBox.margin>
+                        <center>
+                            <Label fx:id="overallRatingLabel" alignment="CENTER"
+                                   maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                                   text="..." wrapText="true">
+                                <font>
+                                    <Font name="Inter Regular" size="32.0"/>
+                                </font>
+                            </Label>
+                        </center>
+                    </BorderPane>
+                </VBox>
+                <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" layoutX="157.0"
+                            layoutY="11.0" minHeight="-Infinity" minWidth="-Infinity" pannable="true"
+                            style="-fx-border-width: 0;" vbarPolicy="NEVER">
+                    <HBox fx:id="statPane1" maxHeight="1.7976931348623157E308"
+                          maxWidth="1.7976931348623157E308"/>
+                </ScrollPane>
+            </HBox>
+            <Separator maxWidth="1.7976931348623157E308" style="-fx-border-width: 1;"/>
+            <HBox alignment="CENTER_LEFT" spacing="25.0" VBox.vgrow="NEVER">
+                <Label text="%tab.results.simulator">
+                    <font>
+                        <Font name="Inter SemiBold" size="18.0"/>
+                    </font>
+                    <graphic>
+                        <FontIcon iconLiteral="zondi-plugin" iconSize="28" wrappingWidth="32.0"/>
+                    </graphic>
+                </Label>
+                <FontIcon fx:id="simulatorInfo" iconColor="#4769ff" iconLiteral="zondi-information-outline"
+                          iconSize="28"/>
+            </HBox>
+            <HBox alignment="CENTER_LEFT"
+                  style="-fx-border-color: #4769ff; -fx-border-width: 1; -fx-border-radius: 2.5; -fx-background-radius: 2.5;">
+                <VBox alignment="CENTER_LEFT" style="-fx-border-color: #4769ff; -fx-border-width: 0 2 0 0;"
+                      HBox.hgrow="NEVER">
+                    <Label alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308"
+                           minHeight="-Infinity" minWidth="-Infinity" prefHeight="71.0"
+                           style="-fx-border-color: #4769ff; -fx-border-width: 0 0 1 0;"
+                           text="%tab.results.simulator.parameter" wrapText="true" VBox.vgrow="NEVER">
+                        <padding>
+                            <Insets bottom="25.0" left="15.0" right="15.0" top="25.0"/>
+                        </padding>
+                        <font>
+                            <Font name="Inter SemiBold" size="16.0"/>
+                        </font>
+                    </Label>
+                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308"
+                           maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
+                           text="%tab.results.simulator.value" wrapText="true" VBox.vgrow="ALWAYS">
+                        <padding>
+                            <Insets bottom="25.0" left="15.0" right="15.0" top="25.0"/>
+                        </padding>
+                        <font>
+                            <Font name="Inter SemiBold" size="16.0"/>
+                        </font>
+                    </Label>
+                </VBox>
+                <ScrollPane fx:id="simulatorScrollPane" fitToHeight="true" hbarPolicy="NEVER" pannable="true"
+                            style="-fx-border-width: 0;" vbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+                    <HBox fx:id="simulatorHBox" maxHeight="1.7976931348623157E308"
+                          maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <BorderPane maxHeight="1.7976931348623157E308"
+                                        maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                <padding>
+                                    <Insets bottom="15.0" left="25.0" right="15.0" top="25.0"/>
+                                </padding>
+                            </BorderPane>
+                        </VBox>
+                    </HBox>
+                </ScrollPane>
+                <VBox alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" prefWidth="350.0"
+                      spacing="25.0" style="-fx-border-width: 0 0 0 2; -fx-border-color: #4769ff;">
+                    <padding>
+                        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0"/>
+                    </padding>
+                    <HBox.margin>
+                        <Insets left="5.0"/>
+                    </HBox.margin>
+                    <HBox alignment="CENTER" spacing="25.0">
+                        <Label text="%tab.results.simulator.result">
+                            <font>
+                                <Font name="Inter SemiBold" size="18.0"/>
+                            </font>
+                        </Label>
+                        <FontIcon fx:id="simulatorResultInfo" iconColor="#4769ff"
+                                  iconLiteral="zondi-information-outline" iconSize="28"/>
+                    </HBox>
+                    <Label fx:id="simulatorOutput" alignment="CENTER" maxHeight="1.7976931348623157E308"
+                           maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="..." wrapText="true"
+                           VBox.vgrow="ALWAYS">
+                        <font>
+                            <Font name="Inter Regular" size="16.0"/>
+                        </font>
+                    </Label>
+                    <Button fx:id="startSimulatorButton" maxWidth="1.7976931348623157E308"
+                            mnemonicParsing="false" onAction="#prepareSimulationValues"
+                            text="%tab.results.simulator.calculate"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </ScrollPane>
 </VBox>
