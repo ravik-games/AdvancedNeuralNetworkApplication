@@ -107,7 +107,7 @@ runtime {
         imageOptions.plusAssign(listOf("--icon", "src/resources/images/logo.$imgType"))
         imageName = "ELENNA"
         installerName = "ELENNA"
-        appVersion = "2.0"
+        appVersion = "2.1"
         installerOptions.plusAssign(listOf("--resource-dir", "src/resources"))
         installerOptions.plusAssign(listOf("--vendor", "ravik"))
 
